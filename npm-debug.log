@@ -3,23 +3,23 @@
 2 info using npm@1.4.3
 3 info using node@v0.10.26
 4 verbose run-script [ 'prestart', 'start', 'poststart' ]
-5 info prestart trial@0.0.1
-6 info start trial@0.0.1
+5 info prestart bugtrack-express@0.0.1
+6 info start bugtrack-express@0.0.1
 7 verbose unsafe-perm in lifecycle true
-8 info trial@0.0.1 Failed to exec start script
-9 error trial@0.0.1 start: `node ./bin/www`
+8 info bugtrack-express@0.0.1 Failed to exec start script
+9 error bugtrack-express@0.0.1 start: `node ./bin/www`
 9 error Exit status 8
-10 error Failed at the trial@0.0.1 start script.
-10 error This is most likely a problem with the trial package,
+10 error Failed at the bugtrack-express@0.0.1 start script.
+10 error This is most likely a problem with the bugtrack-express package,
 10 error not with npm itself.
 10 error Tell the author that this fails on your system:
 10 error     node ./bin/www
 10 error You can get their info via:
-10 error     npm owner ls trial
+10 error     npm owner ls bugtrack-express
 10 error There is likely additional logging output above.
 11 error System Darwin 13.2.0
 12 error command "node" "/usr/local/bin/npm" "start"
-13 error cwd /Users/sreddy/space/angularjs/express/trial
+13 error cwd /Users/sreddy/space/angularjs/express/bugtrack-express
 14 error node -v v0.10.26
 15 error npm -v 1.4.3
 16 error code ELIFECYCLE

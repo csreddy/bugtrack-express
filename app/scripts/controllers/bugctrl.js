@@ -207,7 +207,8 @@ app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'b
 
                 },
                 function(response) {
-                    Flash.addAlert('danger', response.data.error.message);
+                    console.log(response);
+                    Flash.addAlert('danger', response.statusText);
                 }
             );
         };

@@ -18,8 +18,8 @@ var login = require('./routes/login');
 
 var app = express();
 // view engine setup
-// app.set('views', path.join(__dirname, 'views'));
-// app.set('view engine', 'jade');
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'jade');
 
 
 app.use(favicon());
@@ -68,31 +68,84 @@ passport.use(new LocalStrategy(function(username, password, done) {
     //  var username = 'admin',
     //     password = 'admin',
     var url = 'http://' + username + ':' + password + '@localhost:8003/v1/search';
+    var userURI = 'http://localhost:8003/v1/documents?uri=/user/' + username + '.json';
 
-    request({
+    /*function checkUserExists(uri) {
+        app.use('userURI', function(req, res) {
+            req.pipe(request(url)).pipe(res);
+        });
+    }
+
+    function checkPwdMatch(uri) {
+        request
+    }*/
+
+    var options = {
+        method: 'GET',
+        url: userURI
+    };
+    request(options, function(error, response, body) {
+        body = JSON.parse(body);
+        console.log('response = ', typeof body);
+        if (response.statusCode === 404) {
+            return done(null, false, {
+                status: 404,
+                message: 'User does not exist'
+            });
+        } else if (response.statusCode === 200) {
+            console.log('body.password = ', body.password);
+            console.log('password = ', password);
+            if (body.password === password) {
+                return done(null, {
+                    status: 200,
+                    username: username
+                });
+            } else {
+                return done(null, false, {
+                    status: 401,
+                    message: 'Incorrect password.'
+                });
+            }
+        } else {
+            return done(error);
+        }
+    });
+
+
+
+    /*request({
         url: url,
         sendImmediately: false
     }, function(error, response, body) {
         console.log(response.statusCode);
         if (response.statusCode === 401) {
             console.log('Incorrect password ................');
-            done(null, false, {
+            return done(null, false, {
+                status: 401,
                 message: 'Incorrect password.'
             });
         } else if (response.statusCode === 403) {
             console.log('no privilages');
-            done(null, false, {
-                message: 'you do not have privilages.'
+            return done(null, false, {
+                status: 403,
+                message: 'You do not have privilages.'
+            });
+        } else if (response.statusCode === 404) {
+            console.log('User does not exist................');
+            return done(null, false, {
+                status: 404,
+                message: 'User does not exist'
             });
         } else if (response.statusCode === 200) {
             console.log('auth success................');
-            done(null, {
+            return done(null, {
+                status: 200,
                 username: username
             });
         } else {
             console.log('auth failed');
         };
-    });
+    });*/
 
     /*  if (username === 'admin' && password === 'admin') {
         console.log('in');
@@ -107,22 +160,6 @@ passport.use(new LocalStrategy(function(username, password, done) {
 
 }));
 
-// login
-app.post('/login',
-    passport.authenticate('local'),
-    function(req, res) {
-        // If this function gets called, authentication was successful.
-        // `req.user` contains the authenticated user.
-        res.send(req.user);
-    });
-
-
-// logout
-app.get('/logout', function(req, res) {
-    req.logout();
-    console.log('logged out');
-    res.redirect('/');
-});
 
 // api calls
 app.use('/v1/', function(req, res, next) {
@@ -131,7 +168,7 @@ app.use('/v1/', function(req, res, next) {
     if (req.method === 'GET') {
         req.pipe(request(url)).pipe(res);
     } else if (req.method === 'PUT') {
-        //   console.log('body:', req.body);
+        console.log('body:', req.body);
 
         var options = {
             method: 'PUT',
@@ -143,10 +180,51 @@ app.use('/v1/', function(req, res, next) {
             if (err) {
                 next(err);
             }
-            res.send(response);
+
+            res.send(response); // res.send(response.statusCode, response);  
+            console.log(response);
             next(res, res);
         });
     }
+});
+
+
+// login
+/*app.post('/login',
+    passport.authenticate('local'),
+    function(req, res) {
+        // If this function gets called, authentication was successful.
+        // `req.user` contains the authenticated user.
+        res.send(req.user);
+    }, function(req, res) {
+        console.log('failed.....');
+        res.send(req.statusCode);
+    });*/
+
+app.post('/login', function(req, res, next) {
+    passport.authenticate('local', function(err, user, info) {
+        if (err) {
+            return next(err);
+        }
+        if (!user) {
+            req.session.messages = [info.message];
+            return res.send(401, info);
+        }
+        req.logIn(user, function(err) {
+            if (err) {
+                return next(err);
+            }
+            return res.send(req.user);
+        });
+    })(req, res, next);
+});
+
+
+// logout
+app.get('/logout', function(req, res) {
+    req.logout();
+    console.log('logged out');
+    res.redirect('/');
 });
 
 
@@ -180,5 +258,19 @@ app.use(function(err, req, res, next) {
         error: {}
     });
 });
+
+// Simple route middleware to ensure user is authenticated.
+//   Use this route middleware on any resource that needs to be protected.  If
+//   the request is authenticated (typically via a persistent login session),
+//   the request will proceed.  Otherwise, the user will be redirected to the
+//   login page.
+function ensureAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    res.send(401, {
+        message: 'Please sign in'
+    });
+}
 
 module.exports = app;

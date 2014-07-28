@@ -16,14 +16,13 @@ app.controller('loginCtrl', ['$scope', '$location', '$cookieStore', 'Flash', '$w
                 method: 'POST',
                 url: '/login',
                 data: payload
-            }).then(function(status, response) {
-                    console.log(status);
-                    $location.path('/user');
-                    Flash.addAlert('success', 'Hello! ' + status); // need to debug
-
+            }).then(function(response) {
+                    console.log(response);
+                    $location.path('/user/' + response.data.username);
+                    Flash.addAlert('success', 'Welcome! ' + response.data.username);
                 },
-                function(status, response) {
-                    Flash.addAlert('danger', 'User not authenticated');
+                function(response) {
+                    Flash.addAlert('danger', response.data.message);
                 });
         };
 
@@ -33,7 +32,7 @@ app.controller('loginCtrl', ['$scope', '$location', '$cookieStore', 'Flash', '$w
 
 app.controller('logoutCtrl', ['$http', 'Flash',
     function($http, Flash) {
-        $http.get('/logout').then(function(status, response) {
+        $http.get('/logout').then(function(response) {
             console.log('logged out');
             Flash.addAlert('success', 'user logged out');
         }, function() {
@@ -73,12 +72,18 @@ app.controller('registerCtrl', ['$scope', 'Flash', 'User',
 ]);
 
 
-app.controller('userCtrl', ['$scope', '$http',
-    function($scope, $http) {
+app.controller('userCtrl', ['$scope', '$http', '$location', 'Flash',
+    function($scope, $http, $location, Flash) {
         $http.get('/user').then(function(response) {
             $scope.username = response.data;
-        }, function(status, response) {
-            $scope.username = 'ERROR';
+            $http.get('/v1/documents?uri=/user/' + $scope.username + '.json').then(function(response) {
+                $scope.userdata = response.data;
+            }, function(response) {
+                Flash.addAlert('danger', 'could not get user profile');
+            });
+        }, function(response) {
+            $location.path('/login');
+            Flash.addAlert('warning', response.data.message);
         });
 
     }

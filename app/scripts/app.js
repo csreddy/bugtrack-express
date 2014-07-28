@@ -30,14 +30,10 @@ app.config(function($routeProvider) {
             templateUrl: 'views/login.html',
             controller: 'loginCtrl'
         })
-    // .when('/logout', {
-    //     templateUrl: 'views/list.html',
-    //     controller: 'logoutCtrl'
-    // })
-    .when('/user', {
-        templateUrl: 'views/user.html',
-        controller: 'userCtrl'
-    })
+        .when('/user/:username', {
+            templateUrl: 'views/user.html',
+            controller: 'userCtrl'
+        })
         .when('/register', {
             templateUrl: 'views/register.html',
             controller: 'registerCtrl'
