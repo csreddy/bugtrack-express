@@ -1,0 +1,216 @@
+[
+    '{{repeat(1, 1)}}', {
+        id: '{{integer(1000, 9999)}}',
+        createdAt: '{{date(new Date(2014, 0, 1), new Date(), "YYYY-MM-ddThh:mm:ss:f")}}' + 'Z',
+        modifiedAt: '{{date(new Date(2014, 0, 1), new Date(), "YYYY-MM-ddThh:mm:ss:f")}}' + 'Z',
+        kind: function() {
+            return ["Bug", "Task", "RFE", "Other"][0];
+        },
+        status: function() {
+            return ["New", "Verify", "Fix", "Test", "Ship", "Closed", "Will not fix", "External"][Math.floor((Math.random() * 7))];
+        },
+        severity: function() {
+            return ["P1 - Catastrophic", "P2 - Critcial", "P3 - Major", "P4 - Minor", "P5 -  Aesthetic", "Performance"][Math.floor((Math.random() * 6))];
+        },
+        priority: function() {
+            return [{
+                "level": "1",
+                "title": "Drop everything and fix"
+            }, {
+                "level": "2",
+                "title": "A customer is waiting for this"
+            }, {
+                "level": "3",
+                "title": "Very important"
+            }, {
+                "level": "4",
+                "title": "Important"
+            }, {
+                "level": "5",
+                "title": "Fix if time permits"
+            }, {
+                "level": "6",
+                "title": "Probably won’t fix but worth remembering"
+            }, {
+                "level": "7",
+                "title": "Do not fix"
+            }][Math.floor((Math.random() * 6))];
+        },
+        submittedBy: function() {
+            return [{
+                "email": "sreddy@marklogic.com",
+                "name": "sudhakar reddy",
+                "username": "sreddy"
+
+            }, {
+                "email": "robertsonfarmer@bezal.com",
+                "name": "Lawson Bowers",
+                "username": "Bishop"
+            }, {
+                "email": "bishopbowers@bezal.com",
+                "name": "Minnie Robbins",
+                "username": "Liliana"
+            }, {
+                "email": "lilianarobbins@bezal.com",
+                "name": "Shields Evans",
+                "username": "Cummings"
+            }, {
+                "email": "cummingsevans@bezal.com",
+                "name": "Kelley Porter",
+                "username": "Ingrid"
+            }, {
+                "email": "ingridporter@bezal.com",
+                "name": "Dale Whitley",
+                "username": "Giles"
+            }, {
+                "email": "gileswhitley@bezal.com",
+                "name": "Pope Caldwell",
+                "username": "Potter"
+            }, {
+                "email": "pottercaldwell@bezal.com",
+                "name": "Decker Wolf",
+                "username": "Mcconnell"
+            }][Math.floor((Math.random() * 7))];
+        },
+        assignTo: function() {
+            return [{
+                "email": "sreddy@marklogic.com",
+                "name": "sudhakar reddy",
+                "username": "sreddy"
+
+            }, {
+                "email": "robertsonfarmer@bezal.com",
+                "name": "Lawson Bowers",
+                "username": "Bishop"
+            }, {
+                "email": "bishopbowers@bezal.com",
+                "name": "Minnie Robbins",
+                "username": "Liliana"
+            }, {
+                "email": "lilianarobbins@bezal.com",
+                "name": "Shields Evans",
+                "username": "Cummings"
+            }, {
+                "email": "cummingsevans@bezal.com",
+                "name": "Kelley Porter",
+                "username": "Ingrid"
+            }, {
+                "email": "ingridporter@bezal.com",
+                "name": "Dale Whitley",
+                "username": "Giles"
+            }, {
+                "email": "gileswhitley@bezal.com",
+                "name": "Pope Caldwell",
+                "username": "Potter"
+            }, {
+                "email": "pottercaldwell@bezal.com",
+                "name": "Decker Wolf",
+                "username": "Mcconnell"
+            }][Math.floor((Math.random() * 7))];
+        },
+        title: '{{lorem(10, "words")}}',
+        description: '{{lorem(2, "sentences")}}',
+        samplequery: '{{lorem(2, "sentences")}}',
+        sampledata: '{{lorem(4, "sentences")}}',
+        stacktrace: '{{lorem(10, "paragraphs")}}',
+        category: function() {
+            return ["Admin API",
+                "Admin License",
+                "adminGUI",
+                "antennahouse",
+                "App Builder",
+                "Backup/Restore",
+                "Basis",
+                "Bi-Temporal",
+                "Bugtrack"][Math.floor((Math.random() * 8))];
+        },
+        relation: function() {
+            return [
+                'Requirements task for',
+                'Functional Spec task for',
+                'Test Specification task for',
+                'Test Automation task for',
+                'Documentation task for',
+                'Sub-task of'
+            ][Math.floor((Math.random() * 5))];
+        },
+        relatedTo: [
+            '{{repeat(4)}}',
+            '{{integer(1000, 9999)}}'
+        ],
+        cloneOf: '{{integer(1000, 9999)}}',
+        clones: [
+            '{{repeat(4)}}',
+            '{{integer(1000, 9999)}}'
+        ],
+        version: function() {
+            return ["7.0-3",
+                "7.0-2.4",
+                "7.0-2.3",
+                "7.0-2.2",
+                "7.0-2.1",
+                "7.0-2",
+                "7.0-1"][Math.floor((Math.random() * 7))];
+        },
+        tofixin: function() {
+            return [
+                "RFETrack-2.1",
+                "Mint-2.0",
+                "Help-1.1",
+                "DMC-0.3",
+                "Bugtrack-2.1",
+                "5.0-6.2",
+                "Admin-License-0.2",
+                "8.0-ea3",
+                "8.0-ea2",
+                "8.0-2",
+                "8.0-1",
+                "7.0-4",
+                "6.0-6",
+                "5.0-7",
+                "5.0-6.3"
+            ][Math.floor((Math.random() * 15))];
+        },
+        fixedin: function() {
+            return [
+                "RFETrack-2.1",
+                "Mint-2.0",
+                "Help-1.1",
+                "DMC-0.3",
+                "Bugtrack-2.1",
+                "5.0-6.2",
+                "Admin-License-0.2",
+                "8.0-ea3",
+                "8.0-ea2",
+                "8.0-2",
+                "8.0-1",
+                "7.0-4",
+                "6.0-6",
+                "5.0-7",
+                "5.0-6.3"
+            ][Math.floor((Math.random() * 15))];
+        },
+        platform: function() {
+            return ["all",
+                "linux(32-bit)",
+                "linux(64-bit)",
+                "windows(64-bit)",
+                "windows(32-bit)",
+                "solaris(sparc)",
+                "solaris(opteron)",
+                "vmware",
+                "OS X",
+                "EC2"][Math.floor((Math.random() * 5))];
+        },
+        memory: '{{integer(100, 1000)}}' + ' mb',
+        processors: '{{integer(2, 12)}}',
+        note: '{{lorem(1, "paragraphs")}}',
+        headline: '{{lorem(1, "sentences")}}',
+        supportDescription: '{{lorem(1, "paragraphs")}}',
+        workaround: '{{lorem(2, "paragraphs")}}',
+        publishStatus: function() {
+            return ["Publish", "Not Ready", "Prepare", "Never Publish"][2];
+        },
+        customerImpact: '{{lorem(3)}}'
+    }
+]

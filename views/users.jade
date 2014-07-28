@@ -1,0 +1,13 @@
+extends layout
+
+block content
+
+    .alert.alert-success.alert-dismissible(role='alert')
+        button.close(type='button', data-dismiss='alert')
+          span(aria-hidden='true') ×
+          span.sr-only Close
+        strong Welcome!
+           | #{message} : #{user}
+
+  
+    h3= 'this is users page'

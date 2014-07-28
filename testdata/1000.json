@@ -1,0 +1,57 @@
+{
+    "id": 1000,
+    "createdAt": "2014-05-05T15:31:55:78Z",
+    "modifiedAt": "2014-06-26T21:49:48:145Z",
+    "resolvedAt": "2014-04-25T09:52:50:872Z",
+    "TestedAt": "2014-04-28T06:22:09:433Z",
+    "kind": "Bug",
+    "status": "Ship",
+    "severity": "Performance",
+    "priority": {
+        "level": "5",
+        "title": "Fix if time permits"
+    },
+    "submittedBy": {
+        "email": "bishopbowers@bezal.com",
+        "name": "Minnie Robbins",
+        "username": "Liliana"
+    },
+    "assignTo": {
+        "email": "cummingsevans@bezal.com",
+        "name": "Kelley Porter",
+        "username": "Ingrid"
+    },
+    "title": "nostrud qui qui voluptate magna cupidatat quis dolore magna in",
+    "description": "Ullamco duis voluptate ipsum ut exercitation dolor tempor quis voluptate voluptate. Nostrud anim laboris consequat ea proident officia id et. Lorem amet mollit deserunt magna sunt excepteur. Id enim ipsum fugiat ipsum excepteur labore reprehenderit nostrud amet excepteur. Sint esse sunt sit pariatur sit nulla fugiat sunt sunt.\r\nVoluptate nulla cupidatat exercitation cillum ipsum mollit aliquip excepteur. Amet dolore do qui irure aute ad ipsum velit sit eu irure id et dolore. Ipsum commodo qui aliqua ut nulla mollit cupidatat.\r\nMollit quis minim culpa sunt culpa consectetur consequat et ipsum. Anim consequat qui consequat amet nulla sunt cupidatat culpa laboris. Elit eu in proident dolor.\r\n",
+    "samplequery": "Enim reprehenderit occaecat enim nulla id velit amet elit nulla. Eu minim deserunt dolore culpa enim pariatur qui ullamco exercitation amet in sit consequat. Enim Lorem pariatur pariatur magna. Sint dolore excepteur sunt voluptate officia veniam magna non aute occaecat ad. Enim tempor ullamco nisi sunt sunt laborum consectetur culpa ad magna id ut quis elit. Ea id ea aliqua quis culpa amet sunt reprehenderit in.\r\nEx eiusmod reprehenderit anim do nulla laborum in aliqua et ea. Lorem aliquip tempor dolor eiusmod fugiat ullamco. Consectetur cupidatat elit labore ullamco laboris. Culpa dolor nisi aliquip labore aute officia cillum consectetur.\r\n",
+    "sampledata": "Dolore cupidatat esse minim fugiat laborum irure eiusmod non incididunt proident. Ad veniam ut cillum sit et. Ut veniam magna ipsum cillum veniam non proident laborum officia duis nulla non exercitation. Ad et do aute velit minim quis.",
+    "stacktrace": "Excepteur ut occaecat est ad consequat fugiat ullamco id sint occaecat culpa consequat eiusmod reprehenderit. Est id velit consectetur id eu dolore laborum est. Pariatur velit nostrud aliqua cillum duis do anim ex occaecat occaecat. Dolore incididunt elit exercitation velit ut duis eu veniam ut dolore consectetur exercitation nisi. Officia velit veniam laboris mollit consectetur. Est qui adipisicing deserunt occaecat laborum voluptate quis.\r\nCommodo labore qui Lorem mollit pariatur eu minim aute. Sint aliquip do deserunt aliquip eiusmod minim incididunt sint quis. Elit anim adipisicing nulla occaecat magna cillum excepteur esse fugiat consectetur. Consectetur aliquip cupidatat nulla amet est tempor aute irure. Tempor anim est labore occaecat cupidatat laboris exercitation non velit ex. Non ex duis exercitation labore amet laboris est quis reprehenderit sit officia non velit do. Dolore aute ullamco cillum proident non nulla tempor reprehenderit.\r\nCulpa nulla adipisicing cillum consequat enim nisi eu ea in. Ea voluptate in Lorem voluptate deserunt tempor proident mollit quis aute nostrud culpa Lorem. Tempor occaecat mollit nulla culpa labore commodo elit.\r\nAnim occaecat et laboris aliquip pariatur fugiat elit cupidatat anim pariatur deserunt dolor pariatur ea. Dolore non sit incididunt consequat ea culpa minim consectetur nulla voluptate do esse est. Do tempor cupidatat eiusmod dolore pariatur mollit elit quis. Aliquip sunt duis voluptate do enim tempor. Commodo aute sint amet dolore ullamco mollit ex magna.\r\nLorem id culpa dolor enim. Cillum qui eiusmod mollit sunt dolor mollit ipsum ad eiusmod minim aliquip exercitation minim. Anim irure cupidatat ad sint adipisicing amet do magna. Aute nulla nisi dolore proident eiusmod duis amet nostrud anim in sunt. Aliqua amet incididunt proident duis ad mollit pariatur exercitation proident elit dolore ad. Sit sunt adipisicing veniam sint ut occaecat duis consectetur esse incididunt. Quis ipsum aliqua enim eu proident proident elit est cillum et aliqua pariatur ex.\r\nEa Lorem culpa laborum reprehenderit nulla ea velit nulla eu irure dolor labore laborum. Ullamco velit officia sunt id laboris officia magna aute officia aliqua. Pariatur minim ullamco sunt laborum ea eiusmod ipsum proident eiusmod ea.\r\nAd dolore labore ad eiusmod elit Lorem laboris et culpa veniam ipsum veniam. Voluptate laboris Lorem dolore enim sit labore aute dolor nostrud exercitation consequat. Aute cillum id dolor tempor veniam. Officia pariatur amet quis id. Est culpa nisi esse cupidatat consequat culpa nisi proident minim. Occaecat occaecat exercitation dolore dolor id reprehenderit id labore ad duis culpa quis veniam.\r\nAute magna irure proident voluptate reprehenderit reprehenderit est ad in sint in. Consequat aute adipisicing enim sit. Ipsum sunt nostrud quis magna ullamco elit et et cupidatat ut adipisicing deserunt adipisicing. Occaecat eu anim consectetur sit eiusmod anim sint. Aliquip fugiat labore consectetur eu.\r\nProident nisi aliqua amet aliquip eiusmod occaecat Lorem sit consectetur fugiat occaecat qui proident. Dolore ut sint pariatur nisi cillum. Anim qui laborum consectetur labore amet do nisi ut ex sunt reprehenderit ex. Proident culpa culpa tempor laboris ad velit Lorem quis tempor in magna irure veniam officia. Anim cillum deserunt sit labore qui irure mollit officia officia laboris sint voluptate sit qui.\r\nElit quis deserunt esse enim velit ex mollit. Culpa cillum sunt nisi dolore occaecat minim eiusmod. Enim non pariatur pariatur nisi in nostrud cupidatat consectetur. Labore quis Lorem esse amet officia dolor labore nisi quis esse nostrud do esse laborum. Exercitation ex dolore ea deserunt. Occaecat veniam aute consequat Lorem aliqua minim incididunt nulla consectetur.\r\n",
+    "category": "Backup/Restore",
+    "relation": "Functional Spec task for",
+    "relatedTo": [
+        4816,
+        4833,
+        1393,
+        3051
+    ],
+    "cloneOf": 1746,
+    "clones": [
+        9221,
+        2864,
+        6106,
+        1066
+    ],
+    "version": "7.0-2.1",
+    "tofixin": "Admin-License-0.2",
+    "fixedin": "Admin-License-0.2",
+    "platform": "windows(32-bit)",
+    "memory": "292 mb",
+    "processors": 5,
+    "note": "Et adipisicing enim sunt duis ex id nostrud nostrud qui. Est adipisicing ea laborum magna do irure fugiat commodo voluptate elit culpa. Ipsum dolore qui eu esse consequat. Officia et sint id nisi nulla commodo incididunt qui tempor mollit sit incididunt irure non. Quis duis excepteur est commodo tempor laboris sunt.\r\n",
+    "headline": "Sunt proident occaecat aliqua officia anim et minim sint voluptate adipisicing incididunt velit.",
+    "supportDescription": "Dolor magna mollit ipsum ex proident id excepteur incididunt. Aliquip eu consectetur commodo id exercitation velit proident incididunt labore est ipsum aute aliquip. Reprehenderit culpa quis minim magna laboris laboris id fugiat exercitation consequat qui minim cillum laboris. Fugiat in sunt aliqua magna incididunt aliqua anim cupidatat est.\r\n",
+    "workaround": "Pariatur culpa sit voluptate in minim magna est aliqua deserunt mollit do quis tempor. Nulla veniam veniam sunt sunt cupidatat nostrud quis excepteur sint. In laboris velit ullamco ad dolor sunt laborum quis non dolore.\r\nAmet et anim magna cupidatat fugiat voluptate nostrud quis officia proident et ex qui incididunt. Sunt esse duis consequat velit ullamco dolor fugiat. Consectetur sint adipisicing sit amet deserunt dolor proident cupidatat elit ea aliquip adipisicing laborum. Nostrud nisi laboris pariatur sint. Ipsum in consequat nulla non incididunt consequat ipsum dolore. Culpa nostrud reprehenderit nostrud occaecat duis consequat incididunt in ipsum occaecat nisi eu magna.\r\n",
+    "publishStatus": "Prepare",
+    "customerImpact": "Occaecat mollit consectetur amet ut id. Cupidatat ad officia dolore mollit. Aute adipisicing enim ullamco tempor.",
+    "changes": []
+}

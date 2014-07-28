@@ -1,0 +1,19 @@
+#!/usr/bin/env node
+
+var debug = require('debug')('trial');
+var app = require('../app');
+
+
+app.set('port', process.env.PORT || 3000);
+
+var request = require('request');
+
+/*app.use('/v1/', function(req, res) {
+    var url = 'http://localhost:8003' + req.url;
+    req.pipe(request(url)).pipe(res);
+});*/
+
+
+var server = app.listen(app.get('port'), function() {
+    debug('Express server listening on port ' + server.address().port);
+});
