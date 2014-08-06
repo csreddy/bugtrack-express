@@ -10,7 +10,7 @@
 <!-- Select Multiple -->
 <div class="form-group">
     <select ng-model="users" id="users" name="users" class="form-control " multiple="multiple" style="height: 500px;">
-    <option ng-repeat="(key, user) in config.users.sort()"  value="{{key}}">
+    <option ng-repeat="(key, user) in config.users"  value="{{key}}">
   {{user.name}} - {{user.email}} </option>
     </select>
 </div>

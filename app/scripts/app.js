@@ -46,12 +46,18 @@ app.config(function($routeProvider) {
                     function(bugConfigFactory) {
                         return bugConfigFactory.getConfig();
                     }
-        ],
-        getCurrentUser: ['User',
-            function(User) {
-                return User.getInfo();
-            }
-        ]
+                ],
+                getCurrentUser: ['User', '$location', 'Flash',
+                    function(User, $location, Flash) {
+                        User.getInfo().then(function(response) {
+                            return response.data;
+                        }, function(response) {
+                            $location.path('/login');
+                            Flash.addAlert('warning', response.data.message);
+                        });
+
+                    }
+                ]
             }
         })
         .when('/list', {

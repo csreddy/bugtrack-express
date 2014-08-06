@@ -11,22 +11,30 @@
   <div class="row">
       <div class="col-md-12">
         <div class="well">
-          <form class="form-horizontal" action="" method="post">
+          <form class="form-horizontal" name="bugForm" novalidate >
           <fieldset>
             <legend class="text-center">New Bug</legend>
 
 <div class="form-group">
       <label class="col-md-2 control-label" for="name">Title</label>
        <div class="col-md-9">
+       <div class="has-error" ng-show="bugForm.title.$dirty && bugForm.title.$invalid">
+         <small class="has-error" ng-show='bugForm.title.$error.required'>
+        Bug title cannot be blank
+      </small>
+  </div>
          <div class="input-group">
   <div class="input-group-btn">
-    <!-- Button and dropdown menu -->
+    <!-- dropdown menu -->
   <select ng-model="kind" type="text" class="form-control" style="width: 100px">
       <option ng-selected="kind === 'Bug'" ng-repeat="kind in config.kind" value="{{kind}}">{{kind}}</option>
   </select>
   </div>
- <input id="title" ng-model="title" name="title" type="text" placeholder="Bug title" class="form-control">
+
+   <input id="title" ng-model="title" name="title" type="text" placeholder="Bug title" class="form-control" required />
+
 </div>
+
         </div>
 </div>
     
@@ -231,7 +239,8 @@
      <!-- Form actions -->
             <div class="form-group">
               <div class="col-md-7 text-right">
-                <button type="submit" ng-click="createNewBug()"class="btn btn-primary btn-lg">Submit</button>
+                <button ng-click="createNewBug()"  class="btn btn-primary btn-lg">Submit</button> 
+                <!-- ng-disabled="bugForm.$invalid" -->
               </div>
             </div>
           </fieldset>

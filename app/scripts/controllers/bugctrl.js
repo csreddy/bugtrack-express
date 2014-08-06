@@ -21,7 +21,7 @@ app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'b
 
         console.log('============================');
         $scope.config = loadConfig.data;
-        $scope.submittedBy = getCurrentUser.data;
+        $scope.submittedBy = getCurrentUser;
 
         // get user
         /*  User.getInfo().then(function(response) {
@@ -50,6 +50,8 @@ app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'b
         // $scope.setKind = function(kind) {
         //     $scope.kind = kind;
         // };
+
+        $scope.submitted = false;
 
         $scope.setQuery = function(samplequery) {
             $scope.samplequery = samplequery;
@@ -141,7 +143,18 @@ app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'b
             $scope.customerImpact = customerImpact;
         };
 
+
         $scope.createNewBug = function() {
+            if ($scope.bugForm.$valid) {
+                // Submit as normal
+                submitBug();
+            } else {
+                $scope.bugForm.submitted = true;
+            }
+        };
+
+
+        function submitBug() {
             var bugId = Math.floor(Math.random() * 10000);
             var bug = {};
             bug.relatedTo = [];

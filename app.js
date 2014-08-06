@@ -137,7 +137,12 @@ app.get('/userinfo', function(req, res) {
             delete bodyObj.createdAt;
             delete bodyObj.modifiedAt;
             res.send(bodyObj);
+        } else {
+            res.send(401, {
+                message: 'Please sign in'
+            });
         }
+
     });
 });
 
