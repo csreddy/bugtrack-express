@@ -21,7 +21,7 @@ app.service('Flash', function($rootScope, $timeout) {
         });
         $timeout(function() {
             $rootScope.alerts.pop();
-        }, 60000);
+        }, 30000);
     };
 
     $rootScope.closeAlert = function(index) {

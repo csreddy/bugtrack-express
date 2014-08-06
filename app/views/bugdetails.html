@@ -97,7 +97,7 @@
  	<td colspan="" rowspan=""><b>Assign To</b></td>
  	<td colspan="" rowspan="">
  		 <select id="assignTo" ng-model="assignTo" name="assignTo" type="text" class="form-control">
-      <option ng-repeat="assignTo in config.users"  ng-selected="assignTo.name === bug.assignTo.name" value="{{assignTo}}">
+     <option ng-repeat="assignTo in config.users"  ng-selected="assignTo.name === bug.assignTo.name" value="{{assignTo}}">
          {{assignTo.name}}
       </option>
      </select>
@@ -122,6 +122,10 @@
     <tr>
  	<td colspan="" rowspan=""><b>Subscribe others</b></td>
  	<td colspan="" rowspan="">TODO</td>
+ </tr>
+   <tr>
+  <td colspan="" rowspan=""><b>Submitted by</b></td>
+  <td colspan="" rowspan="">{{bug.submittedBy.name}}</td>
  </tr>
  </table>
 <legend><h5>Related bugs</h5></legend>

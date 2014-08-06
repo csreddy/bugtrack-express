@@ -3,9 +3,9 @@
 var app = angular.module('bug.controllers', ['ui.bootstrap', 'ngCookies']);
 app.constant('RESTURL', 'http://' + location.hostname + ':' + location.port);
 
-app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'bugFactory', 'bugConfigFactory', 'Flash',
+app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'bugFactory', 'bugConfigFactory', 'Flash', 'User', 'loadConfig', 'getCurrentUser',
 
-    function($scope, $location, RESTURL, BugService, bugFactory, bugConfigFactory, Flash, Serv) {
+    function($scope, $location, RESTURL, BugService, bugFactory, bugConfigFactory, Flash, User, loadConfig, getCurrentUser) {
         //$scope.test = 'controller works';
 
         // accordiion interactions   
@@ -15,44 +15,28 @@ app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'b
         };
 
         $scope.config = {};
-        bugConfigFactory.getConfig().then(function(response) {
+        /* bugConfigFactory.getConfig().then(function(response) {
             $scope.config = response.data;
-        });
+        });*/
+
+        console.log('============================');
+        $scope.config = loadConfig.data;
+        $scope.submittedBy = getCurrentUser.data;
+
+        // get user
+        /*  User.getInfo().then(function(response) {
+            console.log(response.data.email);
+            $scope.submittedBy = response.data;
+        });*/
+
 
         $scope.selectedItem = {
             value: 0,
             label: ''
         };
 
-        $scope.Wrapper = Serv;
-
-        // initialize scope variables
-        // $scope.id = null;
-        // $scope.title = null;
-        // $scope.submittedBy = null;
-        // $scope.assignTo = null;
-        // $scope.description = null;
-        // $scope.samplequery = null;
-        // $scope.sampledata = null;
-        // $scope.stacktrace = null;
-        // $scope.cloneOf = null;
-        // $scope.clones = [];
-        // $scope.category = null;
-        // $scope.priority = null;
-        // $scope.relation = null;
+        //  $scope.Wrapper = Serv;
         $scope.relatedTo = [];
-        // $scope.version = null;
-        // $scope.platform = 'all';
-        // $scope.memory = null;
-        // $scope.processors = null;
-        // $scope.note = null;
-        // $scope.headline = null;
-        // $scope.supportDescription = null;
-        // $scope.workaround = null;
-        // $scope.publishStatus = 'Not ready';
-        // $scope.tickets = [];
-        // $scope.customerImpact = null;
-
 
         $scope.relatedTasks = [
             'Requirements task for',
@@ -82,7 +66,7 @@ app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'b
         };
 
         $scope.setAssignTo = function(assignTo) {
-            $scope.assignTo = assignTo;
+            $scope.assignTo = JSON.parse(assignTo);
         };
 
         $scope.setSeverity = function(severity) {
@@ -90,7 +74,7 @@ app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'b
         };
 
         $scope.setPriority = function(priority) {
-            $scope.priority = priority;
+            $scope.priority = JSON.parse(priority);
         };
 
         $scope.setToFixIn = function(tofixin) {
@@ -169,8 +153,9 @@ app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'b
             bug.modifiedAt = bug.createdAt;
             bug.status = $scope.config.status[1];
             bug.title = $scope.title;
-            bug.submittedBy = 'sudhakar';
-            bug.assignTo = JSON.parse($scope.assignTo);
+            bug.submittedBy = $scope.submittedBy;
+            // bug.assignTo = JSON.parse($scope.assignTo);
+            bug.assignTo = $scope.assignTo;
             bug.description = $scope.description;
             bug.samplequery = $scope.samplequery;
             bug.sampledata = $scope.sampledata;
@@ -181,7 +166,7 @@ app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'b
             bug.category = $scope.category;
             bug.tofixin = $scope.tofixin;
             bug.severity = $scope.severity;
-            bug.priority = JSON.parse($scope.priority);
+            bug.priority = $scope.priority;
             bug.relation = $scope.relation;
             bug.relatedTo = $scope.relatedTo;
             //bug.relatedTo.push($scope.relatedTo);
@@ -258,7 +243,6 @@ app.controller('bugViewCtrl', ['$scope', '$location', 'RESTURL', 'BugService', '
             $scope.config = response.data;
             console.log('config: ', $scope.config);
         });
-
 
         BugService.getBug(uri).then(function(response) {
                 console.log(response.data);

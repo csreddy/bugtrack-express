@@ -90,7 +90,7 @@
               <label class="col-md-2 control-label" for="assignTo">Assign To</label>
               <div class="col-md-3">
                 <select id="assignTo" ng-model="assignTo" ng-change="setAssignTo(assignTo)" name="assignTo" type="text" placeholder="Assign to" class="form-control">
-                    <option ng-repeat="user in config.users"  value="{{user}}">
+                   <option ng-repeat="user in config.users"  value="{{user}}">
                     {{user.name}}</option>
                 </select>
               </div>

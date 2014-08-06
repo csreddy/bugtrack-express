@@ -1,7 +1,6 @@
 'use strict';
 
 var app = angular.module('bug.factory', []);
-app.constant('RESTURL', 'http://' + location.hostname + ':' + location.port);
 
 app.factory('bugFactory', function($http, RESTURL) {
     // Service logic

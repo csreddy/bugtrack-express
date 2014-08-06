@@ -40,7 +40,19 @@ app.config(function($routeProvider) {
         })
         .when('/new', {
             templateUrl: 'views/new.html',
-            controller: 'newBugCtrl'
+            controller: 'newBugCtrl',
+            resolve: {
+                loadConfig: ['bugConfigFactory',
+                    function(bugConfigFactory) {
+                        return bugConfigFactory.getConfig();
+                    }
+        ],
+        getCurrentUser: ['User',
+            function(User) {
+                return User.getInfo();
+            }
+        ]
+            }
         })
         .when('/list', {
             templateUrl: 'views/list.html',
@@ -59,6 +71,9 @@ app.config(function($routeProvider) {
         });
 });
 
+app.constant('RESTURL', 'http://' + location.hostname + ':' + location.port);
+
 app.run(function(editableOptions) {
+    // Xeditable
     editableOptions.theme = 'bs3'; // bootstrap3 theme. Can be also 'bs2', 'default'
 });

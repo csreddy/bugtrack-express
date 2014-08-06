@@ -9,16 +9,19 @@
 			    	<form accept-charset="UTF-8" role="form">
                     <fieldset>
                     <div class="form-group">
+			    		    <input class="form-control" ng-model="user.name" placeholder="full name" name="fullname" type="text">
+			    		</div>
+                    <div class="form-group">
 			    		    <input class="form-control" ng-model="user.email" placeholder="email" name="email" type="text">
 			    		</div>
 			    	  	<div class="form-group">
 			    		    <input class="form-control" ng-model="user.username" placeholder="username" name="username" type="text">
 			    		</div>
 			    		<div class="form-group">
-			    			<input class="form-control" ng-model="user.password1" placeholder="Password" name="password1" type="password" value="">
+			    			<input class="form-control" ng-model="user.password1" placeholder="password" name="password1" type="password" value="">
 			    		</div>
 			    		<div class="form-group">
-			    			<input class="form-control" ng-model="user.password2" placeholder="Password" name="password"2 type="password" value="">
+			    			<input class="form-control" ng-model="user.password2" placeholder="password" name="password"2 type="password" value="">
 			    		</div>
 			    	    <button class="btn btn-lg btn-success btn-block" type="submit" ng-click="createUser()">Create</button>			    		
 			    	</fieldset>

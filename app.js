@@ -36,7 +36,8 @@ app.use(session({
     saveUninitialized: true,
     resave: true,
     cookie: {
-        maxAge: 604800 // one week
+        maxAge: 604800, // one week
+        expires: new Date(Date.now() + 3600000) //expires after 1 hour
     }
 }));
 
@@ -46,14 +47,15 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
 
+
 app.use('/', routes);
-app.use('/user', user);
+app.use('/user/:username', user);
 app.use('/login', login);
 
 
 // authentication
 passport.serializeUser(function(user, done) {
-    console.log(user);
+    console.log('serializeUser:', user);
     done(null, user.username);
 });
 
@@ -62,23 +64,8 @@ passport.deserializeUser(function(user, done) {
 });
 
 passport.use(new LocalStrategy(function(username, password, done) {
-    // database.login(username, password, done);
-    //  request.get('http://localhost:8003/v1/search').auth('username', 'password', false);
-
-    //  var username = 'admin',
-    //     password = 'admin',
     var url = 'http://' + username + ':' + password + '@localhost:8003/v1/search';
     var userURI = 'http://localhost:8003/v1/documents?uri=/user/' + username + '.json';
-
-    /*function checkUserExists(uri) {
-        app.use('userURI', function(req, res) {
-            req.pipe(request(url)).pipe(res);
-        });
-    }
-
-    function checkPwdMatch(uri) {
-        request
-    }*/
 
     var options = {
         method: 'GET',
@@ -111,53 +98,6 @@ passport.use(new LocalStrategy(function(username, password, done) {
         }
     });
 
-
-
-    /*request({
-        url: url,
-        sendImmediately: false
-    }, function(error, response, body) {
-        console.log(response.statusCode);
-        if (response.statusCode === 401) {
-            console.log('Incorrect password ................');
-            return done(null, false, {
-                status: 401,
-                message: 'Incorrect password.'
-            });
-        } else if (response.statusCode === 403) {
-            console.log('no privilages');
-            return done(null, false, {
-                status: 403,
-                message: 'You do not have privilages.'
-            });
-        } else if (response.statusCode === 404) {
-            console.log('User does not exist................');
-            return done(null, false, {
-                status: 404,
-                message: 'User does not exist'
-            });
-        } else if (response.statusCode === 200) {
-            console.log('auth success................');
-            return done(null, {
-                status: 200,
-                username: username
-            });
-        } else {
-            console.log('auth failed');
-        };
-    });*/
-
-    /*  if (username === 'admin' && password === 'admin') {
-        console.log('in');
-        done(null, {
-            username: username
-        });
-    } else {
-        done(null, false, {
-            message: 'Incorrect password.'
-        });
-    }*/
-
 }));
 
 
@@ -186,6 +126,19 @@ app.use('/v1/', function(req, res, next) {
             next(res, res);
         });
     }
+});
+
+app.get('/userinfo', function(req, res) {
+    var url = 'http://localhost:8003/v1/documents?uri=/user/' + req.user + '.json';
+    request(url, function(error, response, body) {
+        if (!error && response.statusCode === 200) {
+            var bodyObj = JSON.parse(body);
+            delete bodyObj.password;
+            delete bodyObj.createdAt;
+            delete bodyObj.modifiedAt;
+            res.send(bodyObj);
+        }
+    });
 });
 
 
@@ -221,7 +174,7 @@ app.post('/login', function(req, res, next) {
 
 
 // logout
-app.get('/logout', function(req, res) {
+app.get('/logout', function(req, res, next) {
     req.logout();
     console.log('logged out');
     res.redirect('/');

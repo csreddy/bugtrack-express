@@ -1,7 +1,6 @@
 'use strict';
 
 var app = angular.module('bug.services', []);
-app.constant('RESTURL', 'http://' + location.hostname + ':' + location.port);
 
 app.service('BugService', function($http, RESTURL) {
     // AngularJS will instantiate a singleton by calling 'new' on this function
