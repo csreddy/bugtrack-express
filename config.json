@@ -1,38 +1,5 @@
 {
-    "users": [{
-        "email": "sreddy@marklogic.com",
-        "name": "sudhakar reddy",
-        "username": "sreddy"
-
-    }, {
-        "email": "robertsonfarmer@bezal.com",
-        "name": "Lawson Bowers",
-        "username": "Bishop"
-    }, {
-        "email": "bishopbowers@bezal.com",
-        "name": "Minnie Robbins",
-        "username": "Liliana"
-    }, {
-        "email": "lilianarobbins@bezal.com",
-        "name": "Shields Evans",
-        "username": "Cummings"
-    }, {
-        "email": "cummingsevans@bezal.com",
-        "name": "Kelley Porter",
-        "username": "Ingrid"
-    }, {
-        "email": "ingridporter@bezal.com",
-        "name": "Dale Whitley",
-        "username": "Giles"
-    }, {
-        "email": "gileswhitley@bezal.com",
-        "name": "Pope Caldwell",
-        "username": "Potter"
-    }, {
-        "email": "pottercaldwell@bezal.com",
-        "name": "Decker Wolf",
-        "username": "Mcconnell"
-    }],
+    "users": [],
     "severity": ["P1 - Catastrophic", "P2 - Critcial", "P3 - Major", "P4 - Minor", "P5 -  Aesthetic", "Performance"],
     "status": ["New", "Verify", "Fix", "Test", "Ship", "Closed", "Will not fix", "External"],
     "version": [

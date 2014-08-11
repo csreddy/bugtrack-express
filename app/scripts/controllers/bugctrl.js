@@ -3,32 +3,20 @@
 var app = angular.module('bug.controllers', ['ui.bootstrap', 'ngCookies']);
 app.constant('RESTURL', 'http://' + location.hostname + ':' + location.port);
 
-app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'bugFactory', 'bugConfigFactory', 'Flash', 'User', 'loadConfig', 'getCurrentUser',
+app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'bugFactory', 'bugConfigFactory', 'Flash', 'User', 'loadConfig', 'getCurrentUser', 'bugId',
 
-    function($scope, $location, RESTURL, BugService, bugFactory, bugConfigFactory, Flash, User, loadConfig, getCurrentUser) {
+    function($scope, $location, RESTURL, BugService, bugFactory, bugConfigFactory, Flash, User, loadConfig, getCurrentUser, bugId) {
         //$scope.test = 'controller works';
 
-        // accordiion interactions   
+        // accordion interactions   
         $scope.status = {
             isFirstOpen: true,
             isFirstDisabled: false
         };
 
         $scope.config = {};
-        /* bugConfigFactory.getConfig().then(function(response) {
-            $scope.config = response.data;
-        });*/
-
-        console.log('============================');
         $scope.config = loadConfig.data;
         $scope.submittedBy = getCurrentUser;
-
-        // get user
-        /*  User.getInfo().then(function(response) {
-            console.log(response.data.email);
-            $scope.submittedBy = response.data;
-        });*/
-
 
         $scope.selectedItem = {
             value: 0,
@@ -155,19 +143,18 @@ app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'b
 
 
         function submitBug() {
-            var bugId = Math.floor(Math.random() * 10000);
+            //  var bugId = Math.floor(Math.random() * 10000);
             var bug = {};
             bug.relatedTo = [];
             bug.tickets = [];
 
-            bug.id = bugId;
+            bug.id = parseInt(bugId.data.total) + 1;
             bug.kind = $scope.kind || 'Bug';
             bug.createdAt = new Date();
             bug.modifiedAt = bug.createdAt;
             bug.status = $scope.config.status[1];
             bug.title = $scope.title;
             bug.submittedBy = $scope.submittedBy;
-            // bug.assignTo = JSON.parse($scope.assignTo);
             bug.assignTo = $scope.assignTo;
             bug.description = $scope.description;
             bug.samplequery = $scope.samplequery;
@@ -197,11 +184,11 @@ app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'b
             bug.changeHistory = [];
 
 
-            var uri = bugId + '.json';
+            var uri = bug.id + '.json';
             BugService.putDocument(uri, bug).then(function() {
                     console.log('bug details ', bug);
                     $location.path('/list');
-                    Flash.addAlert('success', '<a href=\'/#/bug/' + bugId + '\'>' + bugId + '</a>' + ' was successfully created');
+                    Flash.addAlert('success', '<a href=\'/#/bug/' + bug.id + '\'>' + 'Bug-' + bug.id + '</a>' + ' was successfully created');
 
                 },
                 function(response) {
@@ -212,7 +199,7 @@ app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'b
         };
 
 
-        // text editor for bug descrition	
+        // text editor for bug descrition   
         //  $scope.descrizione = undefined;
 
     }
@@ -220,32 +207,62 @@ app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'b
 
 
 
-app.controller('bugListCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'bugFactory', 'Flash',
+app.controller('bugListCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'bugFactory', 'Flash', 'getBugs',
 
-    function($scope, $location, RESTURL, BugService, bugFactory, Flash) {
+    function($scope, $location, RESTURL, BugService, bugFactory, Flash, getBugs) {
 
-        BugService.getBugs().then(function(response) {
-            $scope.bugs = response.data.results;
-            $scope.bugs.sort(function(a, b) {
-                //  console.log(a.uri);
-                a = parseInt(a.uri.replace('.json', ''));
-                b = parseInt(b.uri.replace('.json', ''));
-                return (a - b);
-            });
-            console.log($scope.bugs);
+        $scope.bugs = [];
+        $scope.currentPage = 1;
+        $scope.itemsPerPage = 2;
+
+        $scope.bugList = getBugs.data.results;
+        $scope.totalItems = $scope.bugList.length;
+        $scope.bugList.sort(function(a, b) {
+            //  console.log(a.uri);
+            a = parseInt(a.uri.replace('.json', ''));
+            b = parseInt(b.uri.replace('.json', ''));
+            return (a - b);
         });
+
+        function getBugDetails(begin, end) {
+            $scope.bugs = [];
+            angular.forEach($scope.bugList.slice(begin, end), function(bug, index) {
+                console.log(bug);
+                console.log(index);
+                BugService.getBug(bug.uri).then(function(response) {
+                    console.log(response.data);
+                    $scope.bugs.push(response.data);
+                }, function() {
+                    Flash.addAlert('danger', 'Oops! could not retriev bugs');
+                });
+            });
+        }
+
+        getBugDetails(0, $scope.itemsPerPage);
+
 
         $scope.goToBug = function(uri) {
             $location.path(uri);
         };
 
+        $scope.setPage = function(pageNo) {
+            $scope.currentPage = pageNo;
+            console.log('Page changed to: ' + $scope.currentPage);
+            var begin = (($scope.currentPage - 1) * $scope.itemsPerPage);
+            var end = begin + $scope.itemsPerPage;
+            getBugDetails(begin, end);
+        };
+
+
+
+
     }
 ]);
 
 
-app.controller('bugViewCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'bugFactory', 'bugConfigFactory', 'Flash', '$cookieStore',
+app.controller('bugViewCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'bugFactory', 'bugConfigFactory', 'Flash',
 
-    function($scope, $location, RESTURL, BugService, bugFactory, bugConfigFactory, Flash, $cookieStore) {
+    function($scope, $location, RESTURL, BugService, bugFactory, bugConfigFactory, Flash) {
 
         $scope.config = {};
         $scope.changes = {};

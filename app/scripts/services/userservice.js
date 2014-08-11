@@ -2,9 +2,9 @@
 
 var app = angular.module('user.services', []);
 
-app.service('User', ['$http', 'RESTURL',
+app.service('User', ['$http', 'RESTURL', '$location', 'Flash',
 
-    function($http, RESTURL) {
+    function($http, RESTURL, $location, Flash) {
 
         // create a new user
         this.create = function(username, payload) {
@@ -38,6 +38,15 @@ app.service('User', ['$http', 'RESTURL',
             return $http({
                 method: 'GET',
                 url: '/userinfo'
+            });
+        };
+
+        this.getCurrentUserInfo = function() {
+            return this.getInfo().then(function(response) {
+                return response.data;
+            }, function(response) {
+                $location.path('/login');
+                Flash.addAlert('warning', response.data.message);
             });
         };
 

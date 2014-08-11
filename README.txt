@@ -30,34 +30,37 @@ curl --anyauth --user admin:admin -T ./config.json -i   -H "Content-type: applic
 
 curl --anyauth --user admin:admin -T ./1000.json -i   -H "Content-type: application/json"   http://localhost:8003/v1/documents?uri=1000.json
 
+{
+        "email": "sreddy@marklogic.com",
+        "name": "sudhakar reddy",
+        "username": "sreddy"
 
-app.use('/v1/', function(req, res, next) {
-    'use strict';
-
-    console.log('Request method =', req.method);
-    var url = 'http://localhost:8003/v1' + req.url;
-    console.log('url', url);
-    if (req.method === 'GET') {
-        req.pipe(request(url)).pipe(res);
-    } else if (req.method === 'PUT') {
-        console.log('----------------- start -----------------------');
-        console.log('headers', req.headers);
-        console.log('body', req.body);
-        console.log('------------------- end ---------------------');
-
-        //  console.log(JSON.stringify(req.body));
-        request.put(url, req.body, function(err, response, body) {
-            if (err) {
-                next(err);
-            }
-            console.log('returned body');
-            res.send(response.statusCode);
-            next(res, res);
-        });
-
-        //  request.put(url, req.body);
-
+    }, {
+        "email": "robertsonfarmer@bezal.com",
+        "name": "Lawson Bowers",
+        "username": "lbowers"
+    }, {
+        "email": "bishopbowers@bezal.com",
+        "name": "Minnie Robbins",
+        "username": "mrobbins"
+    }, {
+        "email": "lilianarobbins@bezal.com",
+        "name": "Shields Evans",
+        "username": "sevans"
+    }, {
+        "email": "cummingsevans@bezal.com",
+        "name": "Kelley Porter",
+        "username": "kporter"
+    }, {
+        "email": "ingridporter@bezal.com",
+        "name": "Dale Whitley",
+        "username": "dwhitley"
+    }, {
+        "email": "gileswhitley@bezal.com",
+        "name": "Pope Caldwell",
+        "username": "pcaldwell"
+    }, {
+        "email": "pottercaldwell@bezal.com",
+        "name": "Decker Wolf",
+        "username": "dwolf"
     }
-
-
-});

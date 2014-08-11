@@ -4,11 +4,11 @@ var router = express.Router();
 
 
 
-
 /* GET user profile. */
 router.get('/', ensureAuthenticated, function(req, res) {
     res.locals.errors = req.flash();
     console.log('request----', req.user);
+   // console.log(req);
     console.log(res.locals);
     //  console.log('----------', req.user.username);
     // res.render('users', {
@@ -26,15 +26,19 @@ router.get('/', ensureAuthenticated, function(req, res) {
 //   the request will proceed.  Otherwise, the user will be redirected to the
 //   login page.
 function ensureAuthenticated(req, res, next) {
+    console.log('------------from user.js ----------------');
+    console.log('req.user', req.user);
     var username = req.originalUrl.replace('/user/', '');
-    if (req.user === username) {
-        if (req.isAuthenticated()) {
-            return next();
-        }
-    }
+    if (req.isAuthenticated()) {
+        return next();
+    } else{
     res.send(401, {
         message: 'Please sign in'
-    });
+    });	
+    }
+    
+
+
 }
 
 module.exports = router;

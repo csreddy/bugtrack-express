@@ -24,7 +24,21 @@ app.config(function($routeProvider) {
     $routeProvider
         .when('/', {
             templateUrl: 'views/list.html',
-            controller: 'bugListCtrl'
+            controller: 'bugListCtrl',
+            resolve:{
+                getBugs:['BugService', function(BugService) {
+                    return BugService.getBugs();
+                }]
+            }
+        })
+        .when('/list', {
+            templateUrl: 'views/list.html',
+            controller: 'bugListCtrl',
+            resolve:{
+                getBugs:['BugService', function(BugService) {
+                    return BugService.getBugs();
+                }]
+            }
         })
         .when('/login', {
             templateUrl: 'views/login.html',
@@ -47,22 +61,18 @@ app.config(function($routeProvider) {
                         return bugConfigFactory.getConfig();
                     }
                 ],
-                getCurrentUser: ['User', '$location', 'Flash',
-                    function(User, $location, Flash) {
-                        User.getInfo().then(function(response) {
-                            return response.data;
-                        }, function(response) {
-                            $location.path('/login');
-                            Flash.addAlert('warning', response.data.message);
-                        });
-
+                getCurrentUser: ['User',
+                    function(User) {
+                        return User.getCurrentUserInfo();
+                    }
+                ],
+                bugId: ['BugService',
+                    function(BugService) {
+                        return BugService.getCount();
                     }
                 ]
+
             }
-        })
-        .when('/list', {
-            templateUrl: 'views/list.html',
-            controller: 'bugListCtrl'
         })
         .when('/config', {
             templateUrl: 'views/config.html',

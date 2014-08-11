@@ -1,8 +1,36 @@
-<h5>Bug List</h5>
-          <div class="well well-sm">
-          <ul ng-repeat="bug in bugs">
-            <li><a ng-href="#/bug/{{bug.uri.replace('.json', '')}}">{{bug.uri}}</a></li>
-          </ul>
-          </div>  
+<!-- <div class="well well-sm">
+	<ul ng-repeat="bug in bugs">
+		<li><a ng-href="#/bug/{{bug.uri.replace('.json', '')}}">{{bug.uri}}</a></li>
+	</ul>
+</div> -->
 
-        {{bugDetails}}
+<table class="table table-striped pull-left">
+<thead><tr>
+<th>Id</th>
+<th>Severity</th>
+<th>Priority</th>
+<th>Submitted by</th>
+<th>Category</th>
+<th>Version</th>
+<th>Fix in</th>
+<th>Title</th>
+<th>Status</th>
+<th>Assigned to</th>
+</tr></thead>
+	<tr ng-repeat="bug in bugs">
+	<td><a ng-href="#/bug/{{bug.id}}">{{bug.id}}</a></td>
+	<td style="width:120px">{{bug.severity}}</td>
+	<td><a class="tooltips" href>{{bug.priority.level}}<span>{{bug.priority.title}}</span></a></td>
+	<td style="width:200px">{{bug.submittedBy.name}}</td>
+	<td>{{bug.category}}</td>
+	<td style="width:70px">{{bug.version}}</td>
+	<td style="width:70px">{{bug.tofixin}}</td>
+	<td style="width:500px">{{bug.title}}</td>
+	<td>{{bug.status}}</td>
+	<td style="width:200px">{{bug.assignTo.name}}</td>
+	</tr>
+</table>
+
+<pagination total-items="totalItems" items-per-page="itemsPerPage" ng-model="currentPage" ng-change="setPage(currentPage)"></pagination>	
+
+ 

@@ -2,8 +2,8 @@
 body {
   padding-top: 60px;
   padding-bottom: 20px;
-  padding-right: 50px;
-padding-left: 50px;
+  padding-right: 20px;
+  padding-left: 20px;
 }
 
 /* Everything but the jumbotron gets side spacing for mobile first views */
@@ -28,7 +28,8 @@ padding-left: 50px;
 
 /* Custom page footer */
 .footer {
-  padding-top: 19px;
+    margin-top: 200px;
+  padding-top: 20px;
   color: #777;
   border-top: 1px solid #e5e5e5;
 }
@@ -36,7 +37,7 @@ padding-left: 50px;
 /* Customize container */
 @media (min-width: 768px) {
   .container {
-    max-width: 730px;
+    max-width: 100%;
   }
 }
 .container-narrow > hr {
@@ -155,6 +156,45 @@ body {
   border-top: 4px;
 }
 /* end login dropdown */
+
+/* tooltip */
+
+a.tooltips {
+  position: relative;
+  display: inline;
+}
+a.tooltips span {
+  position: absolute;
+  width:180px;
+  color: #FFFFFF;
+  background: #000000;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  visibility: hidden;
+  border-radius: 6px;
+}
+a.tooltips span:after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -8px;
+  width: 0; height: 0;
+  border-top: 8px solid #000000;
+  border-right: 8px solid transparent;
+  border-left: 8px solid transparent;
+}
+a:hover.tooltips span {
+  visibility: visible;
+  opacity: 0.8;
+  bottom: 30px;
+  left: 50%;
+  margin-left: -76px;
+  z-index: 999;
+}
+
+
 
 /*
 comments css

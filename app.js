@@ -37,7 +37,7 @@ app.use(session({
     resave: true,
     cookie: {
         maxAge: 604800, // one week
-        expires: new Date(Date.now() + 3600000) //expires after 1 hour
+      //  expires: new Date(Date.now() + 30) //expires after 1 hour 3600000
     }
 }));
 
@@ -129,7 +129,10 @@ app.use('/v1/', function(req, res, next) {
 });
 
 app.get('/userinfo', function(req, res) {
+    console.log('===================== req.user', req.user);
+    // req.user = "admin";
     var url = 'http://localhost:8003/v1/documents?uri=/user/' + req.user + '.json';
+    console.log('URL ==== ', url);
     request(url, function(error, response, body) {
         if (!error && response.statusCode === 200) {
             var bodyObj = JSON.parse(body);
@@ -172,6 +175,7 @@ app.post('/login', function(req, res, next) {
             if (err) {
                 return next(err);
             }
+            console.log('from /login post', req.user);
             return res.send(req.user);
         });
     })(req, res, next);
@@ -182,7 +186,7 @@ app.post('/login', function(req, res, next) {
 app.get('/logout', function(req, res, next) {
     req.logout();
     console.log('logged out');
-    res.redirect('/');
+    res.redirect('/#/login');
 });
 
 
@@ -216,19 +220,5 @@ app.use(function(err, req, res, next) {
         error: {}
     });
 });
-
-// Simple route middleware to ensure user is authenticated.
-//   Use this route middleware on any resource that needs to be protected.  If
-//   the request is authenticated (typically via a persistent login session),
-//   the request will proceed.  Otherwise, the user will be redirected to the
-//   login page.
-function ensureAuthenticated(req, res, next) {
-    if (req.isAuthenticated()) {
-        return next();
-    }
-    res.send(401, {
-        message: 'Please sign in'
-    });
-}
 
 module.exports = app;
