@@ -4,33 +4,86 @@
 	</ul>
 </div> -->
 
-<table class="table table-striped pull-left">
-<thead><tr>
-<th>Id</th>
-<th>Severity</th>
-<th>Priority</th>
-<th>Submitted by</th>
-<th>Category</th>
-<th>Version</th>
-<th>Fix in</th>
-<th>Title</th>
-<th>Status</th>
-<th>Assigned to</th>
-</tr></thead>
-	<tr ng-repeat="bug in bugs">
-	<td><a ng-href="#/bug/{{bug.id}}">{{bug.id}}</a></td>
-	<td style="width:120px">{{bug.severity}}</td>
-	<td><a class="tooltips" href>{{bug.priority.level}}<span>{{bug.priority.title}}</span></a></td>
-	<td style="width:200px">{{bug.submittedBy.name}}</td>
-	<td>{{bug.category}}</td>
-	<td style="width:70px">{{bug.version}}</td>
-	<td style="width:70px">{{bug.tofixin}}</td>
-	<td style="width:500px">{{bug.title}}</td>
-	<td>{{bug.status}}</td>
-	<td style="width:200px">{{bug.assignTo.name}}</td>
-	</tr>
-</table>
+<accordion close-others="false">
+    <accordion-group heading="Bugs" ng-init="open=true;disabled=true" is-open="open" is-disabled="disabled">
+        <table class="table table-striped pull-left">
+      <!--       <thead>
+                <tr>
+                    <th>
+                        <input type="text" class="form-control" placeholder="id">
+                    </th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="severity">
+                    </th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="priority">
+                    </th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="submitted by">
+                    </th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="category">
+                    </th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="version">
+                    </th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="fix in">
+                    </th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="title">
+                    </th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="status">
+                    </th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="assigned to">
+                    </th>
+                </tr>
+            </thead> -->
+            <thead>
+                <tr>
+                    <th><a href="" ng-click="reverse=false; order('id', false)">Id</a>
+                    </th>
+                    <th><a href="" ng-click="reverse=!reverse; order('severity', false)">Severity</a>
+                    </th>
+                    <th><a href="" ng-click="reverse=!reverse; order('priority.level', false)">Priority</a>
+                    </th>
+                    <th><a href="" ng-click="reverse=!reverse; order('submittedBy.name', false)">Submitted by</a>
+                    </th>
+                    <th><a href="" ng-click="reverse=!reverse; order('category', false)">Category</a>
+                    </th>
+                    <th><a href="" ng-click="reverse=!reverse; order('version', false)">Version</a>
+                    </th>
+                    <th><a href="" ng-click="reverse=!reverse; order('tofixin', false)">Fix in</a>
+                    </th>
+                    <th><a href="" ng-click="reverse=!reverse; order('title', false)">Title</a>
+                    </th>
+                    <th><a href="" ng-click="reverse=!reverse; order('status', false)">Status</a>
+                    </th>
+                    <th><a href="" ng-click="reverse=!reverse; order('assignTo.name', false)">Assigned to</a>
+                    </th>
+                </tr>
+            </thead>
+            <tr ng-repeat="bug in bugs">
+                <td><a ng-href="#/bug/{{bug.id}}">{{bug.id}}</a>
+                </td>
+                <td style="width:120px">{{bug.severity}}</td>
+                <td><a class="tooltips" href>{{bug.priority.level}}<span>{{bug.priority.title}}</span></a>
+                </td>
+                <td style="width:200px">{{bug.submittedBy.name}}</td>
+                <td>{{bug.category}}</td>
+                <td style="width:70px">{{bug.version}}</td>
+                <td style="width:70px">{{bug.tofixin}}</td>
+                <td style="width:500px">{{bug.title}}</td>
+                <td>{{bug.status}}</td>
+                <td style="width:200px">{{bug.assignTo.name}}</td>
+            </tr>
+        </table>
 
-<pagination total-items="totalItems" items-per-page="itemsPerPage" ng-model="currentPage" ng-change="setPage(currentPage)"></pagination>	
+    </accordion-group>
+</accordion>
 
- 
+
+
+<pagination total-items="totalItems" items-per-page="itemsPerPage" ng-model="currentPage" ng-change="setPage(currentPage)"></pagination>

@@ -207,9 +207,9 @@ app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'b
 
 
 
-app.controller('bugListCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'bugFactory', 'Flash', 'getBugs',
+app.controller('bugListCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'bugFactory', 'Flash', 'getBugs', '$filter',
 
-    function($scope, $location, RESTURL, BugService, bugFactory, Flash, getBugs) {
+    function($scope, $location, RESTURL, BugService, bugFactory, Flash, getBugs, $filter) {
 
         $scope.bugs = [];
         $scope.currentPage = 1;
@@ -232,6 +232,11 @@ app.controller('bugListCtrl', ['$scope', '$location', 'RESTURL', 'BugService', '
                 BugService.getBug(bug.uri).then(function(response) {
                     console.log(response.data);
                     $scope.bugs.push(response.data);
+                    // sort 
+                    $scope.bugs.sort(function(a, b) {
+                        return (a.id - b.id);
+                    });
+
                 }, function() {
                     Flash.addAlert('danger', 'Oops! could not retriev bugs');
                 });
@@ -252,20 +257,26 @@ app.controller('bugListCtrl', ['$scope', '$location', 'RESTURL', 'BugService', '
             var end = begin + $scope.itemsPerPage;
             getBugDetails(begin, end);
         };
+        var orderBy = $filter('orderBy');
+        $scope.order = function(predicate, reverse) {
+            $scope.bugs = orderBy($scope.bugs, predicate, reverse);
+        };
 
-
+      //  $scope.order('-id', false); 
 
 
     }
 ]);
 
 
-app.controller('bugViewCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'bugFactory', 'bugConfigFactory', 'Flash',
+app.controller('bugViewCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'bugFactory', 'bugConfigFactory', 'Flash', 'getCurrentUser',
 
-    function($scope, $location, RESTURL, BugService, bugFactory, bugConfigFactory, Flash) {
+    function($scope, $location, RESTURL, BugService, bugFactory, bugConfigFactory, Flash, getCurrentUser) {
 
         $scope.config = {};
         $scope.changes = {};
+        $scope.updatedBy = getCurrentUser;
+
         var updateBug;
         var uri = $location.path().replace('/bug/', '') + '.json';
 
@@ -390,7 +401,6 @@ app.controller('bugViewCtrl', ['$scope', '$location', 'RESTURL', 'BugService', '
             });
 
 
-
         // update bug 
         $scope.updateBug = function() {
             var uri = $scope.bug.id + '.json';
@@ -404,11 +414,17 @@ app.controller('bugViewCtrl', ['$scope', '$location', 'RESTURL', 'BugService', '
             updateBug.version = $scope.version || $scope.bug.version;
             updateBug.platform = $scope.platform || $scope.bug.platform;
             updateBug.fixedin = $scope.fixedin || $scope.bug.fixedin;
-            if (Object.keys($scope.changes).length !== 0) {
+            if (Object.keys($scope.changes).length !== 0 || $scope.newcomment) {
+                console.log($scope.newcomment);
+                console.log($scope.updatedBy);
                 updateBug.changeHistory.push({
                     'time': updateTime,
-                    'change': $scope.changes
+                    'updatedBy': $scope.updatedBy,
+                    'change': $scope.changes,
+                    'comment':  $scope.newcomment
                 });
+                // clear text area after submit
+                $scope.newcomment = '';
             }
 
 
@@ -421,8 +437,7 @@ app.controller('bugViewCtrl', ['$scope', '$location', 'RESTURL', 'BugService', '
                     //      console.log('updateBug', updateBug);
                     console.log('bug changed from ', updateBug);
                     console.log('bug changed to', $scope.bug);
-                    Flash.addAlert('success', $scope.bug.id + ' was successfully updated');
-
+                    Flash.addAlert('success', '<a href=\'/#/bug/' + $scope.bug.id + '\'>' + 'Bug-' + $scope.bug.id + '</a>' + ' was successfully created');
                 },
                 function(response) {
                     Flash.addAlert('danger', response.data.error.message);

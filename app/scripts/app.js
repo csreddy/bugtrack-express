@@ -80,7 +80,12 @@ app.config(function($routeProvider) {
         })
         .when('/bug/:id', {
             templateUrl: 'views/bugdetails.html',
-            controller: 'bugViewCtrl'
+            controller: 'bugViewCtrl',
+            resolve:{
+                getCurrentUser: ['User', function(User) {
+                    return User.getCurrentUserInfo();
+                }]
+            }       
         })
         .otherwise({
             redirectTo: '/'

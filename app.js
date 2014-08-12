@@ -36,7 +36,7 @@ app.use(session({
     saveUninitialized: true,
     resave: true,
     cookie: {
-        maxAge: 604800, // one week
+        maxAge: 3600000
       //  expires: new Date(Date.now() + 30) //expires after 1 hour 3600000
     }
 }));
