@@ -156,7 +156,7 @@
                     <td colspan="" rowspan=""><a ng-href="#/bug/{{bug.cloneOf}}">{{bug.cloneOf}}</a>
                     </td>
                 </tr>
-                <tr ng-show="bug.clones">
+                <tr ng-hide="bug.cloneOf">
                     <td colspan="" rowspan=""><b>Clones</b>
                     </td>
                     <td colspan="" rowspan="">
@@ -165,7 +165,6 @@
                             </li>
                         </ul>
                          <a class="btn btn-sm btn-warning" ng-href="" ng-click="clone(bug.id)"><span class="glyphicon glyphicon-refresh"></span> Clone</a>
-                        
                     </td>
                 </tr>
             </table>

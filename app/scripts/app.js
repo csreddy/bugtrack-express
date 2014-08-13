@@ -19,7 +19,9 @@ var app = angular.module('bugtrackApp', [
     'user.controllers',
     'dashboard.controllers',
     'search.controllers',
-    'search.services'
+    'search.services',
+    'navbar.controllers',
+    'modal.services'
     //   'angular-flash.service',
     //  'angular-flash.flash-alert-directive'
 ]);

@@ -1,4 +1,4 @@
-<div class="navbar navbar-inverse navbar-fixed-top" ng-show="true">
+<div class="navbar navbar-inverse navbar-fixed-top" ng-show="true" ng-controller="navbarCtrl">
 
     <div class="navbar-header">
         <a class="navbar-brand" href="#"> <span class="glyphicon glyphicon-screenshot"></span> Bugtrack</a>
@@ -28,7 +28,7 @@
       </form>
 
         <ul class="nav navbar-nav navbar-right">
-            <li><a href="#/login"><span class="glyphicon glyphicon-log-in"></span> Login</a>
+            <li ng-hide=""><a href="#/login"><span class="glyphicon glyphicon-log-in"></span> Login {{t}}</a>
             </li>
             <li><a href="#/logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a>
             </li>

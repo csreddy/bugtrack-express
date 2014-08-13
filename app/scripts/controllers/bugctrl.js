@@ -267,9 +267,9 @@ app.controller('bugListCtrl', ['$scope', '$location', 'RESTURL', 'BugService', '
 ]);
 
 
-app.controller('bugViewCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'bugFactory', 'bugConfigFactory', 'Flash', 'getCurrentUser', 'bugId', '$q',
+app.controller('bugViewCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'bugFactory', 'bugConfigFactory', 'Flash', 'getCurrentUser', 'bugId', '$q', 'modalService',
 
-    function($scope, $location, RESTURL, BugService, bugFactory, bugConfigFactory, Flash, getCurrentUser, bugId, $q) {
+    function($scope, $location, RESTURL, BugService, bugFactory, bugConfigFactory, Flash, getCurrentUser, bugId, $q, modalService) {
 
         $scope.config = {};
         $scope.changes = {};
@@ -452,10 +452,14 @@ app.controller('bugViewCtrl', ['$scope', '$location', 'RESTURL', 'BugService', '
         // clone bug 
         $scope.clone = function(id) {
 
-            /* if ($scope.bug.cloneOf) {
-               // $location('#/bug/'+id);
-                Flash.addAlert('danger', "Cloning of clone is not allowed. Clone the parent bug");
-            };*/
+            var modalOptions = {
+                closeButtonText: 'Cancel',
+                actionButtonText: 'Clone',
+                headerText: 'Clone Bug-' + id + '?',
+                bodyText: 'Are you sure you want to clone this bug?'
+            };
+
+           
 
             console.log('cloned ' + id);
             var cloneTime = new Date();
@@ -470,28 +474,41 @@ app.controller('bugViewCtrl', ['$scope', '$location', 'RESTURL', 'BugService', '
                 'comment': "<span class='label label-danger'><span class='glyphicon glyphicon-bullhorn'></span></span> Cloned from " + "<a href='#/bug/" + id + "'>Bug-" + id + "</a>"
             });
 
-            if ($scope.bug.clones) {
+            
+
+           
+
+             if ($scope.bug.cloneOf) { 
+                 Flash.addAlert('danger', "Cloning of cloned bug is not allowed. Clone the parent <a href='#/bug/" + $scope.bug.cloneOf + "'>Bug-" + $scope.bug.cloneOf + "</a>");  
+               // $location.path('/bug/' + id);
+            } else {
+                console.warn('clone of',$scope.bug.cloneOf);
+                 modalService.showModal({}, modalOptions).then(function(result) {
+                if ($scope.bug.clones) {
                 $scope.bug.clones.push(newBugId);
             } else {
                 $scope.bug.clones = [newBugId];
             }
-
-            var promises = [BugService.putDocument(newBugId + '.json', clonedBug, $scope.updatedBy).then(),
+                
+                 var promises = [BugService.putDocument(newBugId + '.json', clonedBug, $scope.updatedBy).then(),
                 BugService.putDocument(uri, $scope.bug, $scope.updatedBy).then()
             ];
+                $q.all(promises).then(function() {
+                        console.log('bug details ', clonedBug);
+                      //  console.log('----', $scope.updatedBy);
+                        $location.path('/bug/' + newBugId);
+                        Flash.addAlert('success', '<a href=\'/#/bug/' + clonedBug.id + '\'>' + 'Bug-' + clonedBug.id + '</a>' + ' was successfully cloned');
+                    },
+                    function(response) {
+                        console.log(response);
+                        Flash.addAlert('danger', response.data.error.message);
+                    }
+                );
+            }); 
+            }
+          
 
 
-            $q.all(promises).then(function() {
-                    console.log('bug details ', clonedBug);
-                    console.log('----', $scope.updatedBy);
-                    $location.path('/bug/' + newBugId);
-                    Flash.addAlert('success', '<a href=\'/#/bug/' + clonedBug.id + '\'>' + 'Bug-' + clonedBug.id + '</a>' + ' was successfully cloned');
-                },
-                function(response) {
-                    console.log(response);
-                    Flash.addAlert('danger', response.data.error.message);
-                }
-            );
 
         };
 
