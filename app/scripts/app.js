@@ -15,7 +15,11 @@ var app = angular.module('bugtrackApp', [
     'xeditable',
     'wysiHtml5.directive',
     'login.controllers',
-    'user.services'
+    'user.services',
+    'user.controllers',
+    'dashboard.controllers',
+    'search.controllers',
+    'search.services'
     //   'angular-flash.service',
     //  'angular-flash.flash-alert-directive'
 ]);
@@ -25,28 +29,78 @@ app.config(function($routeProvider) {
         .when('/', {
             templateUrl: 'views/list.html',
             controller: 'bugListCtrl',
-            resolve:{
-                getBugs:['BugService', function(BugService) {
-                    return BugService.getBugs();
-                }]
+            resolve: {
+                getCurrentUser: ['User',
+                    function(User) {
+                        return User.getCurrentUserInfo();
+                    }
+                ],
+                getCurrentUserBugs: ['BugService', 'User',
+                    function(BugService, User) {
+                        return User.getCurrentUserInfo().then(function(user) {
+                            return BugService.getCurrentUserBugs(user);
+                        });
+
+                    }
+                ]
             }
         })
         .when('/list', {
             templateUrl: 'views/list.html',
             controller: 'bugListCtrl',
-            resolve:{
-                getBugs:['BugService', function(BugService) {
-                    return BugService.getBugs();
-                }]
+            resolve: {
+                getCurrentUser: ['User',
+                    function(User) {
+                        return User.getCurrentUserInfo();
+                    }
+                ],
+                getCurrentUserBugs: ['BugService', 'User',
+                    function(BugService, User) {
+                        return User.getCurrentUserInfo().then(function(user) {
+                            return BugService.getCurrentUserBugs(user);
+                        });
+
+                    }
+                ]
             }
         })
         .when('/login', {
             templateUrl: 'views/login.html',
             controller: 'loginCtrl'
         })
+        .when('/logout', {
+            templateUrl: 'views/login.html',
+            controller: 'logoutCtrl'
+        })
         .when('/user/:username', {
             templateUrl: 'views/user.html',
-            controller: 'userCtrl'
+            controller: 'userCtrl',
+            resolve: {
+                getCurrentUser: ['User',
+                    function(User) {
+                        return User.getCurrentUserInfo();
+                    }
+                ],
+                getCurrentUserBugs: ['BugService', 'User',
+                    function(BugService, User) {
+                        return User.getCurrentUserInfo().then(function(user) {
+                            return BugService.getCurrentUserBugs(user);
+                        });
+
+                    }
+                ]
+            }
+        })
+       .when('/home', {
+            templateUrl: 'views/user.html',
+            controller: 'userRedirectCtrl',
+            resolve:{
+                getCurrentUser: ['User',
+                    function(User) {
+                        return User.getCurrentUserInfo();
+                    }
+                ]
+            }
         })
         .when('/register', {
             templateUrl: 'views/register.html',
@@ -81,11 +135,25 @@ app.config(function($routeProvider) {
         .when('/bug/:id', {
             templateUrl: 'views/bugdetails.html',
             controller: 'bugViewCtrl',
-            resolve:{
-                getCurrentUser: ['User', function(User) {
-                    return User.getCurrentUserInfo();
-                }]
-            }       
+            resolve: {
+                getCurrentUser: ['User',
+                    function(User) {
+                        return User.getCurrentUserInfo();
+                    }
+                ],
+                bugId: ['BugService',
+                    function(BugService) {
+                        return BugService.getCount();
+                    }
+                ]
+            }
+        })
+        .when('/dashboard', {
+            templateUrl: 'views/dashboard.html',
+            controller: 'dashboardCtrl'
+        })
+        .when('/404', {
+            templateUrl: '404.html'
         })
         .otherwise({
             redirectTo: '/'

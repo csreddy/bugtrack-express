@@ -50,5 +50,9 @@ app.service('User', ['$http', 'RESTURL', '$location', 'Flash',
             });
         };
 
+        this.getBugs = function(user) {
+            
+        };
+
     }
 ]);

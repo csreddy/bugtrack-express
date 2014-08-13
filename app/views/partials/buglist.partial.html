@@ -1,13 +1,11 @@
-<!-- <div class="well well-sm">
-	<ul ng-repeat="bug in bugs">
-		<li><a ng-href="#/bug/{{bug.uri.replace('.json', '')}}">{{bug.uri}}</a></li>
-	</ul>
-</div> -->
-
 <accordion close-others="false">
     <accordion-group heading="Bugs" ng-init="open=true;disabled=true" is-open="open" is-disabled="disabled">
         <table class="table table-striped pull-left">
-      <!--       <thead>
+
+      <!--
+			search box on every column
+
+             <thead>
                 <tr>
                     <th>
                         <input type="text" class="form-control" placeholder="id">
@@ -41,6 +39,7 @@
                     </th>
                 </tr>
             </thead> -->
+
             <thead>
                 <tr>
                     <th><a href="" ng-click="reverse=false; order('id', false)">Id</a>

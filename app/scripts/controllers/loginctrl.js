@@ -31,11 +31,12 @@ app.controller('loginCtrl', ['$scope', '$location', '$cookieStore', 'Flash', '$w
 ]);
 
 
-app.controller('logoutCtrl', ['$http', 'Flash',
-    function($http, Flash) {
+app.controller('logoutCtrl', ['$http', 'Flash', '$location',
+    function($http, Flash, $location) {
         $http.get('/logout').then(function() {
             console.log('logged out');
-            Flash.addAlert('success', 'user logged out'); // bug: flash not appearing
+            $location.path('/login');
+            Flash.addAlert('success', 'user logged out'); 
         }, function() {
             Flash.addAlert('danger', 'something went wrong');
         });
@@ -90,7 +91,7 @@ app.controller('registerCtrl', ['$scope', 'Flash', 'User', 'bugConfigFactory',
 ]);
 
 
-app.controller('userCtrl', ['$scope', '$http', '$location', 'Flash', 'User',
+/*app.controller('userCtrl', ['$scope', '$http', '$location', 'Flash', 'User',
     function($scope, $http, $location, Flash, User) {
         $http.get($location.path()).then(function(response) {
             $scope.username = response.data.username;
@@ -108,4 +109,4 @@ app.controller('userCtrl', ['$scope', '$http', '$location', 'Flash', 'User',
         });
 
     }
-]);
+]);*/

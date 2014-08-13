@@ -3,7 +3,9 @@
 <div class="col-md-3 pull-left">
     <div class="panel panel-primary">
         <div class="panel-heading">
-            <h3 class="panel-title"><a ng-href="#/bug/{{bug.id}}">{{bug.kind}} -  {{bug.id}}</a>
+            <h3 class="panel-title">
+<i class="fa fa-bug"></i>
+            <a ng-href="#/bug/{{bug.id}}">{{bug.kind}} -  {{bug.id}}</a>
             </h3>
         </div>
         <div class="panel-body">
@@ -145,29 +147,30 @@
                     <td colspan="" rowspan="">{{bug.submittedBy.name}}</td>
                 </tr>
             </table>
-            <legend>
-                <h5>Related bugs</h5>
-            </legend>
-            <table class="table table-striped">
-                <tr>
+            <span class="label label-default">Related bugs</span>
+            <div class="alert alert-warning">
+                 <table class="table">
+                <tr ng-show="bug.cloneOf">
                     <td colspan="" rowspan=""><b>Clone of</b>
                     </td>
-                    <td colspan="" rowspan=""><a ng-href="/bug/{{bug.cloneOf}}">{{bug.cloneOf}}</a>
+                    <td colspan="" rowspan=""><a ng-href="#/bug/{{bug.cloneOf}}">{{bug.cloneOf}}</a>
                     </td>
                 </tr>
-                <tr>
+                <tr ng-show="bug.clones">
                     <td colspan="" rowspan=""><b>Clones</b>
                     </td>
                     <td colspan="" rowspan="">
                         <ul ng-repeat="clone in bug.clones" class="list-inline" style="display: inline-block;">
-                            <li><a ng-href="/bug/{{clone}}">{{clone}}</a>
+                            <li><a ng-href="#/bug/{{clone}}"><span class="label label-success">{{clone}}</span></a>
                             </li>
                         </ul>
-                         <a ng-href="" ng-click="clone(bug.id)">Clone</a>
+                         <a class="btn btn-sm btn-warning" ng-href="" ng-click="clone(bug.id)"><span class="glyphicon glyphicon-refresh"></span> Clone</a>
                         
                     </td>
                 </tr>
             </table>
+            </div>
+         
         </div>
     </div>
 </div>
@@ -208,7 +211,7 @@
   </div>
   <div class="panel panel-default" ng-repeat="item in bug.changeHistory">
     <div class="panel-heading">
-         <img alt="user pic" src="https://lh5.googleusercontent.com/-b0-k99FZlyE/AAAAAAAAAAI/AAAAAAAAAAA/eu7opA4byxI/photo.jpg?sz=100" class="img-circle img-responsive" style="height: 40px;width: 40px; float:left;margin-right: 5px;">
+         <img alt="user pic" src="images/photo.png" class="img-circle img-responsive" style="height: 40px;width: 40px; float:left;margin-right: 5px;">
    <b>{{item.updatedBy.name}}</b><p class="pull-right" style="font-size: 12px;font-weight: 400;">{{item.time}}</p>   
     </div>
       <div class="panel-body">
@@ -234,7 +237,9 @@
 <div class="pull-left">
 <div class="row">
   <div class="col-md-1">
-     <img alt="user pic" src="https://lh5.googleusercontent.com/-b0-k99FZlyE/AAAAAAAAAAI/AAAAAAAAAAA/eu7opA4byxI/photo.jpg?sz=100" class="img-circle" style="height: 40px;width: 40px;">  
+  <a href="" class="tooltips"> <span>{{updatedBy.name}}</span>
+    <img alt="user pic" src="https://lh5.googleusercontent.com/-b0-k99FZlyE/AAAAAAAAAAI/AAAAAAAAAAA/eu7opA4byxI/photo.jpg?sz=100" class="img-circle tooltips" style="height: 40px;width: 40px;">
+  </a>
   </div>
   <div class="col-md-11">
        <textarea rich-text-editor  class="form-control"  ng-model="newcomment" id="newcomment" name="newcomment" placeholder="Add a comment here..." rows="8" cols="100%"></textarea>

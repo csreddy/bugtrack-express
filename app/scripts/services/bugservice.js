@@ -15,11 +15,19 @@ app.service('BugService', function($http, RESTURL) {
         });
     };
 
-    this.putDocument = function(uri, payload) {
+
+    this.getCurrentUserBugs = function(user) {
+        return $http({
+            method: 'GET',
+            url: RESTURL + '/v1/search?format=json&collection=' + user.username + '&pageLength=50'
+        });
+    };
+
+    this.putDocument = function(uri, payload, user) {
         console.log('document = ' + uri);
         return $http({
             method: 'PUT',
-            url: RESTURL + '/v1/documents?uri=' + uri + '&collection=bugs',
+            url: RESTURL + '/v1/documents?uri=' + uri + '&collection=bugs&collection=' + user.username,
             data: payload
         });
     };

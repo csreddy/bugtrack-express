@@ -160,16 +160,13 @@ app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'b
             bug.samplequery = $scope.samplequery;
             bug.sampledata = $scope.sampledata;
             bug.stacktrace = $scope.stacktrace;
-
-            // $scope.cloneOf = null;
-            // $scope.clones;
             bug.category = $scope.category;
             bug.tofixin = $scope.tofixin;
             bug.severity = $scope.severity;
             bug.priority = $scope.priority;
             bug.relation = $scope.relation;
             bug.relatedTo = $scope.relatedTo;
-            //bug.relatedTo.push($scope.relatedTo);
+            bug.clones = [];
             bug.version = $scope.version;
             bug.platform = $scope.platform || 'all';
             bug.memory = $scope.memory;
@@ -185,7 +182,7 @@ app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'b
 
 
             var uri = bug.id + '.json';
-            BugService.putDocument(uri, bug).then(function() {
+            BugService.putDocument(uri, bug, $scope.submittedBy).then(function() {
                     console.log('bug details ', bug);
                     $location.path('/list');
                     Flash.addAlert('success', '<a href=\'/#/bug/' + bug.id + '\'>' + 'Bug-' + bug.id + '</a>' + ' was successfully created');
@@ -207,15 +204,16 @@ app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'b
 
 
 
-app.controller('bugListCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'bugFactory', 'Flash', 'getBugs', '$filter',
+app.controller('bugListCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'bugFactory', 'Flash', 'getCurrentUserBugs', '$filter', 'getCurrentUser',
 
-    function($scope, $location, RESTURL, BugService, bugFactory, Flash, getBugs, $filter) {
+    function($scope, $location, RESTURL, BugService, bugFactory, Flash, getCurrentUserBugs, $filter, getCurrentUser) {
 
         $scope.bugs = [];
+        $scope.currentUser = getCurrentUser;
         $scope.currentPage = 1;
         $scope.itemsPerPage = 2;
 
-        $scope.bugList = getBugs.data.results;
+        $scope.bugList = getCurrentUserBugs.data.results;
         $scope.totalItems = $scope.bugList.length;
         $scope.bugList.sort(function(a, b) {
             //  console.log(a.uri);
@@ -262,16 +260,16 @@ app.controller('bugListCtrl', ['$scope', '$location', 'RESTURL', 'BugService', '
             $scope.bugs = orderBy($scope.bugs, predicate, reverse);
         };
 
-      //  $scope.order('-id', false); 
+        //  $scope.order('-id', false); 
 
 
     }
 ]);
 
 
-app.controller('bugViewCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'bugFactory', 'bugConfigFactory', 'Flash', 'getCurrentUser',
+app.controller('bugViewCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'bugFactory', 'bugConfigFactory', 'Flash', 'getCurrentUser', 'bugId', '$q',
 
-    function($scope, $location, RESTURL, BugService, bugFactory, bugConfigFactory, Flash, getCurrentUser) {
+    function($scope, $location, RESTURL, BugService, bugFactory, bugConfigFactory, Flash, getCurrentUser, bugId, $q) {
 
         $scope.config = {};
         $scope.changes = {};
@@ -397,7 +395,13 @@ app.controller('bugViewCtrl', ['$scope', '$location', 'RESTURL', 'BugService', '
                 // Flash.addAlert('success', 'opened ' + uri);
             },
             function(response) {
-                Flash.addAlert('danger', response.data.error.message);
+                if (response.status === 404) {
+                    $location.path('/404');
+                    Flash.addAlert('danger', 'bug not found');
+                } else {
+                    Flash.addAlert('danger', response.data.error.message);
+                }
+
             });
 
 
@@ -421,7 +425,7 @@ app.controller('bugViewCtrl', ['$scope', '$location', 'RESTURL', 'BugService', '
                     'time': updateTime,
                     'updatedBy': $scope.updatedBy,
                     'change': $scope.changes,
-                    'comment':  $scope.newcomment
+                    'comment': $scope.newcomment
                 });
                 // clear text area after submit
                 $scope.newcomment = '';
@@ -430,19 +434,66 @@ app.controller('bugViewCtrl', ['$scope', '$location', 'RESTURL', 'BugService', '
 
             //  updateBug.changes.comment.push($scope.newcomment);
 
-            BugService.putDocument(uri, updateBug).then(function() {
+            BugService.putDocument(uri, updateBug, updateBug.submittedBy).then(function() {
 
                     $scope.changes = {};
                     console.log('changes', $scope.changes);
                     //      console.log('updateBug', updateBug);
                     console.log('bug changed from ', updateBug);
                     console.log('bug changed to', $scope.bug);
-                    Flash.addAlert('success', '<a href=\'/#/bug/' + $scope.bug.id + '\'>' + 'Bug-' + $scope.bug.id + '</a>' + ' was successfully created');
+                    Flash.addAlert('success', '<a href=\'/#/bug/' + $scope.bug.id + '\'>' + 'Bug-' + $scope.bug.id + '</a>' + ' was successfully updated');
                 },
                 function(response) {
                     Flash.addAlert('danger', response.data.error.message);
                 }
             );
         };
+
+        // clone bug 
+        $scope.clone = function(id) {
+
+            /* if ($scope.bug.cloneOf) {
+               // $location('#/bug/'+id);
+                Flash.addAlert('danger', "Cloning of clone is not allowed. Clone the parent bug");
+            };*/
+
+            console.log('cloned ' + id);
+            var cloneTime = new Date();
+            var newBugId = parseInt(bugId.data.total) + 1;
+            var clonedBug = angular.copy($scope.bug);
+            clonedBug.id = newBugId;
+            clonedBug.cloneOf = id;
+            clonedBug.clones = [];
+            clonedBug.changeHistory.push({
+                'time': cloneTime,
+                'updatedBy': $scope.updatedBy,
+                'comment': "<span class='label label-danger'><span class='glyphicon glyphicon-bullhorn'></span></span> Cloned from " + "<a href='#/bug/" + id + "'>Bug-" + id + "</a>"
+            });
+
+            if ($scope.bug.clones) {
+                $scope.bug.clones.push(newBugId);
+            } else {
+                $scope.bug.clones = [newBugId];
+            }
+
+            var promises = [BugService.putDocument(newBugId + '.json', clonedBug, $scope.updatedBy).then(),
+                BugService.putDocument(uri, $scope.bug, $scope.updatedBy).then()
+            ];
+
+
+            $q.all(promises).then(function() {
+                    console.log('bug details ', clonedBug);
+                    console.log('----', $scope.updatedBy);
+                    $location.path('/bug/' + newBugId);
+                    Flash.addAlert('success', '<a href=\'/#/bug/' + clonedBug.id + '\'>' + 'Bug-' + clonedBug.id + '</a>' + ' was successfully cloned');
+                },
+                function(response) {
+                    console.log(response);
+                    Flash.addAlert('danger', response.data.error.message);
+                }
+            );
+
+        };
+
     }
 ]);

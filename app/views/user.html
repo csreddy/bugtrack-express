@@ -1,2 +1,8 @@
-<h2>Hello {{user.fullname}}</h2>
-{{user}}
+<h3>Hello! {{currentUser.name}}</h3>
+
+<div ng-include src="'views/partials/search.partial.html'"></div>
+
+  <div class="row">
+<div ng-include src="'views/partials/buglist.partial.html'"></div>
+  </div>
+</div>
