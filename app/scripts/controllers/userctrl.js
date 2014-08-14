@@ -23,14 +23,14 @@ var app = angular.module('user.controllers', []);
 ]);
 */
 
-app.controller('userCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'bugFactory', 'Flash', 'getCurrentUserBugs', '$filter', 'getCurrentUser',
+/*app.controller('userCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'bugFactory', 'Flash', 'getCurrentUserBugs', '$filter', 'getCurrentUser',
 
     function($scope, $location, RESTURL, BugService, bugFactory, Flash, getCurrentUserBugs, $filter, getCurrentUser) {
 
         $scope.bugs = [];
         $scope.currentUser = getCurrentUser;
         $scope.currentPage = 1;
-        $scope.itemsPerPage = 5;
+        $scope.itemsPerPage = 10;
 
         $scope.bugList = getCurrentUserBugs.data.results;
         $scope.totalItems = $scope.bugList.length;
@@ -44,10 +44,7 @@ app.controller('userCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'bug
         function getBugDetails(begin, end) {
             $scope.bugs = [];
             angular.forEach($scope.bugList.slice(begin, end), function(bug, index) {
-                console.log(bug);
-                console.log(index);
                 BugService.getBug(bug.uri).then(function(response) {
-                    console.log(response.data);
                     $scope.bugs.push(response.data);
                     // sort 
                     $scope.bugs.sort(function(a, b) {
@@ -74,17 +71,16 @@ app.controller('userCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'bug
             var end = begin + $scope.itemsPerPage;
             getBugDetails(begin, end);
         };
+        
         var orderBy = $filter('orderBy');
         $scope.order = function(predicate, reverse) {
             $scope.bugs = orderBy($scope.bugs, predicate, reverse);
         };
 
-      //  $scope.order('-id', false); 
-
 
     }
 ]);
-
+*/
 
 
 app.controller('userRedirectCtrl', ['$location', 'getCurrentUser', function($location, getCurrentUser){

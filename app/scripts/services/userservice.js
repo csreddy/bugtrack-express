@@ -50,8 +50,12 @@ app.service('User', ['$http', 'RESTURL', '$location', 'Flash',
             });
         };
 
-        this.getBugs = function(user) {
-            
+        this.login = function(userCredentials) {
+            return  $http({
+                method: 'POST',
+                url: '/login',
+                data: userCredentials
+            });
         };
 
     }

@@ -37,7 +37,7 @@ app.use(session({
     resave: true,
     cookie: {
         maxAge: 3600000
-      //  expires: new Date(Date.now() + 30) //expires after 1 hour 3600000
+        //  expires: new Date(Date.now() + 30) //expires after 1 hour 3600000
     }
 }));
 
@@ -72,6 +72,13 @@ passport.use(new LocalStrategy(function(username, password, done) {
         url: userURI
     };
     request(options, function(error, response, body) {
+        if(error){
+          return  done(null, false, {
+                status: 503,
+                message: 'Database connection refused'
+            });
+        }
+    
         body = JSON.parse(body);
         console.log('response = ', typeof body);
         if (response.statusCode === 404) {
@@ -100,13 +107,32 @@ passport.use(new LocalStrategy(function(username, password, done) {
 
 }));
 
+process.on('uncaughtException', function(err) {
+    console.error('uncaughtException: ' + err.message);
+    console.error('ERROR', err.stack);
+    process.exit(1); // exit with error
+});
+
 
 // api calls
 app.use('/v1/', function(req, res, next) {
     'use strict';
+    function handleConnRefused(err, resp, body) {
+            if (err.code === 'ECONNREFUSED') {
+                console.error('Refused connection');
+                next(err);
+            } else {
+                throw err;
+            }
+    }
+
     var url = 'http://localhost:8003/v1' + req.url;
     if (req.method === 'GET') {
-        req.pipe(request(url)).pipe(res);
+        req.pipe(request(url, function(error, respnse, body) {
+            if (error) {
+                next(error);
+            }
+        })).pipe(res);
     } else if (req.method === 'PUT') {
         console.log('body:', req.body);
 
@@ -184,9 +210,16 @@ app.post('/login', function(req, res, next) {
 
 // logout
 app.get('/logout', function(req, res, next) {
-    req.logout();
+   /*  this is not working 
+   http://stackoverflow.com/questions/13758207/why-is-passportjs-in-node-not-removing-session-on-logout
+   req.logout();  
     console.log('logged out');
     res.redirect('/#/login');
+    */
+   
+   req.session.destroy(function (err) {
+    res.redirect('/#/login'); //Inside a callback… bulletproof!
+  });
 });
 
 

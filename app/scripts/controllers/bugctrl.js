@@ -1,6 +1,6 @@
 'use strict';
 
-var app = angular.module('bug.controllers', ['ui.bootstrap', 'ngCookies']);
+var app = angular.module('bug.controllers', ['ui.bootstrap']);
 app.constant('RESTURL', 'http://' + location.hostname + ':' + location.port);
 
 app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'bugFactory', 'bugConfigFactory', 'Flash', 'User', 'loadConfig', 'getCurrentUser', 'bugId',
@@ -211,7 +211,7 @@ app.controller('bugListCtrl', ['$scope', '$location', 'RESTURL', 'BugService', '
         $scope.bugs = [];
         $scope.currentUser = getCurrentUser;
         $scope.currentPage = 1;
-        $scope.itemsPerPage = 2;
+        $scope.itemsPerPage = 10;
 
         $scope.bugList = getCurrentUserBugs.data.results;
         $scope.totalItems = $scope.bugList.length;
@@ -225,10 +225,7 @@ app.controller('bugListCtrl', ['$scope', '$location', 'RESTURL', 'BugService', '
         function getBugDetails(begin, end) {
             $scope.bugs = [];
             angular.forEach($scope.bugList.slice(begin, end), function(bug, index) {
-                console.log(bug);
-                console.log(index);
                 BugService.getBug(bug.uri).then(function(response) {
-                    console.log(response.data);
                     $scope.bugs.push(response.data);
                     // sort 
                     $scope.bugs.sort(function(a, b) {
@@ -255,12 +252,11 @@ app.controller('bugListCtrl', ['$scope', '$location', 'RESTURL', 'BugService', '
             var end = begin + $scope.itemsPerPage;
             getBugDetails(begin, end);
         };
+        
         var orderBy = $filter('orderBy');
         $scope.order = function(predicate, reverse) {
             $scope.bugs = orderBy($scope.bugs, predicate, reverse);
         };
-
-        //  $scope.order('-id', false); 
 
 
     }
@@ -459,8 +455,6 @@ app.controller('bugViewCtrl', ['$scope', '$location', 'RESTURL', 'BugService', '
                 bodyText: 'Are you sure you want to clone this bug?'
             };
 
-           
-
             console.log('cloned ' + id);
             var cloneTime = new Date();
             var newBugId = parseInt(bugId.data.total) + 1;
@@ -474,10 +468,6 @@ app.controller('bugViewCtrl', ['$scope', '$location', 'RESTURL', 'BugService', '
                 'comment': "<span class='label label-danger'><span class='glyphicon glyphicon-bullhorn'></span></span> Cloned from " + "<a href='#/bug/" + id + "'>Bug-" + id + "</a>"
             });
 
-            
-
-           
-
              if ($scope.bug.cloneOf) { 
                  Flash.addAlert('danger', "Cloning of cloned bug is not allowed. Clone the parent <a href='#/bug/" + $scope.bug.cloneOf + "'>Bug-" + $scope.bug.cloneOf + "</a>");  
                // $location.path('/bug/' + id);
@@ -490,8 +480,8 @@ app.controller('bugViewCtrl', ['$scope', '$location', 'RESTURL', 'BugService', '
                 $scope.bug.clones = [newBugId];
             }
                 
-                 var promises = [BugService.putDocument(newBugId + '.json', clonedBug, $scope.updatedBy).then(),
-                BugService.putDocument(uri, $scope.bug, $scope.updatedBy).then()
+                 var promises = [BugService.putDocument(newBugId + '.json', clonedBug, $scope.bug.submittedBy).then(),
+                BugService.putDocument(uri, $scope.bug, $scope.bug.submittedBy).then()
             ];
                 $q.all(promises).then(function() {
                         console.log('bug details ', clonedBug);

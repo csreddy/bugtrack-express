@@ -76,7 +76,7 @@ app.config(function($routeProvider) {
         })
         .when('/user/:username', {
             templateUrl: 'views/user.html',
-            controller: 'userCtrl',
+            controller: 'bugListCtrl',
             resolve: {
                 getCurrentUser: ['User',
                     function(User) {

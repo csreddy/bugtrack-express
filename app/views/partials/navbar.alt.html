@@ -1,36 +1,60 @@
 <div class="navbar navbar-inverse navbar-fixed-top" ng-show="true" ng-controller="navbarCtrl">
 
     <div class="navbar-header">
-        <a class="navbar-brand" href="#"> <span class="glyphicon glyphicon-screenshot"></span> Bugtrack</a>
-<!-- <span><img src="images/shield45.svg" alt=""></span> -->
+        <a class="navbar-brand" href="#">
+            <span class="glyphicon glyphicon-screenshot"></span> Bugtrack</a>
+        <!-- <span><img src="images/shield45.svg" alt=""></span> -->
     </div>
     <div class="collapse navbar-collapse">
         <ul class="nav navbar-nav">
-            <li class="active"><a href="#/dashboard"><span class="glyphicon glyphicon-dashboard"></span> Dashboard</a>
+            <li class="active">
+                <a href="#/dashboard">
+                    <span class="glyphicon glyphicon-dashboard"></span> Dashboard</a>
             </li>
             <li>
-            <!-- <a href="#/new">New Bug</a> -->
-             <div><a class='btn btn-primary btn-danger' href='#/new' style="margin-top: 8px">
-             <span class="glyphicon glyphicon-plus-sign"></span> New Bug</a></div>
+                <!-- <a href="#/new">New Bug</a> -->
+                <div>
+                    <a class='btn btn-primary btn-danger' href='#/new' style="margin-top: 8px">
+                        <span class="glyphicon glyphicon-plus-sign"></span> New Bug</a>
+                </div>
             </li>
-            <li><a href="#/config"><span class="glyphicon glyphicon-cog"></span> Configure</a>
+
+            <li>
+                <a href="#/home">
+                    <span class="glyphicon glyphicon-home"></span> Home</a>
             </li>
-            <li><a href="#/home"><span class="glyphicon glyphicon-home"></span> Home</a>
-            </li>
-            <li><a href="#/register"><span class="glyphicon glyphicon-edit"></span> Signup</a>
+            <li ng-show="hide">
+                <a href="#/register">
+                    <span class="glyphicon glyphicon-edit"></span> Signup</a>
             </li>
         </ul>
+
+
         <form class="navbar-form navbar-left" role="search">
-        <div class="form-group">
-          <input type="text" class="form-control" placeholder="Search">
-        </div>
-        <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search"></span> Search</button>
-      </form>
+            <div class="form-group">
+                <div class="col-xs-7">
+                    <input type="text" class="form-control" placeholder="Search">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-default">
+                <span class="glyphicon glyphicon-search"></span> Search</button>
+
+        </form>
+
+
 
         <ul class="nav navbar-nav navbar-right">
-            <li ng-hide=""><a href="#/login"><span class="glyphicon glyphicon-log-in"></span> Login {{t}}</a>
+            <li>
+                <a href="#/config">
+                    <span class="glyphicon glyphicon-cog"></span> Configure</a>
             </li>
-            <li><a href="#/logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a>
+            <li ng-if="hide">
+                <a href="#/login">
+                    <span class="glyphicon glyphicon-log-in"></span> Login</a>
+            </li>
+            <li ng-if="!hide">
+                <a href="#/logout">
+                    <span class="glyphicon glyphicon-log-out"></span> Logout</a>
             </li>
         </ul>
         <!-- 

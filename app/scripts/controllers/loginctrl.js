@@ -2,8 +2,8 @@
 
 var app = angular.module('login.controllers', ['ngCookies']);
 
-app.controller('loginCtrl', ['$scope', '$location', '$cookieStore', 'Flash', '$window', '$http',
-    function($scope, $location, $cookieStore, Flash, $window, $http) {
+app.controller('loginCtrl', ['$scope', '$location', '$cookieStore', 'Flash', '$http', 'User',
+    function($scope, $location, $cookieStore, Flash, $http, User) {
 
 
         $scope.login = function() {
@@ -13,11 +13,8 @@ app.controller('loginCtrl', ['$scope', '$location', '$cookieStore', 'Flash', '$w
                 username: $scope.username,
                 password: $scope.password
             };
-            $http({
-                method: 'POST',
-                url: '/login',
-                data: payload
-            }).then(function(response) {
+            
+            User.login(payload).then(function(response) {
                     console.log(response);
                     $location.path('/user/' + response.data.username);
                     Flash.addAlert('success', 'Welcome! ' + response.data.username);
@@ -31,12 +28,13 @@ app.controller('loginCtrl', ['$scope', '$location', '$cookieStore', 'Flash', '$w
 ]);
 
 
-app.controller('logoutCtrl', ['$http', 'Flash', '$location',
-    function($http, Flash, $location) {
+app.controller('logoutCtrl', ['$http', 'Flash', '$location', '$rootScope', 
+    function($http, Flash, $location, $rootScope) {
         $http.get('/logout').then(function() {
             console.log('logged out');
-            $location.path('/login');
+           // $location.path('/login');
             Flash.addAlert('success', 'user logged out'); 
+            $rootScope.navbarUser = undefined;
         }, function() {
             Flash.addAlert('danger', 'something went wrong');
         });
