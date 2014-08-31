@@ -21,11 +21,6 @@
                 <a href="#/home">
                     <span class="glyphicon glyphicon-home"></span> Home</a>
             </li>
-            <li ng-show="hide">
-                <a href="#/register">
-                    <span class="glyphicon glyphicon-edit"></span>Signup</a>
-            </li>
-            
         </ul>
         <ul class="nav navbar-nav navbar-right">
             <li>
@@ -58,6 +53,10 @@
                    <li ng-if="!hide">
                 <a href="#/logout">
                     <span class="glyphicon glyphicon-log-out"></span> Logout</a>
+            </li>
+             <li ng-if="hide">
+                <a href="#/register">
+                    <span class="glyphicon glyphicon-edit"></span> Signup</a>
             </li>
                 </ul>
             </li>

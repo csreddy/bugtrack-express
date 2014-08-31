@@ -2,11 +2,22 @@
 </div>
 <div class="col-md-3 pull-left">
     <div class="panel panel-primary">
-        <div class="panel-heading">
+        <div class="panel-heading" style="height: 40px">
+            <div class="pull-left">
             <h3 class="panel-title">
 <i class="fa fa-bug"></i>
             <a ng-href="#/bug/{{bug.id}}">{{bug.kind}} -  {{bug.id}}</a>
-            </h3>
+            </h3>    
+            </div>
+            
+
+            <div class="pull-right">
+            
+            <a href="" style="background-color: white">
+            <span>Subscribe</span>
+            <span class="glyphicon glyphicon-bookmark"></span>        
+            </a>
+            </div>
         </div>
         <div class="panel-body">
             <table class="table table-striped">
@@ -115,17 +126,17 @@
                         </select>
                     </td>
                 </tr>
-                <tr>
+                <tr ng-show="bug.memory">
                     <td colspan="" rowspan=""><b>Memory Size</b>
                     </td>
                     <td colspan="" rowspan="">{{bug.memory}}</td>
                 </tr>
-                <tr>
+                <tr ng-show="bug.resolvedAt">
                     <td colspan="" rowspan=""><b>Resolved on</b>
                     </td>
                     <td colspan="" rowspan="">{{bug.resolvedAt}}</td>
                 </tr>
-                <tr>
+                <tr ng-show="bug.testedAt">
                     <td colspan="" rowspan=""><b>Tested on</b>
                     </td>
                     <td colspan="" rowspan="">{{bug.resolvedAt}}</td>
@@ -137,12 +148,12 @@
                     <td colspan="" rowspan="">{{bug.createdAt}}</td>
                 </tr>
                 <tr>
-                    <td colspan="" rowspan=""><b>Subscribe others</b>
+                    <td colspan="" rowspan=""><b>Subscribers</b>
                     </td>
-                    <td colspan="" rowspan="">TODO</td>
+                    <td colspan="" rowspan=""><ul ng-repeat="subscriber in bug.subscribers">{{subscriber.name}}</ul></td>
                 </tr>
                 <tr>
-                    <td colspan="" rowspan=""><b>Submitted by</b>
+                    <td colspan="" rowspan=""><b>Reported by</b>
                     </td>
                     <td colspan="" rowspan="">{{bug.submittedBy.name}}</td>
                 </tr>
@@ -181,26 +192,26 @@
             <div ng-show="bug.note">
                 <p>
                     <h6>Note:</h6>
-                    <code>{{bug.note}}</code>
+                    <span class="glyphicon glyphicon-info-sign"> Note:</span> <blockquote style="border-left-color: #d9534f;"> {{bug.note}} </blockquote>
                 </p>
                 <br>
             </div>
 
             <div ng-show="bug.samplequery">
                 <legend>
-                  <h4><span class="label label-primary">Sample Query</span></span></h4>
+                  <h5><span class="glyphicon glyphicon-pencil"></span>  Sample Query</span></h5>
                 </legend>
                 {{bug.samplequery}}
             </div>
             <div ng-show="bug.sampledata">
                 <legend>
-                    <h4> <span class="label label-primary">Sample Data</span></span></h4>
+                    <h5><span class="glyphicon glyphicon-align-justify"></span>  Sample Data</span></h5>
                 </legend>
-                {{bug.sampledata}}
+              {{bug.sampledata}}
             </div>
             <div ng-show="bug.stacktrace">
                 <legend>
-                   <h4><span class="label label-primary">Error Stacktrace</span></span></h4>
+                   <h5><span class="glyphicon glyphicon-file"></span>  Error Stacktrace</span></h5>
                 </legend>
                 <div style="overflow: auto; max-height:500px;">
                     <pre>{{bug.stacktrace}}</pre>
@@ -237,7 +248,7 @@
 <div class="row">
   <div class="col-md-1">
   <a href="" class="tooltips"> <span>{{updatedBy.name}}</span>
-    <img alt="user pic" src="https://lh5.googleusercontent.com/-b0-k99FZlyE/AAAAAAAAAAI/AAAAAAAAAAA/eu7opA4byxI/photo.jpg?sz=100" class="img-circle tooltips" style="height: 40px;width: 40px;">
+    <img alt="user pic" src="images/photo.png" class="img-circle tooltips" style="height: 40px;width: 40px;">
   </a>
   </div>
   <div class="col-md-11">

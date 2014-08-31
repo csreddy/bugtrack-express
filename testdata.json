@@ -1,6 +1,8 @@
 [
-    '{{repeat(1, 1)}}', {
-        id: '{{integer(1000, 9999)}}',
+    '{{repeat(100, 100)}}', {
+      id: function(tag, index){
+     return index+1;
+      },
         createdAt: '{{date(new Date(2014, 0, 1), new Date(), "YYYY-MM-ddThh:mm:ss:f")}}' + 'Z',
         modifiedAt: '{{date(new Date(2014, 0, 1), new Date(), "YYYY-MM-ddThh:mm:ss:f")}}' + 'Z',
         kind: function() {
@@ -136,12 +138,14 @@
         },
         relatedTo: [
             '{{repeat(4)}}',
-            '{{integer(1000, 9999)}}'
+            '{{integer(1, 100)}}'
         ],
-        cloneOf: '{{integer(1000, 9999)}}',
+        cloneOf: function(tag, index){
+     return index+5;
+      },
         clones: [
             '{{repeat(4)}}',
-            '{{integer(1000, 9999)}}'
+            '{{integer(1, 100)}}'
         ],
         version: function() {
             return ["7.0-3",
@@ -211,6 +215,61 @@
         publishStatus: function() {
             return ["Publish", "Not Ready", "Prepare", "Never Publish"][2];
         },
-        customerImpact: '{{lorem(3)}}'
+        customerImpact: '{{lorem(3)}}',
+      changeHistory:['{{repeat(4)}}',{
+        time: '{{date(new Date(2014, 0, 1), new Date(), "YYYY-MM-ddThh:mm:ss:f")}}' + 'Z',
+        updatedBy: function() {
+            return [{
+                "email": "sreddy@marklogic.com",
+                "name": "sudhakar reddy",
+                "username": "sreddy"
+
+            }, {
+                "email": "robertsonfarmer@bezal.com",
+                "name": "Lawson Bowers",
+                "username": "Bishop"
+            }, {
+                "email": "bishopbowers@bezal.com",
+                "name": "Minnie Robbins",
+                "username": "Liliana"
+            }, {
+                "email": "lilianarobbins@bezal.com",
+                "name": "Shields Evans",
+                "username": "Cummings"
+            }, {
+                "email": "cummingsevans@bezal.com",
+                "name": "Kelley Porter",
+                "username": "Ingrid"
+            }, {
+                "email": "ingridporter@bezal.com",
+                "name": "Dale Whitley",
+                "username": "Giles"
+            }, {
+                "email": "gileswhitley@bezal.com",
+                "name": "Pope Caldwell",
+                "username": "Potter"
+            }, {
+                "email": "pottercaldwell@bezal.com",
+                "name": "Decker Wolf",
+                "username": "Mcconnell"
+            }][Math.floor((Math.random() * 7))];
+        },
+        change:{
+          status: {
+          from: 'Verify',
+          to: 'Test'
+        },
+         severity:{
+           from: function() {
+            return ["P1 - Catastrophic", "P2 - Critcial", "P3 - Major", "P4 - Minor", "P5 -  Aesthetic", "Performance"][Math.floor((Math.random() * 6))];
+            },
+           to: function() {
+            return ["P1 - Catastrophic", "P2 - Critcial", "P3 - Major", "P4 - Minor", "P5 -  Aesthetic", "Performance"][Math.floor((Math.random() * 6))];
+            }
+        }
+        },
+        comment: '{{lorem(3)}}'
+      }
+        ]
     }
 ]

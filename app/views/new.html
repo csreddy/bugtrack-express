@@ -105,7 +105,7 @@
               <label class="col-md-2 control-label" for="category">Category</label>
               <div class="col-md-3">
                 <select id="category" ng-model="category" ng-change="setCategory(category)"  name="category" type="text" class="form-control input-sm">
-                    <option ng-repeat="category in config.categories.sort()"  value="{{category}}">
+                    <option ng-repeat="category in config.category.sort()"  value="{{category}}">
                     {{category}}</option>
                 </select>
               </div>
@@ -210,7 +210,7 @@
               </div>
               </div>
               <div class="col-md-9">
-              <legend><h5>Reference: <a href="http://help.marklogic.com" target="_window">help.marklogic.com</a></h5></legend>  
+              <legend><h5>Reference: <a href="http://help.mycompany.com" target="_window">help.mycompany.com</a></h5></legend>  
               <div class="form-group">
               <label class="col-md-3 control-label" for="tickets">Tickets</label>
               <div class="col-md-6">

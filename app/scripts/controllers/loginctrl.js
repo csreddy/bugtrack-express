@@ -5,6 +5,9 @@ var app = angular.module('login.controllers', ['ngCookies']);
 app.controller('loginCtrl', ['$scope', '$location', '$cookieStore', 'Flash', '$http', 'User',
     function($scope, $location, $cookieStore, Flash, $http, User) {
 
+        $scope.username = 'sreddy';
+        $scope.password = 'admin';
+
 
         $scope.login = function() {
             console.log('login called');

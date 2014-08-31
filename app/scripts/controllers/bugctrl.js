@@ -179,6 +179,7 @@ app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'b
             bug.tickets.push($scope.tickets);
             bug.customerImpact = $scope.customerImpact;
             bug.changeHistory = [];
+            bug.subscribers = [$scope.submittedBy, $scope.assignTo];
 
 
             var uri = bug.id + '.json';

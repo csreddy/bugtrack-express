@@ -55,8 +55,8 @@
 
 <!-- Button (Double) -->
 <div class="form-group">
-    <button ng-click="addKind(newkind)" id="addnewkind" name="addnewkind" class="btn btn-sm btn-success">Add</button>
-    <button ng-click="deleteKind(kinds)" id="deletekind" name="deletekind" class="btn btn-sm btn-danger">Delete</button>
+    <button ng-click="addConfigItem('kind', newkind)" id="addnewkind" name="addnewkind" class="btn btn-sm btn-success">Add</button>
+    <button ng-click="deleteConfigItem('kind', kinds)" id="deletekind" name="deletekind" class="btn btn-sm btn-danger">Delete</button>
 </div>
 
 </fieldset>
@@ -84,10 +84,10 @@
   <span class="help-block">help</span>  
 </div>
 
-<!-- Button (Double) -->
+<!-- Button (Double) addPlatform(newplatform) -->
 <div class="form-group">
-    <button ng-click="addPlatform(newplatform)" id="addnewplatform" name="addnewplatform" class="btn btn-sm btn-success">Add</button>
-    <button ng-click="deletePlatform(platforms)" id="deleteplatform" name="deleteplatform" class="btn btn-sm btn-danger">Delete</button>
+    <button ng-click="addConfigItem('platform', newplatform )" id="addnewplatform" name="addnewplatform" class="btn btn-sm btn-success">Add</button>
+    <button ng-click="deleteConfigItem('platform', platforms)" id="deleteplatform" name="deleteplatform" class="btn btn-sm btn-danger">Delete</button>
 </div>
 
 </fieldset>
@@ -116,8 +116,8 @@
 
 <!-- Button (Double) -->
 <div class="form-group">
-    <button ng-click="addNewStatus(newstatus)" id="addnewstatus" name="addnewstatus" class="btn btn-sm btn-success">Add</button>
-    <button ng-click="deleteStatus(statuses)" id="deleteStatus" name="deletestatus" class="btn btn-sm btn-danger">Delete</button>
+    <button ng-click="addConfigItem('status',newstatus)" id="addnewstatus" name="addnewstatus" class="btn btn-sm btn-success">Add</button>
+    <button ng-click="deleteConfigItem('status',statuses)" id="deleteStatus" name="deletestatus" class="btn btn-sm btn-danger">Delete</button>
 </div>
 
 </fieldset>
@@ -133,7 +133,7 @@
 <!-- Select Multiple -->
 <div class="form-group">
     <select ng-model="categories" id="categories" name="categories" class="form-control" multiple="multiple">
-  <option ng-repeat="category in config.categories.sort()" value="{{category}}">{{category}}</option>
+  <option ng-repeat="category in config.category.sort()" value="{{category}}">{{category}}</option>
     </select>
 </div>
 
@@ -145,8 +145,8 @@
 
 <!-- Button (Double) -->
 <div class="form-group">
-    <button ng-click="addNewCategory(newcategory)" id="addNewCategory" name="addNewCategory" class="btn btn-sm btn-success">Add</button>
-    <button ng-click="deleteCategories(categories)" id="deleteCategory" name="deleteCategory" class="btn btn-sm btn-danger">Delete</button>
+    <button ng-click="addConfigItem('category', newcategory)" id="addNewCategory" name="addNewCategory" class="btn btn-sm btn-success">Add</button>
+    <button ng-click="deleteConfigItem('category',categories)" id="deleteCategory" name="deleteCategory" class="btn btn-sm btn-danger">Delete</button>
 </div>
 
 </fieldset>
@@ -174,8 +174,8 @@
 
 <!-- Button (Double) -->
 <div class="form-group">
-    <button ng-click="addNewVersion(newversion)" id="newversion" name="newversion" class="btn btn-sm btn-success">Add</button>
-    <button ng-click="deleteVersion(versions)" id="deleteversion" name="deleteversion" class="btn btn-sm btn-danger">Delete</button>
+    <button ng-click="addConfigItem('version', newversion)" id="newversion" name="newversion" class="btn btn-sm btn-success">Add</button>
+    <button ng-click="deleteConfigItem('version', versions)" id="deleteversion" name="deleteversion" class="btn btn-sm btn-danger">Delete</button>
 </div>
 
 </fieldset>
@@ -204,8 +204,8 @@
 
 <!-- Button (Double) -->
 <div class="form-group">
-    <button ng-click="addNewFixin(newtofixin)" id="addnewfixin" name="addnewfixin" class="btn btn-sm btn-success">Add</button>
-    <button ng-click="deleteFixin(tofixins)" id="deletefixin" name="deletefixin" class="btn btn-sm btn-danger">Delete</button>
+    <button ng-click="addConfigItem('tofixin',newtofixin)" id="addnewfixin" name="addnewfixin" class="btn btn-sm btn-success">Add</button>
+    <button ng-click="deleteConfigItem('tofixin', tofixins)" id="deletefixin" name="deletefixin" class="btn btn-sm btn-danger">Delete</button>
 </div>
 
 </fieldset>
@@ -233,8 +233,8 @@
 
 <!-- Button (Double) -->
 <div class="form-group">
-    <button ng-click="addSeverity(newseverity)" id="addnewseverity" name="addnewseverity" class="btn btn-sm btn-success">Add</button>
-    <button ng-click="deleteSeverity(severities)" id="deleteseverity" name="deleteseverity" class="btn btn-sm btn-danger">Delete</button>
+    <button ng-click="addConfigItem('severity', newseverity)" id="addnewseverity" name="addnewseverity" class="btn btn-sm btn-success">Add</button>
+    <button ng-click="deleteConfigItem('severity',severities)" id="deleteseverity" name="deleteseverity" class="btn btn-sm btn-danger">Delete</button>
 </div>
 
 </fieldset>

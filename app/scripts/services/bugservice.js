@@ -11,7 +11,7 @@ app.service('BugService', function($http, RESTURL) {
         // console.log('q = ' + q);
         return $http({
             method: 'GET',
-            url: RESTURL + '/v1/search?format=json&collection=bugs&pageLength=50'
+            url: RESTURL + '/v1/search?format=json&collection=bugs&pageLength=200'
         });
     };
 
@@ -20,6 +20,7 @@ app.service('BugService', function($http, RESTURL) {
         return $http({
             method: 'GET',
             url: RESTURL + '/v1/search?format=json&collection=' + user.username + '&pageLength=50'
+          //  url: RESTURL + '/v1/search?format=json&collection=bugs&pageLength=50'
         });
     };
 
