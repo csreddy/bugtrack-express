@@ -2,16 +2,19 @@
 
 var app = angular.module('search.controllers', []);
 
-app.controller('searchCtrl', ['$scope', 'Search', 'Flash', function($scope, Search, Flash){
-		$scope.q = 'test';
+app.controller('searchCtrl', ['$rootScope','$scope', 'Search', 'Flash', function($rootScope, $scope, Search, Flash){
+		$scope.q = '';
 		$scope.search = function() {
-			return Search.search($scope.q).then(function(response) {
+			return Search.bugs($scope.q).then(function(response) {
 				console.log(response);
 				$scope.results = response.data;
-				Flash.addAlert('success', 'returned ' + $scope.results.total + ' results');
+				$rootScope.$broadcast('search',  {
+					searchResults: response.data.results
+				});
+				Flash.addAlert('success', 'Returned ' + $scope.results.total + ' results');
 			}, function(response) {
 				Flash.addAlert('danger', response.status + ' :error occured');
 			});
 		};
 
-}]);
+}]); 

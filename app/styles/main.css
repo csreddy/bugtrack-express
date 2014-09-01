@@ -169,3 +169,8 @@ a:hover.tooltips span {
     margin-left: -76px;
     z-index: 999;
 }
+
+pre {
+  font-family:   "Courier New", Courier, monospace;
+  font-size: 1em;
+}

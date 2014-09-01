@@ -11,12 +11,17 @@
             </div>
             
 
-            <div class="pull-right">
-            
-            <a href="" style="background-color: white">
-            <span>Subscribe</span>
-            <span class="glyphicon glyphicon-bookmark"></span>        
-            </a>
+            <div class="pull-right" ng-show="showSubscribe">
+          <!-- <a ng-click="subscribe()" tooltip="subscribe" tooltip-placement="right"> -->
+           <a class="pointer"  tooltip="Subscribe" ng-click="subscribe()">
+           <span class="glyphicon glyphicon-bookmark" style="background-color: white"></span> 
+           </a>
+            </div>
+            <div class="pull-right" ng-show="showUnsubscribe">
+          <!-- <a ng-click="subscribe()" tooltip="subscribe" tooltip-placement="right"> -->
+           <a class="pointer" tooltip="Unsubscribe"  ng-click="unsubscribe()">
+           <span class="glyphicon glyphicon-bookmark" style="background-color: black"></span> 
+           </a>
             </div>
         </div>
         <div class="panel-body">
@@ -54,7 +59,7 @@
     -->
                     <td>
                         <select id="category" ng-model="category" name="category" type="text" class="form-control input-sm">
-                            <option ng-repeat="category in config.categories.sort()" ng-selected="category === bug.category" value="{{category}}">
+                            <option ng-repeat="category in config.category.sort()" ng-selected="category === bug.category" value="{{category}}">
                                 {{category}}
                             </option>
                         </select>
@@ -116,13 +121,16 @@
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="" rowspan=""><b>Assign To</b>
+                    <td colspan="" rowspan=""><b>Assigned To</b>
                     </td>
                     <td colspan="" rowspan="">
                         <select id="assignTo" ng-model="assignTo" name="assignTo" type="text" class="form-control input-sm">
                             <option ng-repeat="assignTo in config.users" ng-selected="assignTo.name === bug.assignTo.name" value="{{assignTo}}">
                                 {{assignTo.name}}
                             </option>
+                           <!--  <option ng-repeat="assignTo in config.users" ng-selected="bug.assignTo.name" value="{{assignTo}}">
+                                {{assignTo.name}}
+                            </option> -->
                         </select>
                     </td>
                 </tr>
@@ -225,7 +233,7 @@
    <b>{{item.updatedBy.name}}</b><p class="pull-right" style="font-size: 12px;font-weight: 400;">{{item.time}}</p>   
     </div>
       <div class="panel-body">
-      <ul ng-repeat="(key, value) in item.change" class="list-unstyled" >
+      <ul ng-repeat="(key, value) in item.change" class="list-unstyled">
                 <li ng-hide="value.to.name">
                     {{key}} changed
                     <span ng-hide="value.from===undefined">from {{value.from}}</span> to
@@ -247,6 +255,9 @@
 <div class="pull-left">
 <div class="row">
   <div class="col-md-1">
+<!--   <a href="" tooltip="{{updatedBy.name}}"</span>
+      <img alt="user pic" src="images/photo.png" class="img-circle tooltips" style="height: 40px;width: 40px;">
+  </a> -->
   <a href="" class="tooltips"> <span>{{updatedBy.name}}</span>
     <img alt="user pic" src="images/photo.png" class="img-circle tooltips" style="height: 40px;width: 40px;">
   </a>

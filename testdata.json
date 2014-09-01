@@ -216,6 +216,9 @@
             return ["Publish", "Not Ready", "Prepare", "Never Publish"][2];
         },
         customerImpact: '{{lorem(3)}}',
+         subscribers: function(){
+   return [this.submittedBy, this.assignTo];
+      },
       changeHistory:['{{repeat(4)}}',{
         time: '{{date(new Date(2014, 0, 1), new Date(), "YYYY-MM-ddThh:mm:ss:f")}}' + 'Z',
         updatedBy: function() {
@@ -253,7 +256,7 @@
                 "name": "Decker Wolf",
                 "username": "Mcconnell"
             }][Math.floor((Math.random() * 7))];
-        },
+        },                               
         change:{
           status: {
           from: 'Verify',
@@ -269,7 +272,7 @@
         }
         },
         comment: '{{lorem(3)}}'
-      }
+      }            
         ]
     }
 ]

@@ -40,12 +40,14 @@ app.config(function($routeProvider) {
                 getCurrentUserBugs: ['BugService', 'User',
                     function(BugService, User) {
                         return User.getCurrentUserInfo().then(function(user) {
-                            // return BugService.getCurrentUserBugs(user);
-                             return BugService.getBugs();
+                             return BugService.getCurrentUserBugs(user);
                         });
 
                     }
-                ]
+                ],
+                getAllBugs: ['BugService', function(BugService) {
+                    return BugService.getBugs();
+                }]
             }
         })
         .when('/list', {
@@ -60,12 +62,14 @@ app.config(function($routeProvider) {
                 getCurrentUserBugs: ['BugService', 'User',
                     function(BugService, User) {
                         return User.getCurrentUserInfo().then(function(user) {
-                           // return BugService.getCurrentUserBugs(user);
-                             return BugService.getBugs();
+                            return BugService.getCurrentUserBugs(user);  
                         });
 
                     }
-                ]
+                ],
+                getAllBugs: ['BugService', function(BugService) {
+                    return BugService.getBugs();
+                }]
             }
         })
         .when('/login', {
@@ -92,7 +96,10 @@ app.config(function($routeProvider) {
                         });
 
                     }
-                ]
+                ],
+                getAllBugs: ['BugService', function(BugService) {
+                    return BugService.getBugs();
+                }]
             }
         })
        .when('/home', {
