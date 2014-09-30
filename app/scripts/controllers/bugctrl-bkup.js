@@ -13,7 +13,7 @@ app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'b
             isFirstOpen: true,
             isFirstDisabled: false
         };
-
+ 
         $scope.config = {};
         $scope.config = loadConfig.data;
         $scope.submittedBy = getCurrentUser;
@@ -183,14 +183,13 @@ app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'b
             bug.subscribers = [$scope.submittedBy, $scope.assignTo];
             bug.attachments = $scope.files || [];
 
-
              $http({
                 url: '/new',
                 method: 'POST',
                 headers: {
                     'Content-Type': undefined
                 },
-                transformRequest: function(data) {
+                transformRequest: function(data, getHeaders) {
                     var form = new FormData();
                     form.append('bug', angular.toJson(bug));
                     for (var i = 0; i < data.files.length; i++) {
@@ -204,11 +203,16 @@ app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'b
                     files: $scope.files
                 }
             }).success(function(data, status, headers, config) {
-                $location.path('/');
-                Flash.addAlert('success', '<a href=\'/#/bug/' + bug.id + '\'>' + 'Bug-' + bug.id + '</a>' + ' was successfully created');
+                Flash.addAlert('success', 'successssss');
             }).error(function(data, status, headers, config) {
-                Flash.addAlert('danger', response);
+                Flash.addAlert('danger', 'failed');
             });
+
+            // .then(function(response) {
+            //     Flash.addAlert('success', response.data);
+            // }, function(response) {
+            //     Flash.addAlert('danger', response.statusText);
+            // });
         };
 
 
@@ -265,6 +269,9 @@ app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'b
             bug.attachments = $scope.files || [];
 
 
+            //var payload = {data: bug, files: $scope.files};
+
+
             var fd = new FormData();
             fd.append('data', angular.toJson(bug));
             for (var i = 0; i < $scope.files.length; i++) {
@@ -274,7 +281,7 @@ app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'b
             console.log($scope.files);
 
             var uri = bug.id + '.json';
-            BugService.createBug(uri, fd, $scope.submittedBy).then(function() {
+            BugService.putDocument(uri, fd, $scope.submittedBy).then(function() {
                     console.log('bug details ', bug);
                     $location.path('/list');
                     Flash.addAlert('success', '<a href=\'/#/bug/' + bug.id + '\'>' + 'Bug-' + bug.id + '</a>' + ' was successfully created');

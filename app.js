@@ -9,14 +9,23 @@ var session = require('express-session');
 var passport = require('passport'),
     LocalStrategy = require('passport-local').Strategy;
 var flash = require('connect-flash');
+var multer = require('multer');
+var marklogic = require('marklogic');
+var conn = require('./db-config.js').connection;
+var db = marklogic.createDatabaseClient(conn);
+var fs = require('fs');
 
 
 var routes = require('./routes/index');
 var user = require('./routes/user');
 var login = require('./routes/login');
+var upload = require('./routes/upload');
 
 
 var app = express();
+app.use(multer({
+    dest: './uploads/'
+}));
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -51,6 +60,7 @@ app.use(flash());
 app.use('/', routes);
 app.use('/user/:username', user);
 app.use('/login', login);
+//app.use('/upload', upload);
 
 
 // authentication
@@ -72,13 +82,13 @@ passport.use(new LocalStrategy(function(username, password, done) {
         url: userURI
     };
     request(options, function(error, response, body) {
-        if(error){
-          return  done(null, false, {
+        if (error) {
+            return done(null, false, {
                 status: 503,
                 message: 'Database connection refused'
             });
         }
-    
+
         body = JSON.parse(body);
         console.log('response = ', typeof body);
         if (response.statusCode === 404) {
@@ -117,24 +127,69 @@ process.on('uncaughtException', function(err) {
 // api calls
 app.use('/v1/', function(req, res, next) {
     'use strict';
+
     function handleConnRefused(err, resp, body) {
-            if (err.code === 'ECONNREFUSED') {
-                console.error('Refused connection');
-                next(err);
-            } else {
-                throw err;
-            }
+        if (err.code === 'ECONNREFUSED') {
+            console.error('Refused connection');
+            next(err);
+        } else {
+            throw err;
+        }
+    }
+    var url = 'http://localhost:8003/v1' + req.url;
+
+    switch (req.method) {
+        case 'GET':
+            req.pipe(request(url, function(error, response, body) {
+                if (error) {
+                    next(error);
+                }
+            })).pipe(res);
+            break;
+        case 'PUT':
+            var options = {
+                method: 'PUT',
+                url: url,
+                body: req.body,
+                json: true
+            };
+
+            req.pipe(request(options, function(error, response, body) {
+                if (error) {
+                    next(error);
+                }
+            })).pipe(res);
+            break;
+        case 'POST':
+            console.log('its a POST');
+            var url = 'http://localhost:8003/v1/documents?extension=json';
+            var options = {
+                method: 'POST',
+                headers: req.headers,
+                url: url,
+                body: JSON.stringify(req.body)
+            };
+
+            req.pipe(request(options, function(error, response, body) {
+                if (error) {
+                    next(error);
+                }
+            })).pipe(res);
+            break;
+        default:
+            console.log('nothing to do');
     }
 
-    var url = 'http://localhost:8003/v1' + req.url;
-    if (req.method === 'GET') {
-        req.pipe(request(url, function(error, respnse, body) {
+
+
+    /*    if (req.method === 'GET') {
+        req.pipe(request(url, function(error, response, body) {
             if (error) {
                 next(error);
             }
         })).pipe(res);
     } else if (req.method === 'PUT') {
-        console.log('body:', req.body);
+        //console.log('request:', req);
 
         var options = {
             method: 'PUT',
@@ -142,16 +197,14 @@ app.use('/v1/', function(req, res, next) {
             body: req.body,
             json: true
         };
-        request(options, function(err, response, body) {
-            if (err) {
-                next(err);
-            }
 
-            res.send(response); // res.send(response.statusCode, response);  
-            console.log(response);
-            next(res, res);
-        });
-    }
+        req.pipe(request(options, function(error, response, body) {
+            if (error) {
+                next(error);
+            }
+        })).pipe(res);
+    }*/
+
 });
 
 app.get('/userinfo', function(req, res) {
@@ -210,16 +263,104 @@ app.post('/login', function(req, res, next) {
 
 // logout
 app.get('/logout', function(req, res, next) {
-   /*  this is not working 
+    /*  this is not working 
    http://stackoverflow.com/questions/13758207/why-is-passportjs-in-node-not-removing-session-on-logout
    req.logout();  
     console.log('logged out');
     res.redirect('/#/login');
     */
-   
-   req.session.destroy(function (err) {
-    res.redirect('/#/login'); //Inside a callback… bulletproof!
-  });
+
+    req.session.destroy(function(err) {
+        res.redirect('/#/login'); //Inside a callback… bulletproof!
+    });
+});
+
+app.post('/new', function(req, res, next) {
+    console.log('inside NEW.........');
+    console.log('BODY', req.body);
+    console.log('FILES', req.files);
+    var attachments = req.files;
+    var errors = false;
+
+    db.write([{
+        uri: JSON.parse(req.body.bug).id + '.json',
+        category: 'content',
+        contentType: 'application/json',
+        collections: ['bugs', req.user],
+        content: req.body.bug
+    }]).result(function(response) {
+        console.log('wrote:\n    ' +
+            response.documents.map(function(document) {
+                return document.uri;
+            }).join(', ')
+        );
+        console.log('done\n');
+        res.send(200);
+    });
+
+    for (var file in attachments) {
+        console.log(attachments[file]);
+        if (attachments[file].mimetype === "image/svg+xml") {
+             errors = true;
+            break;
+        }
+        var doc = {
+            uri: '/tmp/' + attachments[file].originalname,
+            category: 'content',
+            contentType: attachments[file].mimetype
+        };
+
+        var writableStream = db.createWriteStream(doc);
+        writableStream.result(function(response) {
+            console.log('wrote:\n ' + response.documents[0].uri);
+        }, function(error) {
+            console.log('file upload failed');
+            errors = true;
+            res.send(400, {
+                message: 'file upload failed. Try again'
+            });
+        });
+        fs.createReadStream(attachments[file].path).pipe(writableStream);
+    }
+
+
+
+});
+
+
+app.get('/upload', function(req, res) {
+    res.sendfile('views/upload.html');
+});
+
+app.post('/upload', function(req, res, next) {
+    var url = 'http://localhost:8003/v1/documents';
+    console.log('BODY', req.body);
+    console.log('FILES', req.files);
+
+    req.headers['content-type'] = req.headers['content-type']
+        .replace('multipart/form-data',
+            'multipart/mixed');
+    console.log('HEADERS', req.headers);
+
+    console.log(res.attachment(req.files.file_upload[0].path));
+    console.log(res.attachment(req.files.file_upload[1].path));
+    console.log(res._headers);
+
+    console.log(req.body);
+
+    var options = {
+        method: 'POST',
+        url: url,
+        multipart: []
+    };
+
+    req.pipe(request(options, function(error, response, body) {
+        if (error) {
+            console.log(error);
+            next(error);
+        }
+    })).pipe(res);
+    //  res.send(JSON.stringify(req.files));
 });
 
 

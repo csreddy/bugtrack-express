@@ -1,7 +1,7 @@
 <div class="row">
 </div>
 <div class="col-md-3 pull-left">
-    <div class="panel panel-primary">
+    <div class="panel panel-info">
         <div class="panel-heading" style="height: 40px">
             <div class="pull-left">
             <h3 class="panel-title">
@@ -14,13 +14,15 @@
             <div class="pull-right" ng-show="showSubscribe">
           <!-- <a ng-click="subscribe()" tooltip="subscribe" tooltip-placement="right"> -->
            <a class="pointer"  tooltip="Subscribe" ng-click="subscribe()">
-           <span class="glyphicon glyphicon-bookmark" style="background-color: white"></span> 
+          <!--  <span class="glyphicon glyphicon-bookmark" style="background-color: white"></span>  -->
+           <i class="fa fa-eye"></i>
            </a>
             </div>
             <div class="pull-right" ng-show="showUnsubscribe">
           <!-- <a ng-click="subscribe()" tooltip="subscribe" tooltip-placement="right"> -->
            <a class="pointer" tooltip="Unsubscribe"  ng-click="unsubscribe()">
-           <span class="glyphicon glyphicon-bookmark" style="background-color: black"></span> 
+           <i class="fa fa-eye-slash"></i>
+           <!-- <span class="glyphicon glyphicon-bookmark" style="background-color: black"></span>  -->
            </a>
             </div>
         </div>
@@ -202,7 +204,6 @@
                     <h6>Note:</h6>
                     <span class="glyphicon glyphicon-info-sign"> Note:</span> <blockquote style="border-left-color: #d9534f;"> {{bug.note}} </blockquote>
                 </p>
-                <br>
             </div>
 
             <div ng-show="bug.samplequery">
@@ -223,6 +224,7 @@
                 </legend>
                 <div style="overflow: auto; max-height:500px;">
                     <pre>{{bug.stacktrace}}</pre>
+                    <p class="gist">{{bug.stacktrace}}</p>
                 </div>
             </div>
       </div>

@@ -64,3 +64,19 @@ curl --anyauth --user admin:admin -T ./1000.json -i   -H "Content-type: applicat
         "name": "Decker Wolf",
         "username": "dwolf"
     }
+
+------WebKitFormBoundaryUAdivlEqkKaJXSeX
+Content-Disposition: form-data; name="test"
+
+this is upload test
+------WebKitFormBoundaryUAdivlEqkKaJXSeX
+Content-Disposition: form-data; name="file_upload"; filename="20140817 - Personal - Newyork-Niagara - 3502.jpg"
+Content-Type: image/jpeg
+
+
+------WebKitFormBoundaryUAdivlEqkKaJXSeX--
+
+   curl --anyauth --user admin:admin -X PUT \
+    --data-binary @file.txt \
+    -H "Content-type: multipart/mixed; boundary=BOUNDARY" \
+    'http://localhost:8003/v1/documents?uri=/xml/box.xml&category=collections&category=content'

@@ -20,7 +20,7 @@ app.service('BugService', function($http, RESTURL) {
         return $http({
             method: 'GET',
             url: RESTURL + '/v1/search?format=json&collection=' + user.username + '&pageLength=50'
-          //  url: RESTURL + '/v1/search?format=json&collection=bugs&pageLength=50'
+            //  url: RESTURL + '/v1/search?format=json&collection=bugs&pageLength=50'
         });
     };
 
@@ -29,6 +29,15 @@ app.service('BugService', function($http, RESTURL) {
         return $http({
             method: 'PUT',
             url: RESTURL + '/v1/documents?uri=' + uri + '&collection=bugs&collection=' + user.username,
+            data: payload
+        });
+    };
+
+    this.createBug = function(uri, payload, user) {
+        console.log('inside createBug()');
+        return $http({
+            method: 'POST',
+            url: '/new',
             data: payload
         });
     };

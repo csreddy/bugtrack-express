@@ -21,7 +21,8 @@ var app = angular.module('bugtrackApp', [
     'search.controllers',
     'search.services',
     'navbar.controllers',
-    'modal.services'
+    'modal.services',
+    'fileupload.directive'
     //   'angular-flash.service',
     //  'angular-flash.flash-alert-directive'
 ]);
@@ -40,14 +41,16 @@ app.config(function($routeProvider) {
                 getCurrentUserBugs: ['BugService', 'User',
                     function(BugService, User) {
                         return User.getCurrentUserInfo().then(function(user) {
-                             return BugService.getCurrentUserBugs(user);
+                            return BugService.getCurrentUserBugs(user);
                         });
 
                     }
                 ],
-                getAllBugs: ['BugService', function(BugService) {
-                    return BugService.getBugs();
-                }]
+                getAllBugs: ['BugService',
+                    function(BugService) {
+                        return BugService.getBugs();
+                    }
+                ]
             }
         })
         .when('/list', {
@@ -62,14 +65,16 @@ app.config(function($routeProvider) {
                 getCurrentUserBugs: ['BugService', 'User',
                     function(BugService, User) {
                         return User.getCurrentUserInfo().then(function(user) {
-                            return BugService.getCurrentUserBugs(user);  
+                            return BugService.getCurrentUserBugs(user);
                         });
 
                     }
                 ],
-                getAllBugs: ['BugService', function(BugService) {
-                    return BugService.getBugs();
-                }]
+                getAllBugs: ['BugService',
+                    function(BugService) {
+                        return BugService.getBugs();
+                    }
+                ]
             }
         })
         .when('/login', {
@@ -97,15 +102,17 @@ app.config(function($routeProvider) {
 
                     }
                 ],
-                getAllBugs: ['BugService', function(BugService) {
-                    return BugService.getBugs();
-                }]
+                getAllBugs: ['BugService',
+                    function(BugService) {
+                        return BugService.getBugs();
+                    }
+                ]
             }
         })
-       .when('/home', {
+        .when('/home', {
             templateUrl: 'views/user.html',
             controller: 'userRedirectCtrl',
-            resolve:{
+            resolve: {
                 getCurrentUser: ['User',
                     function(User) {
                         return User.getCurrentUserInfo();
@@ -172,6 +179,10 @@ app.config(function($routeProvider) {
 });
 
 app.constant('RESTURL', 'http://' + location.hostname + ':' + location.port);
+
+// app.config(['$httpProvider',function($httpProvider) {
+//     $httpProvider.defaults.headers.post['Content-Type'] = 'multipart/mixed';
+// }]);
 
 app.run(function(editableOptions) {
     // Xeditable
