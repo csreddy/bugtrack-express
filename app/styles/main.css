@@ -197,3 +197,9 @@ position: absolute;
 text-align: right;
 width: 2.5ex;
 }
+
+
+.navbar-text {
+ margin-top: -10px; 
+ margin-bottom: 5px; 
+}

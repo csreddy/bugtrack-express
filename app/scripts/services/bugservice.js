@@ -33,35 +33,36 @@ app.service('BugService', function($http, RESTURL) {
         });
     };
 
-    this.createBug = function(uri, payload, user) {
-        console.log('inside createBug()');
+
+    this.updateBug = function(payload) {
+        console.log('inside updateBug()');
+        var payloadForUpdate = {};
+        payloadForUpdate.bug = payload;
         return $http({
             method: 'POST',
             url: '/new',
-            data: payload
+            data: payloadForUpdate
         });
     };
 
-    this.getBug = function(uri) {
+    this.getBug = function(id) {
         return $http({
             method: 'GET',
-            url: RESTURL + '/v1/documents?uri=' + uri
+            url:'/bug/' + id
         });
     };
 
     this.getBugById = function(id) {
         return $http({
             method: 'GET',
-            url: RESTURL + '/v1/documents?uri=' + id + '.json'
+            url: '/bug/' + id
         });
     };
-
-
 
     this.getCount = function() {
         return $http({
             method: 'GET',
-            url: RESTURL + '/v1/search?format=json&view=metadata&collection=bugs'
+            url: '/bug/count'
         });
     };
 

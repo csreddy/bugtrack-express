@@ -1,108 +1,22 @@
-<div class="navbar navbar-inverse navbar-fixed-top" ng-show="true" ng-controller="navbarCtrl">
-
-    <div class="navbar-header">
-        <a class="navbar-brand" href="#">
-            <span class="glyphicon glyphicon-screenshot"></span> Bugtrack</a>
-        <!-- <span><img src="images/shield45.svg" alt=""></span> -->
-    </div>
-    <div class="collapse navbar-collapse">
-        <ul class="nav navbar-nav">
-            <li class="active">
-                <a href="#/dashboard">
-                    <span class="glyphicon glyphicon-dashboard"></span> Dashboard</a>
-            </li>
-            <li>
-                <!-- <a href="#/new">New Bug</a> -->
-                <div>
-                    <a class='btn btn-primary btn-danger' href='#/new' style="margin-top: 8px">
-                        <span class="glyphicon glyphicon-plus-sign"></span> New Bug</a>
-                </div>
-            </li>
-
-            <li>
-                <a href="#/home">
-                    <span class="glyphicon glyphicon-home"></span> Home</a>
-            </li>
-            <li ng-show="hide">
-                <a href="#/register">
-                    <span class="glyphicon glyphicon-edit"></span> Signup</a>
-            </li>
-        </ul>
-
-
-        <form class="navbar-form navbar-left" role="search">
-            <div class="form-group">
-                <div class="col-xs-7">
-                    <input type="text" class="form-control" placeholder="Search">
-                </div>
-            </div>
-            <button type="submit" class="btn btn-default">
-                <span class="glyphicon glyphicon-search"></span> Search</button>
-
-        </form>
-
-
-
-        <ul class="nav navbar-nav navbar-right">
-            <li>
-                <a href="#/config">
-                    <span class="glyphicon glyphicon-cog"></span> Configure</a>
-            </li>
-            <li ng-if="hide">
-                <a href="#/login">
-                    <span class="glyphicon glyphicon-log-in"></span> Login</a>
-            </li>
-            <li ng-if="!hide">
-                <a href="#/logout">
-                    <span class="glyphicon glyphicon-log-out"></span> Logout</a>
-            </li>
-        </ul>
-        <!-- 
- <!-#- DROPDOWN LOGIN STARTS HERE  -#->
-    <ul id="signInDropdown" class="nav navbar-nav navbar-right">
-     <li><a href="/logout">Logout</a></li>
-      <li class="dropdown">
-        <button type="button" id="dropdownMenu1" data-toggle="dropdown" class="btn btn-default navbar-btn dropdown-toggle"><i class="glyphicon glyphicon-user color-blue"></i> Login <span class="caret"></span></button>
-        <ul class="dropdown-menu">
-        <li>
-          <form class="navbar-form form" role="form">
-            <div class="form-group loginform">
-              <div class="input-group">
-                <span class="input-group-addon"><i class="glyphicon glyphicon-envelope color-blue"></i></span>
-                <!-#-EMAIL ADDRESS-#->
-                <input id="emailInput" placeholder="email address" class="form-control" type="email" oninvalid="setCustomValidity('Please enter a valid email address!')" onchange="try{setCustomValidity('')}catch(e){}" required="">
-              </div>
-            </div>           
-            <div class="form-group loginform">
-              <div class="input-group">
-                <span class="input-group-addon"><i class="glyphicon glyphicon-lock color-blue"></i></span>
-                <!-#-PASSWORD-#-> 
-                <input id="passwordInput" placeholder="password" class="form-control" type="password" oninvalid="setCustomValidity('Please enter a password!')" onchange="try{setCustomValidity('')}catch(e){}" required="">
-              </div>
-            </div>
-            <!-#-  BASIC ERROR MESSAGE
-            <div class="form-group">
-              <label class="error-message color-red">*Email &amp; password don't match!</label>
-            </div>
-            -#->
-            <div class="form-group loginform">
-              <!-#-BUTTON-#->
-              <button type="submit" class="btn btn-primary form-control">Login</button></div>
-            <div class="form-group">
-              <!-#-RESET PASSWORD LINK-#->
-              <span class="pull-right"><a href="#">Forgot Password?</a></span></div>
-          </form>
-        </li>
-      </ul>
-      </li>
+<nav class="navbar navbar-static-top navbar-inverse">
+  <nav class="navbar-inner">
+    <a class="brand" href="#">Brand</a>
+    <ul class="nav">
+      <li class="active"><a href="#">Home</a></li>
+      <li><a href="#">Link</a></li>
+      <li><a href="#">Link</a></li>
+      <li><a href="#">More</a></li>
+      <li><a href="#">Options</a></li>
     </ul>
-    <!-#- DROPDOWN LOGIN ENDS HERE  -#->
- -->
-
-    </div>
-    <!--/.nav-collapse -->
-
-
-
-</div>
-<!--/.navbar -->
+  </div>
+</nav>
+<nav class="navbar">
+  <nav class="navbar-inner">
+    <ul class="nav">
+      <li><a href="#">Link</a></li>
+      <li><a href="#">Link</a></li>
+      <li><a href="#">Link</a></li>
+      <li><a href="#">Link</a></li>
+    </ul>
+  </nav>
+</nav>

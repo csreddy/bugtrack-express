@@ -12,17 +12,13 @@
             
 
             <div class="pull-right" ng-show="showSubscribe">
-          <!-- <a ng-click="subscribe()" tooltip="subscribe" tooltip-placement="right"> -->
            <a class="pointer"  tooltip="Subscribe" ng-click="subscribe()">
-          <!--  <span class="glyphicon glyphicon-bookmark" style="background-color: white"></span>  -->
-           <i class="fa fa-eye"></i>
+           <span class="glyphicon glyphicon-star-empty"></span> 
            </a>
             </div>
             <div class="pull-right" ng-show="showUnsubscribe">
-          <!-- <a ng-click="subscribe()" tooltip="subscribe" tooltip-placement="right"> -->
            <a class="pointer" tooltip="Unsubscribe"  ng-click="unsubscribe()">
-           <i class="fa fa-eye-slash"></i>
-           <!-- <span class="glyphicon glyphicon-bookmark" style="background-color: black"></span>  -->
+            <span class="glyphicon glyphicon-star"></span> 
            </a>
             </div>
         </div>
@@ -231,7 +227,7 @@
   </div>
   <div class="panel panel-default" ng-repeat="item in bug.changeHistory">
     <div class="panel-heading">
-         <img alt="user pic" src="images/photo.png" class="img-circle img-responsive" style="height: 40px;width: 40px; float:left;margin-right: 5px;">
+         <img alt="user pic" src="images/avatar.png" class="img-circle img-responsive" style="height: 40px;width: 40px; float:left;margin-right: 5px;">
    <b>{{item.updatedBy.name}}</b><p class="pull-right" style="font-size: 12px;font-weight: 400;">{{item.time}}</p>   
     </div>
       <div class="panel-body">
@@ -261,7 +257,7 @@
       <img alt="user pic" src="images/photo.png" class="img-circle tooltips" style="height: 40px;width: 40px;">
   </a> -->
   <a href="" class="tooltips"> <span>{{updatedBy.name}}</span>
-    <img alt="user pic" src="images/photo.png" class="img-circle tooltips" style="height: 40px;width: 40px;">
+    <img alt="user pic" src="images/avatar.png" class="img-circle tooltips" style="height: 40px;width: 40px;">
   </a>
   </div>
   <div class="col-md-11">

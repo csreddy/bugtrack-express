@@ -20,6 +20,7 @@ var routes = require('./routes/index');
 var user = require('./routes/user');
 var login = require('./routes/login');
 var upload = require('./routes/upload');
+var bugService = require('./routes/bugService');
 
 
 var app = express();
@@ -60,6 +61,7 @@ app.use(flash());
 app.use('/', routes);
 app.use('/user/:username', user);
 app.use('/login', login);
+app.use('/bug', bugService);
 //app.use('/upload', upload);
 
 
@@ -276,17 +278,27 @@ app.get('/logout', function(req, res, next) {
 });
 
 app.post('/new', function(req, res, next) {
+    'use strict';
     console.log('inside NEW.........');
-    console.log('BODY', req.body);
-    console.log('FILES', req.files);
+    //console.log('BODY', req.body);
+    //console.log('FILES', req.files);
     var attachments = req.files;
     var errors = false;
-
+     var uri ;
+     var collections = ['bugs'];
+    if (typeof req.body.bug === 'object') {
+         uri = req.body.bug.id + '.json';     
+         collections.push(req.body.bug.submittedBy.username);
+    } else{
+         uri = JSON.parse(req.body.bug).id + '.json'; 
+          collections.push(JSON.parse(req.body.bug).submittedBy.username);
+    }
+    
     db.write([{
-        uri: JSON.parse(req.body.bug).id + '.json',
+        uri: uri,
         category: 'content',
         contentType: 'application/json',
-        collections: ['bugs', req.user],
+        collections: collections,
         content: req.body.bug
     }]).result(function(response) {
         console.log('wrote:\n    ' +
