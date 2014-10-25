@@ -190,11 +190,30 @@
         </div>
     </div>
 </div>
+<!-- bug details  -->
 <div class="col-md-9">
  <div class="panel panel-default">
     <div class="panel-heading"><b>{{bug.title}}</b></div>
       <div class="panel-body">
+              <div class="col-md-3 pull-right" ng-show="bug.attachments">
+    <div class="box box-success">
+    <div class="box-header">
+        <div class="box-tools pull-left">
+            <div class="label bg-green"><span class="glyphicon glyphicon-file"></span> Attachments</div>
+        </div>
+    </div>
+    <div class="box-body">
+        <ul ng-repeat="file in attachments track by $index" class="list-unstyled">
+            <li><a ng-href="/v1/documents?uri={{file.uri}}" target="_window">{{file.name}}</a>
+            </li>
+        </ul>
+
+    </div>
+    <!-- /.box-body -->
+  </div>
+</div>
       <p ng-bind-html="bug.description"></p>
+
             <div ng-show="bug.note">
                 <p>
                     <h6>Note:</h6>
@@ -224,7 +243,9 @@
                 </div>
             </div>
       </div>
-  </div>
+</div>
+
+
   <div class="panel panel-default" ng-repeat="item in bug.changeHistory">
     <div class="panel-heading">
          <img alt="user pic" src="images/avatar.png" class="img-circle img-responsive" style="height: 40px;width: 40px; float:left;margin-right: 5px;">
@@ -247,27 +268,29 @@
       </div>
   </div>
 
-<br>
+
+
 
 <!-- <div class="col-md-3"></div> -->
-<div class="pull-left">
+<div class="container pull-left">
 <div class="row">
   <div class="col-md-1">
-<!--   <a href="" tooltip="{{updatedBy.name}}"</span>
-      <img alt="user pic" src="images/photo.png" class="img-circle tooltips" style="height: 40px;width: 40px;">
-  </a> -->
   <a href="" class="tooltips"> <span>{{updatedBy.name}}</span>
     <img alt="user pic" src="images/avatar.png" class="img-circle tooltips" style="height: 40px;width: 40px;">
   </a>
   </div>
-  <div class="col-md-11">
-       <textarea rich-text-editor  class="form-control"  ng-model="newcomment" id="newcomment" name="newcomment" placeholder="Add a comment here..." rows="8" cols="100%"></textarea>
-    <br>
-    <button ng-click="updateBug()" id="updatebug" name="updatebug" class="btn btn-primary">Update</button>
-  </div>
+  <!-- second method -->
+<div class="row col-md-8">
+<form name="commentForm">
+     <textarea rich-text-editor  class="form-control"  ng-model="newcomment" id="newcomment" name="newcomment" placeholder="Add a comment here..." rows="8" cols="100%"></textarea>
+       <br>
+     <input type="file" file-upload multiple/>
+     <ul>
+        <li ng-repeat="file in files">{{file.name}}</li>
+    </ul> 
+    <button ng-click="updateBug()" id="updatebug" name="updatebug" class="btn btn-primary btn-danger">Update</button>
+</form>    
 </div>
-
-   <!--  <textarea class="form-control" ng-model="newcomment" id="newcomment" name="newcomment" placeholder="Add a comment" rows="8" cols="100%"></textarea> -->
-
+</div>
 </div>
 </div>

@@ -284,16 +284,16 @@ app.post('/new', function(req, res, next) {
     //console.log('FILES', req.files);
     var attachments = req.files;
     var errors = false;
-     var uri ;
+     var id;
      var collections = ['bugs'];
     if (typeof req.body.bug === 'object') {
-         uri = req.body.bug.id + '.json';     
+         id = req.body.bug.id;
          collections.push(req.body.bug.submittedBy.username);
     } else{
-         uri = JSON.parse(req.body.bug).id + '.json'; 
+          id = JSON.parse(req.body.bug).id;
           collections.push(JSON.parse(req.body.bug).submittedBy.username);
     }
-    
+    var uri = id + '.json';  
     db.write([{
         uri: uri,
         category: 'content',
@@ -317,7 +317,7 @@ app.post('/new', function(req, res, next) {
             break;
         }
         var doc = {
-            uri: '/tmp/' + attachments[file].originalname,
+            uri: '/'+ id +'/' + attachments[file].originalname,
             category: 'content',
             contentType: attachments[file].mimetype
         };

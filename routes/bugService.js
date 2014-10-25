@@ -14,6 +14,10 @@ router.get('/count', function(req, res) {
         q.where(
             q.collection('bugs')
         )
+        .slice(1,99999999)
+        .withOptions({
+          categories: 'metadata'
+        })
     ).result(function(response) {
         res.json({
             count: response.length
