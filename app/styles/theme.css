@@ -17,7 +17,7 @@ body {
   -webkit-font-smoothing: antialiased;
   min-height: 100%;
  /* background: #f9f9f9;*/
-   padding-top: 25px;
+   padding-top: 30px;
 }
 a {
   color: #3c8dbc;
@@ -68,7 +68,7 @@ body > .header {
 }
 @media screen and (min-width: 992px) {
   .left-side {
-    top: 50px;
+    top: 0px;    /* modfified from 50px */
   }
   /*Right side strech mode*/
   .right-side.strech {
@@ -3604,3 +3604,47 @@ font-size: inherit;
   outline: none;
   text-decoration: none;
 }
+
+
+/* advancd search link */
+#advSrch{
+  cursor: pointer;
+}
+
+/* advanced search options */
+.input-xsm {
+  height: 20px;
+  padding: 5px 10px;
+  font-size: 12px;
+  line-height: 1.5;
+  border-radius: 3px;
+}
+select.form-control.input-xsm {
+  height: 20px;
+  line-height: 30px;
+  width:140px;
+}
+
+label.xsm-label{
+  font-size: smaller;
+}
+
+
+#adv-search-form > div.col-md-1, 
+#adv-search-form > div.col-md-2,
+#adv-search-form > div.col-md-3{
+  padding-right: 5px;
+  border-right: 1px solid #E4DFDF;
+}
+
+label.sm{
+  margin-bottom: 0px;
+}
+
+hr {
+margin-top: 10px;
+margin-bottom: 2px;
+border: 0;
+border-top: 1px solid #eee;
+}
+

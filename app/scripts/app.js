@@ -32,6 +32,7 @@ app.config(function($routeProvider) {
         .when('/', {
             templateUrl: 'views/list.html',
             controller: 'bugListCtrl',
+            title: 'Home',
             resolve: {
                 getCurrentUser: ['User',
                     function(User) {
@@ -50,10 +51,16 @@ app.config(function($routeProvider) {
                     function(BugService) {
                         return BugService.getBugs();
                     }
-                ]
+                ],
+                loadConfig: ['bugConfigFactory',
+                    function(bugConfigFactory) {
+                        return bugConfigFactory.getConfig();
+                    }
+                    ]
             }
         })
         .when('/list', {
+             title: 'Home',
             templateUrl: 'views/list.html',
             controller: 'bugListCtrl',
             resolve: {
@@ -74,18 +81,26 @@ app.config(function($routeProvider) {
                     function(BugService) {
                         return BugService.getBugs();
                     }
-                ]
+                ],
+                loadConfig: ['bugConfigFactory',
+                    function(bugConfigFactory) {
+                        return bugConfigFactory.getConfig();
+                    }
+                    ]
             }
         })
         .when('/login', {
+             title: 'Login',
             templateUrl: 'views/login.html',
             controller: 'loginCtrl'
         })
         .when('/logout', {
+             title: 'Logout',
             templateUrl: 'views/login.html',
             controller: 'logoutCtrl'
         })
         .when('/user/:username', {
+            title: 'Home',
             templateUrl: 'views/user.html',
             controller: 'bugListCtrl',
             resolve: {
@@ -110,6 +125,7 @@ app.config(function($routeProvider) {
             }
         })
         .when('/home', {
+             title: 'Home',
             templateUrl: 'views/user.html',
             controller: 'userRedirectCtrl',
             resolve: {
@@ -121,10 +137,12 @@ app.config(function($routeProvider) {
             }
         })
         .when('/register', {
+             title: 'Register',
             templateUrl: 'views/register.html',
             controller: 'registerCtrl'
         })
         .when('/new', {
+             title: 'New',
             templateUrl: 'views/new.html',
             controller: 'newBugCtrl',
             resolve: {
@@ -147,10 +165,12 @@ app.config(function($routeProvider) {
             }
         })
         .when('/config', {
+             title: 'Configure',
             templateUrl: 'views/config.html',
             controller: 'bugConfigCtrl'
         })
         .when('/bug/:id', {
+             title: 'Bug Details',
             templateUrl: 'views/bugdetails.html',
             controller: 'bugViewCtrl',
             resolve: {
@@ -167,6 +187,7 @@ app.config(function($routeProvider) {
             }
         })
         .when('/dashboard', {
+             title: 'Dashboard',
             templateUrl: 'views/dashboard.html',
             controller: 'dashboardCtrl'
         })
@@ -180,9 +201,14 @@ app.config(function($routeProvider) {
 
 app.constant('RESTURL', 'http://' + location.hostname + ':' + location.port);
 
-// app.config(['$httpProvider',function($httpProvider) {
-//     $httpProvider.defaults.headers.post['Content-Type'] = 'multipart/mixed';
-// }]);
+/*app.run(['$location', '$rootScope', 'editableOptions', function($location, $rootScope, editableOptions) {
+    $rootScope.$on('$routeChangeSuccess', function (event, current, previous) {
+        $rootScope.title = current.$route.title;
+    });
+
+    // Xeditable
+    editableOptions.theme = 'bs3'; // bootstrap3 theme. Can be also 'bs2', 'default'
+}]);*/
 
 app.run(function(editableOptions) {
     // Xeditable

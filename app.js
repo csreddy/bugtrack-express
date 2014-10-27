@@ -21,6 +21,7 @@ var user = require('./routes/user');
 var login = require('./routes/login');
 var upload = require('./routes/upload');
 var bugService = require('./routes/bugService');
+var search = require('./routes/search');
 
 
 var app = express();
@@ -62,6 +63,7 @@ app.use('/', routes);
 app.use('/user/:username', user);
 app.use('/login', login);
 app.use('/bug', bugService);
+app.use('/search', search);
 //app.use('/upload', upload);
 
 
@@ -207,7 +209,7 @@ app.use('/v1/', function(req, res, next) {
         })).pipe(res);
     }*/
 
-});
+}); 
 
 app.get('/userinfo', function(req, res) {
     console.log('===================== req.user', req.user);
@@ -334,9 +336,6 @@ app.post('/new', function(req, res, next) {
         });
         fs.createReadStream(attachments[file].path).pipe(writableStream);
     }
-
-
-
 });
 
 

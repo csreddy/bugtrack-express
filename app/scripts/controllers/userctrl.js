@@ -84,5 +84,10 @@ var app = angular.module('user.controllers', []);
 
 
 app.controller('userRedirectCtrl', ['$location', 'getCurrentUser', function($location, getCurrentUser){
-		$location.path('/user/'+ getCurrentUser.username);
+		try{
+            $location.path('/user/'+ getCurrentUser.username);
+        }catch(e){
+            $location.path('/login');
+        }  
+        
 }]);

@@ -1,9 +1,19 @@
-<accordion close-others="false">
-    <accordion-group heading="Bugs ({{totalItems}})" ng-init="open=true;disabled=true" is-open="open" is-disabled="disabled">
-        <table class="table table-striped pull-left">
+<div class="container-fluid">
+<!-- <div class="col-md-3" id="facetBox">
+<div ng-include src="'views/partials/facets.partial.html'"></div>
+</div> -->
+
+    
+    <accordion close-others="false">
+    <accordion-group ng-init="open=true;disabled=true" is-open="open" is-disabled="disabled">
+      <accordion-heading>
+      <b>{{totalItems}} Bugs</b>
+      </accordion-heading>
+    <div class="table-responsive">
+        <table class="table table-striped table-condensed pull-left">
 
       <!--
-			search box on every column
+            search box on every column
 
              <thead>
                 <tr>
@@ -48,7 +58,7 @@
                     </th>
                     <th><a href="" ng-click="reverse=!reverse; order('priority.level', reverse)">Priority</a>
                     </th>
-                    <th><a href="" ng-click="reverse=!reverse; order('submittedBy.name', reverse)">Submitted by</a>
+                    <th><a href="" ng-click="reverse=!reverse; order('submittedBy.username', reverse)">Submitted by</a>
                     </th>
                     <th><a href="" ng-click="reverse=!reverse; order('category', reverse)">Category</a>
                     </th>
@@ -60,7 +70,7 @@
                     </th>
                     <th><a href="" ng-click="reverse=!reverse; order('status', reverse)">Status</a>
                     </th>
-                    <th><a href="" ng-click="reverse=!reverse; order('assignTo.name', reverse)">Assigned to</a>
+                    <th><a href="" ng-click="reverse=!reverse; order('assignTo.username', reverse)">Assigned to</a>
                     </th>
                 </tr>
             </thead>
@@ -70,19 +80,25 @@
                 <td style="width:120px">{{bug.severity}}</td>
                 <td><a class="tooltips" href>{{bug.priority.level}}<span>{{bug.priority.title}}</span></a>
                 </td>
-                <td style="width:200px">{{bug.submittedBy.name}}</td>
+                <td style="width:200px">{{bug.submittedBy.username}}</td>
                 <td>{{bug.category}}</td>
                 <td style="width:70px">{{bug.version}}</td>
                 <td style="width:70px">{{bug.tofixin}}</td>
                 <td style="width:500px">{{bug.title}}</td>
                 <td>{{bug.status}}</td>
-                <td style="width:200px">{{bug.assignTo.name}}</td>
+                <td style="width:200px">{{bug.assignTo.username}}</td>
             </tr>
         </table>
+        </div>
 
     </accordion-group>
 </accordion>
+</div>
 
-
-
+<div class="container-fluid pull-right">
 <pagination total-items="totalItems" items-per-page="itemsPerPage" ng-model="currentPage" ng-change="setPage(currentPage)"></pagination>
+</div>
+
+
+
+

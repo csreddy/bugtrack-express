@@ -21,7 +21,7 @@ app.controller('navbarCtrl', ['$rootScope', '$location', 'User',
                         $rootScope.hide = true;
                     }
 
-                    console.log('====', $rootScope.navbarUser);
+                 //   console.log('====', $rootScope.navbarUser);
                 }, function() {
                     $rootScope.hide = true;
                     console.log($rootScope.hide);

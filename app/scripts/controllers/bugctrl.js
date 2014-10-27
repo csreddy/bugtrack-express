@@ -79,14 +79,14 @@ app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'b
             if (relatedTo) {
                 var tokenizedTaskIds = relatedTo.split(',');
                 var taskIds = [];
-            for (var i = 0; i < tokenizedTaskIds.length; i++) {
-                if (!isNaN(parseInt(tokenizedTaskIds[i].replace(/ /g, '')))) {
-                    taskIds[i] = parseInt(tokenizedTaskIds[i].replace(/ /g, ''));    
+                for (var i = 0; i < tokenizedTaskIds.length; i++) {
+                    if (!isNaN(parseInt(tokenizedTaskIds[i].replace(/ /g, '')))) {
+                        taskIds[i] = parseInt(tokenizedTaskIds[i].replace(/ /g, ''));
+                    }
                 }
-            }
-                 $scope.relatedTo = taskIds;
-                 console.log(taskIds);
-            } else{
+                $scope.relatedTo = taskIds;
+                console.log(taskIds);
+            } else {
                 $scope.relatedTo = [];
             }
         };
@@ -150,7 +150,7 @@ app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'b
                 $scope.files.push(args.file);
             });
         });
-             $scope.createNewBug = function() {
+        $scope.createNewBug = function() {
             if ($scope.bugForm.$valid) {
                 // Submit as normal
                 submitBug();
@@ -160,7 +160,7 @@ app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'b
         };
 
         //-------------------------------------------------------------------
-       function submitBug() {
+        function submitBug() {
             var bug = {};
             bug.relatedTo = [];
             bug.tickets = [];
@@ -199,7 +199,7 @@ app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'b
             bug.subscribers = [$scope.submittedBy, $scope.assignTo];
             bug.attachments = [];
             for (var i = 0; i < $scope.files.length; i++) {
-               bug.attachments[i] = '/'+ bug.id +'/'+ $scope.files[i].name;
+                bug.attachments[i] = '/' + bug.id + '/' + $scope.files[i].name;
             }
 
 
@@ -222,7 +222,7 @@ app.controller('bugListCtrl', ['$scope', '$location', 'RESTURL', 'BugService', '
         $scope.bugs = [];
         $scope.currentUser = getCurrentUser;
         $scope.currentPage = 1;
-        $scope.itemsPerPage = 10;
+        $scope.itemsPerPage = 25;
         // get all bugs on load
         $scope.bugList = getAllBugs.data.results;
 
@@ -239,10 +239,9 @@ app.controller('bugListCtrl', ['$scope', '$location', 'RESTURL', 'BugService', '
             function getBugDetails(begin, end) {
                 $scope.bugs = [];
                 angular.forEach($scope.bugList.slice(begin, end), function(bug) {
-                    var id = parseInt(bug.uri.replace('.json', '')); 
-                    console.log(id);
+                    var id = parseInt(bug.uri.replace('.json', ''));
                     BugService.getBug(id).then(function(response) {
-                       console.log(response.data);
+                        // console.log(response.data);
                         $scope.bugs.push(response.data.content);
                         // sort 
                         $scope.bugs.sort(function(a, b) {
@@ -318,10 +317,11 @@ app.controller('bugViewCtrl', ['$scope', '$location', 'RESTURL', 'BugService', '
                 console.log('updateBug', updateBug);
 
                 // cloned bug attachedments will have its parent attachment uri, hence need to do this
-                $scope.attachments = [{}];
-                  for (var i = 0; i < $scope.bug.attachments.length; i++) {
-                     $scope.attachments[i].uri = $scope.bug.attachments[i];
-                     $scope.attachments[i].name = $scope.bug.attachments[i].replace(/\/\d*\//, '');
+                $scope.attachments = [];
+                for (var i = 0; i < $scope.bug.attachments.length; i++) {
+                    $scope.attachments[i] = {};
+                    $scope.attachments[i].uri = $scope.bug.attachments[i];
+                    $scope.attachments[i].name = $scope.bug.attachments[i].replace(/\/\d*\//, '');
                 }
 
                 // if the current user has already subscribed then show Unsubscribe else show Subscribe
@@ -460,7 +460,7 @@ app.controller('bugViewCtrl', ['$scope', '$location', 'RESTURL', 'BugService', '
 
             });
 
-//an array of files selected
+        //an array of files selected
         $scope.files = [];
 
         //listen for the file selected event
@@ -507,10 +507,10 @@ app.controller('bugViewCtrl', ['$scope', '$location', 'RESTURL', 'BugService', '
                 // clear text area after submit
                 $scope.newcomment = '';
             }
-             for (var j = 0; j < $scope.files.length; j++) {
-                var fileuri = '/'+ updateBug.id +'/'+ $scope.files[j].name;
-               if (updateBug.attachments.indexOf(fileuri) > -1) {
-                   var modalOptions = {
+            for (var j = 0; j < $scope.files.length; j++) {
+                var fileuri = '/' + updateBug.id + '/' + $scope.files[j].name;
+                if (updateBug.attachments.indexOf(fileuri) > -1) {
+                    var modalOptions = {
                         showCloseButton: true,
                         showActionButton: false,
                         closeButtonText: 'Ok',
@@ -518,21 +518,19 @@ app.controller('bugViewCtrl', ['$scope', '$location', 'RESTURL', 'BugService', '
                         bodyText: 'File with name <b>' + fileuri + '</b> is already attached to this bug'
                     };
                     modalService.showModal({}, modalOptions);
-
-                  //  updateBug.attachments.push(fileuri+'(1)');
-               } else{
+                } else {
                     updateBug.attachments.push(fileuri);
-               }
-               
-            }        
-                
-                BugService.updateBug(updateBug, $scope.files).success(function() {
-                        // reset watchers
-                         $scope.changes = {};
-                         Flash.addAlert('success', '<a href=\'/#/bug/' + $scope.bug.id + '\'>' + 'Bug-' + $scope.bug.id + '</a>' + ' was successfully updated');
-                }).error(function(response) {
-                        Flash.addAlert('danger', response.data.error.message);
-                });
+                }
+            }
+
+            BugService.updateBug(updateBug, $scope.files).success(function() {
+                // reset watchers
+                $scope.changes = {};
+                $scope.files = [];
+                Flash.addAlert('success', '<a href=\'/#/bug/' + $scope.bug.id + '\'>' + 'Bug-' + $scope.bug.id + '</a>' + ' was successfully updated');
+            }).error(function(response) {
+                Flash.addAlert('danger', response.data.error.message);
+            });
         };
 
         // clone bug 
@@ -569,7 +567,7 @@ app.controller('bugViewCtrl', ['$scope', '$location', 'RESTURL', 'BugService', '
                         $scope.bug.clones.push(newBugId);
                     } else {
                         $scope.bug.clones = [newBugId];
-                    } 
+                    }
                     var promises = [BugService.cloneBug(clone.bug).then(),
                         BugService.cloneBug($scope.bug).then()
                     ];

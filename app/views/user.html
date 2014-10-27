@@ -1,9 +1,13 @@
-<h3>Hello! {{currentUser.name}}</h3>
+<!-- <h3>Hello! {{currentUser.name}}</h3> -->
 
+  
 <div ng-include src="'views/partials/search.partial.html'"></div>
-
-
-  <div class="row">
-<div ng-include src="'views/partials/buglist.partial.html'"></div>
-  </div>
+<div class="col-md-3">
+<div ng-include src="'views/partials/facets.alt.html'"></div>	
 </div>
+
+
+
+<div ng-include src="'views/partials/buglist.partial.html'"></div>	
+
+

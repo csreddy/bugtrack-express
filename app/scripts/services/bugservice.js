@@ -113,5 +113,12 @@ app.service('BugService', function($http, RESTURL) {
         });
     };
 
+    this.getFacets = function() {
+       return $http({
+            method: 'GET',
+            url: '/bug/facets'
+        });
+    };
+
 
 });
