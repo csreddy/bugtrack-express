@@ -60,43 +60,43 @@
             <div class="form-group">
                 <label class="sm">Assigned to</label>
                 <br>
-                <select id="assignedTo" ng-model="assignedTo" ng-options="user.name for user in config.users"  name="assignedTo" type="text" class="form-control input-xsm">
-                      <option value=""></option>
+                <select id="assignedTo" ng-model="assignedTo"  name="assignedTo" type="text" class="form-control input-xsm">
+                    <option ng-repeat="user in config.users" value="{{user.username}}">{{user.name}}</option>
                 </select>
             </div>
             <div class="form-group">
                 <label class="sm">Category</label>
                 <br>
-                <select id="category" ng-model="category" ng-options="category for category in config.category" name="category" type="text" class="form-control input-xsm">
-                    <option value=""></option>
+                <select id="category" ng-model="category" name="category" type="text" class="form-control input-xsm">
+                    <option ng-repeat="category in config.category" value="{{categroy}}">{{category}}</option>
                 </select>
             </div>
             <div class="form-group">
                 <label class="sm">Fixed in</label>
                 <br>
-                <select id="fixedIn" ng-model="fixedin" ng-options="version for  version in config.version"  name="fixedin" type="text" class="form-control input-xsm">
-                    <option value=""></option>
-                </select>
+                <select id="fixedIn" ng-model="fixedin"  name="fixedin" type="text" class="form-control input-xsm">
+                    <option ng-repeat="version in config.version" value="{{version}}">{{version}}</option>
+                </select> 
             </div>
             <div class="form-group">
                 <label class="sm">Submitted By</label>
                 <br>
-                <select id="submittedBy" ng-model="submittedBy" ng-options="user.name for user in config.users"name="submittedBy" type="text" class="form-control input-xsm">
-                    <option value=""></option>
-                </select>
+                <select id="submittedBy" ng-model="submittedBy" name="submittedBy" type="text" class="form-control input-xsm">
+                    <option ng-repeat="user in config.users" value="{{user.username}}">{{user.name}}</option>
+                </select> 
             </div>
             <div class="form-group">
                 <label class="sm">Version</label>
                 <br>
-                <select id="version" ng-model="version" ng-options="version for version in config.version" name="version" type="text" class="form-control input-xsm">
-                    <option value=""></option>
+                <select id="version" ng-model="version"  name="version" type="text" class="form-control input-xsm">
+                    <option ng-repeat="version in config.version" value="{{version}}">{{version}}</option>
                 </select>
             </div>
             <div class="form-group">
                 <label class="sm">To Fix in</label>
                 <br>
-                <select id="tofixin" ng-model="tofixin" ng-options="version for version in config.version" name="tofixin" type="text" class="form-control input-xsm">
-                      <option value=""></option>
+                <select id="tofixin" ng-model="tofixin"  name="tofixin" type="text" class="form-control input-xsm">
+                      <option ng-repeat="version in config.version" value="{{version}}">{{version}}</option>
                 </select>
             </div>
         </div>
