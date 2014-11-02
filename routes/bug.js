@@ -31,8 +31,6 @@ router.get('/:id(\\d+)', function(req, res) {
     res.locals.errors = req.flash();
     console.log(res.locals.errors);
     db.read(req.params.id + '.json').result(function(response) {
-       // console.log(response[0]);
-       console.log("SUCCESS");
        console.log(response);
        if (response.length === 1) {
        		res.json(response[0]);

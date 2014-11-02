@@ -7,16 +7,16 @@
         </div>
     </div>
     <div class="box-body">
-
-        <ul ng-repeat="(index, facetType) in facets.facets" class="list-unstyled">
-            <li><b>{{index}} ({{facetType.facetValues.length}})</b>
+        <ul ng-repeat="(facetKind, facetType) in facetList" class="list-unstyled">
+            <li><b>{{facetKind | uppercase }} ({{facetType.facetValues.length}})</b>
             </li>
             <ul ng-repeat="(key, facet) in facetType.facetValues" class="list-unstyled">
-                <li style="margin-left: 10px">{{facet.name}}
+                <a href="" ng-click="filter(facetKind, facet)">
+                    <li style="margin-left: 10px">{{facet.name}}
                     <span class="badge bg-olive pull-right">{{facet.count}}</span>
-                </li>
+                </li>    
+                </a>
             </ul>
-            </li>
         </ul>
     </div>
     <!-- /.box-body -->

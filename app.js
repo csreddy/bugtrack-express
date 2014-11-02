@@ -20,7 +20,7 @@ var routes = require('./routes/index');
 var user = require('./routes/user');
 var login = require('./routes/login');
 var upload = require('./routes/upload');
-var bugService = require('./routes/bugService');
+var bug = require('./routes/bug');
 var search = require('./routes/search');
 
 
@@ -52,7 +52,7 @@ app.use(session({
     }
 }));
 
-console.log('starting express.......');
+console.log('starting BugTrack.......');
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -62,7 +62,7 @@ app.use(flash());
 app.use('/', routes);
 app.use('/user/:username', user);
 app.use('/login', login);
-app.use('/bug', bugService);
+app.use('/bug', bug);
 app.use('/search', search);
 //app.use('/upload', upload);
 

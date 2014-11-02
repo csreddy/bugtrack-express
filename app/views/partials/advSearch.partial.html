@@ -7,13 +7,13 @@
                 <ul class="list-inline">
                     &nbsp;
                     <li ng-repeat="kind in config.kind">
-                        <div class="checkbox">
+                        <div class="checkbox">    <!-- http://jsfiddle.net/DotDotDot/7AU6A/1/ -->
                             <label class="xsm-label">
-                                <input type="checkbox" name="kind" value="{{kind}}">&nbsp;{{kind}}
+                                <input type="checkbox" name="kind"  ng-model="form.kind[kind]" value="{{kind}}">&nbsp;{{kind}}
                             </label>
                         </div>
                     </li>
-                </ul>
+                </ul>    
             </div>
         </div>
         <div class="col-md-2">
@@ -25,14 +25,14 @@
                     <li ng-repeat="status in config.status">
                         <div class="checkbox">
                             <label class="xsm-label">
-                                <input type="checkbox" name="status" value="{{status}}">&nbsp;{{status}}&nbsp;&nbsp;
+                                <input type="checkbox" name="status" ng-model="form.status[status]" value="{{status}}">&nbsp;{{status}}&nbsp;&nbsp;
                             </label>
                         </div>
                     </li>
                     <li>
                         <div class="checkbox">
                             <label class="xsm-label">
-                                <input type="checkbox" value="n/v/f/e">&nbsp;n/v/f/e
+                                <input type="checkbox" name="nvfe" ng-model="form.status.nvfe" value="nvfe">&nbsp;n/v/f/e
                             </label>
                         </div>
                     </li>
@@ -48,7 +48,7 @@
                     <li ng-repeat="severity in config.severity">
                         <div class="checkbox">
                             <label class="xsm-label">
-                                <input type="checkbox" name="severity" value="{{severity}}">&nbsp;{{severity}}
+                                <input type="checkbox" name="severity" ng-model="form.severity[severity]" value="{{severity}}">&nbsp;{{severity}}
                             </label>
                         </div>
 
@@ -60,45 +60,57 @@
             <div class="form-group">
                 <label class="sm">Assigned to</label>
                 <br>
-                <select id="assignedTo" ng-model="assignedTo"  name="assignedTo" type="text" class="form-control input-xsm">
+                <select id="assignTo" ng-model="form.assignTo" name="assignTo" type="text" class="form-control input-xsm" ng-change="setAssignedTo(form.assignTo)">
+                <option value="" selected></option>
                     <option ng-repeat="user in config.users" value="{{user.username}}">{{user.name}}</option>
                 </select>
             </div>
             <div class="form-group">
                 <label class="sm">Category</label>
                 <br>
-                <select id="category" ng-model="category" name="category" type="text" class="form-control input-xsm">
-                    <option ng-repeat="category in config.category" value="{{categroy}}">{{category}}</option>
+                <select id="category" ng-model="form.category" name="category" type="text" class="form-control input-xsm" ng-change="setCategory(form.category)">
+                    <option value="" selected></option>
+                    <option ng-repeat="category in config.category" value="{{category}}">{{category}}</option>
                 </select>
             </div>
             <div class="form-group">
                 <label class="sm">Fixed in</label>
                 <br>
-                <select id="fixedIn" ng-model="fixedin"  name="fixedin" type="text" class="form-control input-xsm">
+                <select id="fixedin" ng-model="form.fixedin"  name="fixedin" type="text" class="form-control input-xsm" ng-change="setFixedIn(form.fixedin)">
+                <option value="" selected></option>
                     <option ng-repeat="version in config.version" value="{{version}}">{{version}}</option>
                 </select> 
             </div>
             <div class="form-group">
                 <label class="sm">Submitted By</label>
                 <br>
-                <select id="submittedBy" ng-model="submittedBy" name="submittedBy" type="text" class="form-control input-xsm">
+                <select id="submittedBy" ng-model="form.submittedBy" name="submittedBy" type="text" class="form-control input-xsm" ng-change="setSubmittedBy(form.submittedBy)">
+                <option value="" selected></option>
                     <option ng-repeat="user in config.users" value="{{user.username}}">{{user.name}}</option>
                 </select> 
             </div>
             <div class="form-group">
                 <label class="sm">Version</label>
                 <br>
-                <select id="version" ng-model="version"  name="version" type="text" class="form-control input-xsm">
+                <select id="version" ng-model="form.version"  name="version" type="text" class="form-control input-xsm" ng-change="setVersion(form.version)">
+                <option value="" selected></option>
                     <option ng-repeat="version in config.version" value="{{version}}">{{version}}</option>
                 </select>
             </div>
             <div class="form-group">
                 <label class="sm">To Fix in</label>
                 <br>
-                <select id="tofixin" ng-model="tofixin"  name="tofixin" type="text" class="form-control input-xsm">
+                <select id="tofixin" ng-model="form.tofixin"  name="tofixin" type="text" class="form-control input-xsm" ng-change="setToFixin(form.tofixin)">
+                <option value="" selected></option>
                       <option ng-repeat="version in config.version" value="{{version}}">{{version}}</option>
                 </select>
             </div>
         </div>
+   <div class="col-md-1">
+            <div class="form-group">
+			<button class="btn btn-sm btn-danger" ng-click="clear()">Clear</button>
+            </div>
+        </div>
+
     </div>
 </div>

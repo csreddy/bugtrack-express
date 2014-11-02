@@ -17,7 +17,7 @@ xquery version "1.0-ml";
   import module namespace admin = "http://marklogic.com/xdmp/admin" 
       at "/MarkLogic/admin.xqy";
 
-  let $paths := ("/submittedBy/name", "/assignTo/name", "/priority/level", "/priority/title" )
+  let $paths := ("/submittedBy/username", "/submittedBy/name", "/assignTo/username", "/assignTo/name", "/priority/level", "/priority/title" )
   for $path in $paths
   return
   let $config := admin:get-configuration()

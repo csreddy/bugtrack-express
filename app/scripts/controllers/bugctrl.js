@@ -41,6 +41,7 @@ app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'b
 
         $scope.submitted = false;
 
+
         $scope.setQuery = function(samplequery) {
             $scope.samplequery = samplequery;
         };
@@ -203,7 +204,7 @@ app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'b
             }
 
 
-            BugService.createNewBug(bug, $scope.files).success(function(response) {
+            BugService.createNewBug(bug, $scope.files).success(function() {
                 $location.path('/');
                 Flash.addAlert('success', '<a href=\'/#/bug/' + bug.id + '\'>' + 'Bug-' + bug.id + '</a>' + ' was successfully created');
             }).error(function(response) {
@@ -215,7 +216,7 @@ app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'b
 
 
 
-app.controller('bugListCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'bugFactory', 'Flash', 'getCurrentUserBugs', 'getAllBugs', '$filter', 'getCurrentUser',
+app.controller('bugListCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'bugFactory', 'Flash', 'getCurrentUserBugs', 'getAllBugs', '$filter', 'getCurrentUser', 
 
     function($scope, $location, RESTURL, BugService, bugFactory, Flash, getCurrentUserBugs, getAllBugs, $filter, getCurrentUser) {
 
@@ -223,67 +224,62 @@ app.controller('bugListCtrl', ['$scope', '$location', 'RESTURL', 'BugService', '
         $scope.currentUser = getCurrentUser;
         $scope.currentPage = 1;
         $scope.itemsPerPage = 25;
-        // get all bugs on load
-        $scope.bugList = getAllBugs.data.results;
-
-        function getBugList() {
-            // $scope.bugList = getCurrentUserBugs.data.results;            
-            $scope.totalItems = $scope.bugList.length;
-            $scope.bugList.sort(function(a, b) {
-                //  console.log(a.uri);
-                a = parseInt(a.uri.replace('.json', ''));
-                b = parseInt(b.uri.replace('.json', ''));
-                return (a - b);
-            });
-
-            function getBugDetails(begin, end) {
-                $scope.bugs = [];
-                angular.forEach($scope.bugList.slice(begin, end), function(bug) {
-                    var id = parseInt(bug.uri.replace('.json', ''));
-                    BugService.getBug(id).then(function(response) {
-                        // console.log(response.data);
-                        $scope.bugs.push(response.data.content);
-                        // sort 
-                        $scope.bugs.sort(function(a, b) {
-                            return (a.id - b.id);
-                        });
-
-                    }, function() {
-                        Flash.addAlert('danger', 'Oops! could not retrieve bugs');
-                    });
-                });
-            }
-
-            getBugDetails(0, $scope.itemsPerPage);
 
 
-            $scope.goToBug = function(uri) {
-                $location.path(uri);
-            };
+        // get search metrics data from first item in result set
+        $scope.searchMetrics = getAllBugs.data[0].metrics;
+        $scope.totalItems = getAllBugs.data[0].total;
 
-            $scope.setPage = function(pageNo) {
-                $scope.currentPage = pageNo;
-                console.log('Page changed to: ' + $scope.currentPage);
-                var begin = (($scope.currentPage - 1) * $scope.itemsPerPage);
-                var end = begin + $scope.itemsPerPage;
-                getBugDetails(begin, end);
-            };
+        // get bug contents
+        getAllBugs.data.splice(0, 1);
+        $scope.bugList = getAllBugs.data;
 
-            var orderBy = $filter('orderBy');
-            $scope.order = function(predicate, reverse) {
-                $scope.bugs = orderBy($scope.bugs, predicate, reverse);
-            };
-
-        }
 
         getBugList();
 
 
         $scope.$on('search', function(event, data) {
             $scope.bugList = data.searchResults;
+            $scope.facets = data.searchCriteria.facets;
             console.log($scope.bugList);
+            $scope.totalItems = $scope.bugList[0].total;
             getBugList();
         });
+
+
+        $scope.goToBug = function(uri) {
+            $location.path(uri);
+        };
+
+        $scope.setPage = function(pageNo) {
+            $scope.currentPage = pageNo;
+            console.log('Page changed to: ' + $scope.currentPage);
+            var begin = (($scope.currentPage - 1) * $scope.itemsPerPage);
+            var end = begin + $scope.itemsPerPage;
+            getBugDetails(begin, end);
+        };
+
+        var orderBy = $filter('orderBy');
+        $scope.order = function(predicate, reverse) {
+            $scope.bugs = orderBy($scope.bugs, predicate, reverse);
+        };
+
+
+        // private functions
+
+        function getBugDetails(begin, end) {
+            $scope.bugs = [];
+            var paginatedBugList = $scope.bugList.slice(begin, end);
+
+            angular.forEach(paginatedBugList, function(bug) {
+                $scope.bugs.push(bug.content);
+            });
+        }
+        // for pagination, get bug details only for given page
+        function getBugList() {
+            getBugDetails(0, $scope.itemsPerPage);
+        }
+
 
 
     }

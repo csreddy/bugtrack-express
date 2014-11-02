@@ -1,9 +1,14 @@
-<div class="container-fluid">
+<div class="container-fluid" style="padding-right: 0px">
 <!-- <div class="col-md-3" id="facetBox">
 <div ng-include src="'views/partials/facets.partial.html'"></div>
 </div> -->
+<ul class="list-inline" ng-controller="facetCtrl">
+    <span ng-repeat="(facetKind, facet) in form.facets" class="badge bg-yellow">{{facetKind}}: {{facet.name}}
+    &nbsp;<a href="" ng-click="unfilter(facetKind)"><span class="glyphicon glyphicon-remove"></span></a>
+    </span>
+</ul>
 
-    
+<hr>
     <accordion close-others="false">
     <accordion-group ng-init="open=true;disabled=true" is-open="open" is-disabled="disabled">
       <accordion-heading>

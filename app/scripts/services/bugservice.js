@@ -4,14 +4,11 @@ var app = angular.module('bug.services', []);
 
 app.service('BugService', function($http, RESTURL) {
     // AngularJS will instantiate a singleton by calling 'new' on this function
-    this.getBugs = function() {
-        // if (q === undefined || q === null) {
-        //     q = '';
-        // }
-        // console.log('q = ' + q);
+    this.getBugs = function(criteria) {
         return $http({
-            method: 'GET',
-            url: RESTURL + '/v1/search?format=json&collection=bugs&pageLength=200'
+            method: 'POST',
+            url: '/search',
+            data: criteria
         });
     };
 
@@ -20,7 +17,7 @@ app.service('BugService', function($http, RESTURL) {
         return $http({
             method: 'GET',
             url: RESTURL + '/v1/search?format=json&collection=' + user.username + '&pageLength=50'
-            //  url: RESTURL + '/v1/search?format=json&collection=bugs&pageLength=50'
+                //  url: RESTURL + '/v1/search?format=json&collection=bugs&pageLength=50'
         });
     };
 
@@ -34,50 +31,50 @@ app.service('BugService', function($http, RESTURL) {
     };
 
     this.createNewBug = function(bug, files) {
-      return  $http({
-                url: '/new',
-                method: 'POST',
-                headers: {
-                    'Content-Type': undefined
-                },
-                transformRequest: function(data) {
-                    var form = new FormData();
-                    form.append('bug', angular.toJson(bug));
-                    for (var i = 0; i < data.files.length; i++) {
-                        console.log('FORM',data.files[i]);
-                        form.append('file' + i, data.files[i]);
-                    }
-                    return form;
-                },
-                data: {
-                    bug: bug,
-                    files: files
+        return $http({
+            url: '/new',
+            method: 'POST',
+            headers: {
+                'Content-Type': undefined
+            },
+            transformRequest: function(data) {
+                var form = new FormData();
+                form.append('bug', angular.toJson(bug));
+                for (var i = 0; i < data.files.length; i++) {
+                    console.log('FORM', data.files[i]);
+                    form.append('file' + i, data.files[i]);
                 }
-            });
+                return form;
+            },
+            data: {
+                bug: bug,
+                files: files
+            }
+        });
     };
 
 
-   this.updateBug = function(bug, files) {
-      return  $http({
-                url: '/new',
-                method: 'POST',
-                headers: {
-                    'Content-Type': undefined
-                },
-                transformRequest: function(data) {
-                    var form = new FormData();
-                    form.append('bug', angular.toJson(bug));
-                    for (var i = 0; i < data.files.length; i++) {
-                        console.log('FORM',data.files[i]);
-                        form.append('file' + i, data.files[i]);
-                    }
-                    return form;
-                },
-                data: {
-                    bug: bug,
-                    files: files
+    this.updateBug = function(bug, files) {
+        return $http({
+            url: '/new',
+            method: 'POST',
+            headers: {
+                'Content-Type': undefined
+            },
+            transformRequest: function(data) {
+                var form = new FormData();
+                form.append('bug', angular.toJson(bug));
+                for (var i = 0; i < data.files.length; i++) {
+                    console.log('FORM', data.files[i]);
+                    form.append('file' + i, data.files[i]);
                 }
-            });
+                return form;
+            },
+            data: {
+                bug: bug,
+                files: files
+            }
+        });
     };
 
     this.cloneBug = function(payload) {
@@ -95,7 +92,7 @@ app.service('BugService', function($http, RESTURL) {
     this.getBug = function(id) {
         return $http({
             method: 'GET',
-            url:'/bug/' + id
+            url: '/bug/' + id
         });
     };
 
@@ -114,7 +111,7 @@ app.service('BugService', function($http, RESTURL) {
     };
 
     this.getFacets = function() {
-       return $http({
+        return $http({
             method: 'GET',
             url: '/bug/facets'
         });
