@@ -11,12 +11,13 @@ router.get('/count', function(req, res) {
     res.locals.errors = req.flash();
     console.log(res.locals.errors);
 
-    db.query(
+    db.documents.query(
         q.where(
             q.collection('bugs')
         )
         .slice(1,maxLimit)
         .withOptions({
+          debug:true,
           categories: 'metadata'
         })
     ).result(function(response) {
@@ -31,7 +32,7 @@ router.get('/:id(\\d+)', function(req, res) {
     res.locals.errors = req.flash();
     console.log(res.locals.errors);
     db.read(req.params.id + '.json').result(function(response) {
-       console.log(response);
+      // console.log(response);
        if (response.length === 1) {
        		res.json(response[0]);
        } else {
@@ -46,7 +47,7 @@ router.get('/facets', function(req, res) {
     console.log(res.locals.errors);
    var facets = {};
 // get facets
-    db.query(
+    db.documents.query(
         q.where(
             q.collection('bugs')
           )
@@ -64,10 +65,11 @@ router.get('/facets', function(req, res) {
           )
         .slice(1,maxLimit)
         .withOptions({
-          view: 'facets'
+          view: 'facets',
+          debug:true
         })
         ).result(function(response) {
-          console.log(response);
+         // console.log(response);
             facets = response[0];
              res.json(facets);
         });

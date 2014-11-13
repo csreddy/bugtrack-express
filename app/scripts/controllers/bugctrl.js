@@ -128,12 +128,20 @@ app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'b
             $scope.publishStatus = publishStatus;
         };
 
-        $scope.setTickets = function(setTickets) {
-            var tokenizedTickets = setTickets.split(',');
-            for (var i = 0; i < tokenizedTickets.length; i++) {
-                tokenizedTickets[i] = parseInt(tokenizedTickets[i].replace(/ /g, ''));
+        $scope.setTickets = function(tickets) {
+            if (tickets) {
+                var tokenizedTickets = tickets.split(',');
+                var ticketIds = [];
+                for (var i = 0; i < tokenizedTickets.length; i++) {
+                    if (!isNaN(parseInt(tokenizedTickets[i].replace(/ /g, '')))) {
+                        ticketIds[i] = parseInt(tokenizedTickets[i].replace(/ /g, ''));
+                    }
+                }
+                $scope.tickets = ticketIds;
+            } else {
+                $scope.tickets = [];
             }
-            $scope.tickets = (tokenizedTickets === null) ? [] : tokenizedTickets;
+
         };
 
         $scope.setCustomerImpact = function(customerImpact) {
@@ -163,8 +171,6 @@ app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'b
         //-------------------------------------------------------------------
         function submitBug() {
             var bug = {};
-            bug.relatedTo = [];
-            bug.tickets = [];
 
             bug.id = parseInt(bugId.data.count) + 1;
             bug.kind = $scope.kind || 'Bug';
@@ -182,27 +188,31 @@ app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'b
             bug.tofixin = $scope.tofixin;
             bug.severity = $scope.severity;
             bug.priority = $scope.priority;
-            bug.relation = $scope.relation;
-            bug.relatedTo = $scope.relatedTo;
-            bug.clones = [];
             bug.version = $scope.version;
             bug.platform = $scope.platform || 'all';
             bug.memory = $scope.memory;
             bug.processors = $scope.processors;
             bug.note = $scope.note;
             bug.headline = $scope.headline;
-            bug.supportDescription = $scope.supportDescription;
-            bug.workaround = $scope.workaround;
-            bug.publishStatus = $scope.publishStatus;
-            bug.tickets.push($scope.tickets);
-            bug.customerImpact = $scope.customerImpact;
-            bug.changeHistory = [];
-            bug.subscribers = [$scope.submittedBy, $scope.assignTo];
+            bug.subscribers = [];
+            bug.subscribers.push($scope.submittedBy);
+            if ($scope.assignTo.username !== $scope.submittedBy.username) {
+                bug.subscribers.push($scope.assignTo);
+            }
             bug.attachments = [];
             for (var i = 0; i < $scope.files.length; i++) {
                 bug.attachments[i] = '/' + bug.id + '/' + $scope.files[i].name;
             }
+            bug.relation = $scope.relation;
+            bug.relatedTo = $scope.relatedTo || [];
+            bug.clones = [];
 
+            bug.supportDescription = $scope.supportDescription;
+            bug.workaround = $scope.workaround;
+            bug.publishStatus = $scope.publishStatus;
+            bug.customerImpact = $scope.customerImpact;
+            bug.tickets = $scope.tickets || [];
+            bug.changeHistory = [];
 
             BugService.createNewBug(bug, $scope.files).success(function() {
                 $location.path('/');
@@ -216,9 +226,9 @@ app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'b
 
 
 
-app.controller('bugListCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'bugFactory', 'Flash', 'getCurrentUserBugs', 'getAllBugs', '$filter', 'getCurrentUser', 
+app.controller('bugListCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'bugFactory', 'Flash', 'getCurrentUserBugs', '$filter', 'getCurrentUser',
 
-    function($scope, $location, RESTURL, BugService, bugFactory, Flash, getCurrentUserBugs, getAllBugs, $filter, getCurrentUser) {
+    function($scope, $location, RESTURL, BugService, bugFactory, Flash, getCurrentUserBugs, $filter, getCurrentUser) {
 
         $scope.bugs = [];
         $scope.currentUser = getCurrentUser;
@@ -227,12 +237,12 @@ app.controller('bugListCtrl', ['$scope', '$location', 'RESTURL', 'BugService', '
 
 
         // get search metrics data from first item in result set
-        $scope.searchMetrics = getAllBugs.data[0].metrics;
-        $scope.totalItems = getAllBugs.data[0].total;
+        $scope.searchMetrics = getCurrentUserBugs.data[0].metrics;
+        $scope.totalItems = getCurrentUserBugs.data[0].total;
 
         // get bug contents
-        getAllBugs.data.splice(0, 1);
-        $scope.bugList = getAllBugs.data;
+        getCurrentUserBugs.data.splice(0, 1);
+        $scope.bugList = getCurrentUserBugs.data;
 
 
         getBugList();
@@ -308,8 +318,8 @@ app.controller('bugViewCtrl', ['$scope', '$location', 'RESTURL', 'BugService', '
         BugService.getBug(id).then(function(response) {
                 console.log(response.data);
 
-                $scope.bug = response.data.content;
-                updateBug = response.data.content;
+                $scope.bug = response.data;
+                updateBug = response.data;
                 console.log('updateBug', updateBug);
 
                 // cloned bug attachedments will have its parent attachment uri, hence need to do this

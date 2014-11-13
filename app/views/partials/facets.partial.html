@@ -1,13 +1,23 @@
-<div class="box box-solid box-primary" ng-controller="facetCtrl">
+<a href="" ng-click="showFacetBox()">
+    <span id="showFacetBox" class="glyphicon glyphicon-chevron-right"></span>    
+</a>
+
+<div class="box box-solid box-primary">
     <div class="box-header">
         <h3 class="box-title">Filter</h3>
         <div class="box-tools pull-right">
-   <button class="btn btn-primary btn-xs" data-widget="collapse" tooltip="minimize" id="facetClose">
+   <button class="btn btn-primary btn-xs" data-widget="collapse" tooltip="minimize" id="facetClose" ng-click="hideFacetBox()">
    <i class="fa fa-minus"></i></button>
         </div>
     </div>
     <div class="box-body">
-        <ul ng-repeat="(facetKind, facetType) in facetList" class="list-unstyled">
+
+<li class="list-unstyled">
+    <span ng-repeat="(facetKind, facet) in form.facets" class="badge bg-yellow" style="margin: 2px">{{facetKind}}: {{facet.name}}
+    <a href="" ng-click="unfilter(facetKind)"><span class="glyphicon glyphicon-remove"></span></a>
+    </span>
+</li>
+        <ul ng-repeat="(facetKind, facetType) in facets" class="list-unstyled" name="{{facetKind}}" ng-hide="facetType.facetValues.length === 0">
             <li><b>{{facetKind | uppercase }} ({{facetType.facetValues.length}})</b>
             </li>
             <ul ng-repeat="(key, facet) in facetType.facetValues" class="list-unstyled">
@@ -19,5 +29,6 @@
             </ul>
         </ul>
     </div>
+  
     <!-- /.box-body -->
 </div>

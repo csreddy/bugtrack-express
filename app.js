@@ -296,7 +296,7 @@ app.post('/new', function(req, res, next) {
           collections.push(JSON.parse(req.body.bug).submittedBy.username);
     }
     var uri = id + '.json';  
-    db.write([{
+    db.documents.write([{
         uri: uri,
         category: 'content',
         contentType: 'application/json',
@@ -324,7 +324,7 @@ app.post('/new', function(req, res, next) {
             contentType: attachments[file].mimetype
         };
 
-        var writableStream = db.createWriteStream(doc);
+        var writableStream = db.documents.createWriteStream(doc);
         writableStream.result(function(response) {
             console.log('wrote:\n ' + response.documents[0].uri);
         }, function(error) {

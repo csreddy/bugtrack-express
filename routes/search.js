@@ -9,122 +9,160 @@ var maxLimit = 99999999;
 
 
 router.post('/', function(req, res) {
-	res.locals.errors = req.flash();
-	console.log(res.locals.errors);
-	var result = {};
-	var criteria = req.body;
-	var conditions = [q.collection('bugs')];
+	// if (!req.user) {
+	// 	res.redirect("/#/login");
+	// };
+	console.log('CALLED /SEARCH------------------');
+    res.locals.errors = req.flash();
+   // console.log(res.locals.errors);
+    var result = {};
+    var criteria = req.body;
+    var searchCriteria = [q.collection('bugs'), q.value(q.pathIndex('/assignTo/username'), 'sreddy')];
 
-	var orQuery = [];
-	for (var key in criteria) {
-		var value = criteria[key];
+    var orQuery = [];
+    for (var key in criteria) {
+        var value = criteria[key];
 
-		if (key === 'q') {
-			conditions.push(q.parsedFrom(value));
-		}
+        if (key === 'q') {
+            searchCriteria.push(q.parsedFrom(value));
+        }
 
-		if (typeof value === 'string' && key !== 'q' && value !== '') {
-			if (key === 'assignTo') {
-				conditions.push(q.range(q.pathIndex('/assignTo/username'), '=', value));
-			} else if (key === 'submittedBy') {
-				conditions.push(q.range(q.pathIndex('/submittedBy/username'), '=', value));
-			} else {
-				conditions.push(q.value(key, value));
-			}
-		}
+        if (typeof value === 'string' && key !== 'q' && value !== '') {
+            if (key === 'assignTo') {
+                searchCriteria.push(q.range(q.pathIndex('/assignTo/username'), q.datatype('string'), '=', value));
+                 //  searchCriteria.push(q.value(q.pathIndex('/assignTo/username'), value));
+            } else if (key === 'submittedBy') {
+                searchCriteria.push(q.range(q.pathIndex('/submittedBy/username'), q.datatype('string'),'=', value));
+               //  searchCriteria.push(q.value(q.pathIndex('/submittedBy/username'), value));
+            } else {
+                searchCriteria.push(q.value(key, value));
+            }
+        }
 
-		if (key !== 'facets' && typeof value === 'object' && Object.keys(value).length > 0) {
-			var keys = Object.keys(value);
-			keys.forEach(function(item) {
-				if (value[item] === true) {
-					orQuery.push(q.value(key, item));
-				}
-			});
-			conditions.push(q.or(orQuery));
-			orQuery = [];
-		}
+        if (key !== 'facets' && typeof value === 'object' && Object.keys(value).length > 0) {
+            var keys = Object.keys(value);
+            keys.forEach(function(item) {
+                if (value[item] === true) {
+                    orQuery.push(q.value(key, item));
+                    searchCriteria.push(q.or(orQuery));
+                }
+            });
+            
+            orQuery = [];
+        }
 
-		// for facets
-		if (key === 'facets' && Object.keys(value).length > 0) {
-			var keys = Object.keys(value);
-			keys.forEach(function(item) {
-				if (item === 'submittedBy') {
-					conditions.push(q.range(q.pathIndex('/submittedBy/name'), '=', value[item].name));	
-				} else if (item === 'assignTo') {
-					conditions.push(q.range(q.pathIndex('/assignTo/name'), '=', value[item].name));	
-				} else if(item === 'priority'){
-					conditions.push(q.range(q.pathIndex('/priority/level'), '=', value[item].name));	
-				} else{
-					conditions.push(q.range(item, '=', value[item].name));	
-				}
-			});
-		}
+        // for facets
+        if (key === 'facets' && Object.keys(value).length > 0) {
+            var keys = Object.keys(value);
+            keys.forEach(function(item) {
+                if (item === 'submittedBy') {
+                    searchCriteria.push(q.range(q.pathIndex('/submittedBy/name'), q.datatype('string'), '=', value[item].name));
+                  //  searchCriteria.push(q.value(q.pathIndex('/submittedBy/username'), value[item].name));
+                } else if (item === 'assignTo') {
+                    searchCriteria.push(q.range(q.pathIndex('/assignTo/name'),q.datatype('string'), '=', value[item].name));
+                  //  searchCriteria.push(q.value(q.pathIndex('/assignTo/username'), value[item].name));
+                } else if (item === 'priority') {
+                    searchCriteria.push(q.range(q.pathIndex('/priority/level'), q.datatype('string'), '=', value[item].name));
+                   //searchCriteria.push(q.value(q.pathIndex('/priority/level'), value[item].name));
+                } else {
+                    //searchCriteria.push(q.range(item, '=', value[item].name));
+                    searchCriteria.push(q.value(item, value[item].name));
+                }
+            });
+        }
 
 
-	}
+    }
 
-	// get results
-	db.query(
-		q.where(
-			conditions
-		)
-		.orderBy(
-			q.sort('id', 'ascending')
-		)
-		.calculate(
-			q.facet('kind', 'kind'),
-			q.facet('status', 'status'),
-			q.facet('category', 'category'),
-			q.facet('severity', 'severity'),
-			q.facet('version', 'version'),
-			q.facet('platform', 'platform'),
-			q.facet('fixedin', 'fixedin'),
-			q.facet('submittedBy', q.pathIndex('/submittedBy/name')),
-			//  q.facet('assignedTo', q.pathIndex('/assignTo/name')),
-			q.facet('priority', q.pathIndex('/priority/level'))
-		)
-		.slice(1, maxLimit)
-		.withOptions({
-			queryPlan: true,
-			metrics: true,
-			category: 'contents',
-			view: 'facets'
-		})
-	).result(function(response) {
-		console.log(response);
-		result = response;
-		res.status(200).json(result);
-	}, function(error) {
-		res.status(500).json(error);
-	});
+    // get results
+    db.documents.query(
+        q.where(
+            searchCriteria
+          //  q.collection('bugs'),
+           // q.range(q.pathIndex('/assignTo/username'), q.datatype('string'), '=', 'sreddy')
+          // q.value(q.pathIndex('/assignTo/username'), 'sreddy')
+
+        )
+        .orderBy(
+            q.sort('id', 'ascending')
+        )
+        .calculate(
+            q.facet('kind', 'kind'),
+            q.facet('status', 'status'),
+            q.facet('category', 'category'),
+            q.facet('severity', 'severity'),
+            q.facet('version', 'version'),
+            q.facet('platform', 'platform'),
+            q.facet('fixedin', 'fixedin'),
+            q.facet('submittedBy', q.pathIndex('/submittedBy/name')), // server crashes if enabled
+            q.facet('assignTo', q.pathIndex('/assignTo/name')),
+            q.facet('priority', q.pathIndex('/priority/level'))
+        )
+        .slice(1, maxLimit)
+        .withOptions({
+        	debug:true,
+            queryPlan: true,
+            metrics: true,
+            category: 'contents',
+            view: 'facets'
+        })
+    ).result(function(response) {
+       // console.log(response);
+       // console.log('/search', req.body);
+        result = response;
+        res.status(200).json(result);
+    }, function(error) {
+        res.status(500).json(error);
+    });
 });
 
 router.get('/all', function(req, res) {
-	res.locals.errors = req.flash();
-	console.log(res.locals.errors);
-	var result = {};
+    res.locals.errors = req.flash();
+    console.log(res.locals.errors);
+    var result = {};
 
-	db.query(
-		q.where(
-			q.collection('bugs')
-		)
-		.slice(1, maxLimit)
-		.orderBy(
-			q.sort('id', 'ascending')
-		)
-		.withOptions({
-			metrics: true,
-			category: 'contents',
-			view: 'facets'
-		})
-	).result(function(response) {
-		console.log(response);
-		result = response;
-		res.status(200).json(result);
-	}, function(error) {
-		res.status(500).json(error);
-	});
+    db.documents.query(
+        q.where(
+            q.collection('bugs')
+        )
+        .slice(1, maxLimit)
+        .orderBy(
+            q.sort('id', 'ascending')
+        )
+        .withOptions({
+        	debug:true,
+            metrics: true,
+            category: 'contents',
+            view: 'facets'
+        })
+    ).result(function(response) {
+      //  console.log(response);
+        result = response;
+        res.status(200).json(result);
+    }, function(error) {
+        res.status(500).json(error);
+    });
 
+});
+
+
+
+router.post('/test', function(req, res) {
+	//console.log('---------------', req);
+ var result = {};
+    db.documents.query(
+        q.where(
+            q.collection('bugs'),
+            q.range(q.pathIndex('/assignTo/username'), '=', req.body.assignTo)
+        )
+        .slice(1, maxLimit)
+    ).result(function(response) {
+        console.log(response);
+        result = response.length;
+        res.status(200).json(result);
+    }, function(error) {
+        res.status(500).json(error);
+    });
 });
 
 module.exports = router;

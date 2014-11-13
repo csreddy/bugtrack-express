@@ -7,9 +7,9 @@
                 <ul class="list-inline">
                     &nbsp;
                     <li ng-repeat="kind in config.kind">
-                        <div class="checkbox">    <!-- http://jsfiddle.net/DotDotDot/7AU6A/1/ -->
+                        <div class="checkbox">   
                             <label class="xsm-label">
-                                <input type="checkbox" name="kind"  ng-model="form.kind[kind]" value="{{kind}}">&nbsp;{{kind}}
+                                <input type="checkbox" name="kind"  ng-model="form.kind[kind]" value="{{kind}}" ng-disabled="kind !== 'Bug'">&nbsp;{{kind}}
                             </label>
                         </div>
                     </li>
@@ -61,8 +61,8 @@
                 <label class="sm">Assigned to</label>
                 <br>
                 <select id="assignTo" ng-model="form.assignTo" name="assignTo" type="text" class="form-control input-xsm" ng-change="setAssignedTo(form.assignTo)">
-                <option value="" selected></option>
-                    <option ng-repeat="user in config.users" value="{{user.username}}">{{user.name}}</option>
+                <option value=""></option>
+                    <option  ng-repeat="user in config.users" value="{{user.username}}" ng-selected="form.assignTo === user.username">{{user.name}}</option>
                 </select>
             </div>
             <div class="form-group">

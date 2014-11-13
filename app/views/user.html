@@ -1,9 +1,18 @@
 <!-- <h3>Hello! {{currentUser.name}}</h3> -->
 
-  
+<div ng-controller="searchCtrl">
+    <div ng-include src="'views/partials/search.partial.html'"></div>
+    <div class="col-md-2" id="facetBox">
+        <div ng-include src="'views/partials/facets.partial.html'"></div>
+    </div>
+</div>
 
+<div ng-include src="'views/partials/buglist.partial.html'"></div>
+
+  
+<!-- 
 <div ng-include src="'views/partials/search.partial.html'"></div>
 <div class="col-md-2" style="padding-left: 0px;">
 <div ng-include src="'views/partials/facets.alt.html'"></div>	
 </div>
-<div ng-include src="'views/partials/buglist.partial.html'"></div>	
+<div ng-include src="'views/partials/buglist.partial.html'"></div>	 -->

@@ -14,6 +14,19 @@ xquery version "1.0-ml";
   return admin:save-configuration($config);
 
 
+
+  import module namespace admin = "http://marklogic.com/xdmp/admin" 
+      at "/MarkLogic/admin.xqy";
+    
+  let $elements :=  ("id")
+  for $element in $elements
+  let $config := admin:get-configuration()
+  let $dbid := xdmp:database("bugtrack")
+  let $rangespec := admin:database-range-element-index("int", "", $element, "", fn:false() )
+  let $config := admin:database-add-range-element-index($config, $dbid, $rangespec)
+  return admin:save-configuration($config);
+
+
   import module namespace admin = "http://marklogic.com/xdmp/admin" 
       at "/MarkLogic/admin.xqy";
 

@@ -31,15 +31,15 @@ app.config(function($routeProvider) {
     $routeProvider
         .when('/', {
             templateUrl: 'views/list.html',
-            controller: 'bugListCtrl',
+            controller: 'searchCtrl',
             title: 'Home',
             resolve: {
-                getCurrentUser: ['User',
+                currentUser: ['User',
                     function(User) {
                         return User.getCurrentUserInfo();
                     }
                 ],
-                getCurrentUserBugs: ['BugService', 'User',
+                currentUserBugs: ['BugService', 'User',
                     function(BugService, User) {
                         return User.getCurrentUserInfo().then(function(user) {
                             return BugService.getCurrentUserBugs(user);
@@ -56,11 +56,11 @@ app.config(function($routeProvider) {
                     function(bugConfigFactory) {
                         return bugConfigFactory.getConfig();
                     }
-                    ]
+                ]
             }
         })
-        .when('/list', {
-             title: 'Home',
+        .when('/list2', {
+            title: 'Home',
             templateUrl: 'views/list.html',
             controller: 'bugListCtrl',
             resolve: {
@@ -86,22 +86,22 @@ app.config(function($routeProvider) {
                     function(bugConfigFactory) {
                         return bugConfigFactory.getConfig();
                     }
-                    ]
+                ]
             }
         })
         .when('/login', {
-             title: 'Login',
+            title: 'Login',
             templateUrl: 'views/login.html',
             controller: 'loginCtrl'
         })
         .when('/logout', {
-             title: 'Logout',
+            title: 'Logout',
             templateUrl: 'views/login.html',
             controller: 'logoutCtrl'
         })
         .when('/user/:username', {
             title: 'Home',
-            templateUrl: 'views/user.html',
+            templateUrl: 'views/list.html',
             controller: 'bugListCtrl',
             resolve: {
                 getCurrentUser: ['User',
@@ -117,15 +117,15 @@ app.config(function($routeProvider) {
 
                     }
                 ],
-                getAllBugs: ['BugService',
-                    function(BugService) {
-                        return BugService.getBugs();
-                    }
-                ]
+                // getAllBugs: ['BugService',
+                //     function(BugService) {
+                //         return BugService.getBugs();
+                //     }
+                // ]
             }
         })
         .when('/home', {
-             title: 'Home',
+            title: 'Home',
             templateUrl: 'views/user.html',
             controller: 'userRedirectCtrl',
             resolve: {
@@ -137,12 +137,12 @@ app.config(function($routeProvider) {
             }
         })
         .when('/register', {
-             title: 'Register',
+            title: 'Register',
             templateUrl: 'views/register.html',
             controller: 'registerCtrl'
         })
         .when('/new', {
-             title: 'New',
+            title: 'New',
             templateUrl: 'views/new.html',
             controller: 'newBugCtrl',
             resolve: {
@@ -165,12 +165,12 @@ app.config(function($routeProvider) {
             }
         })
         .when('/config', {
-             title: 'Configure',
+            title: 'Configure',
             templateUrl: 'views/config.html',
             controller: 'bugConfigCtrl'
         })
         .when('/bug/:id', {
-             title: 'Bug Details',
+            title: 'Bug Details',
             templateUrl: 'views/bugdetails.html',
             controller: 'bugViewCtrl',
             resolve: {
@@ -187,7 +187,7 @@ app.config(function($routeProvider) {
             }
         })
         .when('/dashboard', {
-             title: 'Dashboard',
+            title: 'Dashboard',
             templateUrl: 'views/dashboard.html',
             controller: 'dashboardCtrl'
         })

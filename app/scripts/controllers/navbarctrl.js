@@ -31,8 +31,8 @@ app.controller('navbarCtrl', ['$rootScope', '$location', 'User',
 
 
 
-        $rootScope.navbarSearch = function(str) {
-
+        $rootScope.quickSearch = function(bugId) {
+            $location.path('/bug/'+ bugId);
         };
 
 

@@ -125,3 +125,15 @@ border-top: 1px solid #eee;
   width: 100%;
   top: 0;
 }
+
+.badge{
+  border-radius: 4px;
+}
+
+#facetBox {
+  padding-left: 1px;
+  padding-right: 5px;
+}
+
+
+

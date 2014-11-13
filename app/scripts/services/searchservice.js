@@ -9,11 +9,6 @@ app.service('Search', ['$http', 'RESTURL',
                 method: 'GET',
                 url: '/search/all'
             });
-
-            /* return $http({
-                method: 'GET',
-                url: RESTURL + '/v1/search?q=' + str +  '&collection=bugs&pageLength=100'
-            });*/
         };
 
         this.users = function(str) {

@@ -14,12 +14,25 @@ app.service('BugService', function($http, RESTURL) {
 
 
     this.getCurrentUserBugs = function(user) {
-        return $http({
-            method: 'GET',
-            url: RESTURL + '/v1/search?format=json&collection=' + user.username + '&pageLength=50'
-                //  url: RESTURL + '/v1/search?format=json&collection=bugs&pageLength=50'
+        if (user) {
+        var searchCriteria = {
+            kind: {
+                Bug: true
+            },
+            assignTo: user.username,
+            facets: {}
+        };
+        console.log('inside getCurrentUserBugs().........');
+        
+            return $http({
+            method: 'POST',
+            url: '/search',
+            data: searchCriteria
         });
+        }
+        
     };
+
 
     this.putDocument = function(uri, payload, user) {
         console.log('document = ' + uri);

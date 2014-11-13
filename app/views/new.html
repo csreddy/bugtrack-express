@@ -25,7 +25,8 @@
                                 <div class="input-group-btn">
                                     <!-- dropdown menu -->
                                     <select ng-model="kind" type="text" class="form-control" style="width: 100px">
-                                        <option ng-selected="kind === 'Bug'" ng-repeat="kind in config.kind" value="{{kind}}">{{kind}}</option>
+                                        <!-- <option value="Bug" selected>Bug</option> -->
+                                        <option ng-selected="kind === 'Bug'" ng-disabled="kind !== 'Bug'" ng-repeat="kind in config.kind" value="{{kind}}">{{kind}}</option>
                                     </select>
                                 </div>
                                 <input id="title" ng-model="title" name="title" type="text" placeholder="Bug title" class="form-control" required />
@@ -63,7 +64,7 @@
                                         </accordion-heading>
                                         <textarea class="form-control" ng-model="stacktrace" ng-change="setStacktrace(stacktrace)" id="stacktrace" name="stacktrace" placeholder="Provide stacktrace.." rows="8"></textarea>
                                     </accordion-group>
-                                    <accordion-group is-open="true">
+                                    <accordion-group is-open="status.isFirstOpen">
                                         <accordion-heading>
                                             <i class="glyphicon" ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i>&nbsp;&nbsp;&nbsp;Other info
                                         </accordion-heading>
@@ -126,7 +127,7 @@
                                             </div>
                                         </div>
                                     </accordion-group>
-                                    <accordion-group>
+                                    <accordion-group is-open="status.isFirstOpen">
                                         <accordion-heading>
                                             <i class="glyphicon" ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i>&nbsp;&nbsp;&nbsp;Environment in which you encountered the bug
                                         </accordion-heading>
