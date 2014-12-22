@@ -2,23 +2,95 @@
 
 var app = angular.module('search.controllers', []);
 
-app.controller('searchCtrl', ['$rootScope', '$scope', '$location', 'Search', 'Flash', 'bugConfigFactory', 'currentUser', 'currentUserBugs',
-    function($rootScope, $scope, $location, Search, Flash, bugConfigFactory, currentUser, currentUserBugs) {
+app.controller('searchCtrl', ['$rootScope', '$scope', '$location', '$filter', 'Search', 'Flash', 'bugConfigFactory', 'currentUser', 'currentUserBugs', 'User', 'config',
+    function($rootScope, $scope, $location, $filter, Search, Flash, bugConfigFactory, currentUser, currentUserBugs, User, config) {
         $scope.bugs = [];
         $scope.currentPage = 1;
-        $scope.itemsPerPage = 25;
-        $scope.config = {};
+        $scope.itemsPerPage = 10;
+        $scope.config = config;
+        $scope.userDefaultSearch = true;
         $scope.form = {};
 
+        // if the user has default query then set the $scope.form to user's default query
+        // otherwise initialize with app default query
         $scope.defaultSearchCriteria = function() {
-            $scope.form = {
-                kind: {
-                    Bug: true
-                },
-                q: '',
-                facets: {},
-                assignTo: currentUser.username
-            };
+            if (Object.keys(currentUser.savedQueries.default).length === 0) {
+                $scope.form = {
+                    kind: [{
+                        name: 'Bug',
+                        value: true
+                    }, {
+                        name: 'Task',
+                        value: false
+                    }, {
+                        name: 'RFE',
+                        value: false
+                    }, {
+                        name: 'Other',
+                        value: false
+                    }],
+                    status: [{
+                        name: 'New',
+                        value: false
+                    }, {
+                        name: 'Verify',
+                        value: false
+                    }, {
+                        name: 'Test',
+                        value: false
+                    }, {
+                        name: 'Fix',
+                        value: false
+                    }, {
+                        name: 'Ship',
+                        value: false
+                    }, {
+                        name: 'External',
+                        value: false
+                    }, {
+                        name: 'Will not fix',
+                        value: false
+                    }, {
+                        name: 'Closed',
+                        value: false
+                    }, {
+                        name: 'n/v/f/e',
+                        value: false
+                    }],
+                    severity: [{
+                        name: 'P1 - Catastrophic',
+                        value: false
+                    }, {
+                        name: 'P2 - Critcial',
+                        value: false
+                    }, {
+                        name: ' P3 - Major',
+                        value: false
+                    }, {
+                        name: 'P4 - Minor',
+                        value: false
+                    }, {
+                        name: 'P5 - Aesthetic',
+                        value: false
+                    }, {
+                        name: ' Performance',
+                        value: false
+                    }],
+                    q: '',
+                    facets: {},
+                    assignTo: currentUser.username,
+                    submittedBy: '',
+                    category: '',
+                    version: '',
+                    fixedin: '',
+                    tofixin: ''
+                };
+            } else {
+                $scope.form = angular.copy(currentUser.savedQueries.default);
+                console.log('user has default search....');
+                $scope.search();
+            }
+
         };
 
         // get search metrics data from first item in result set
@@ -33,45 +105,18 @@ app.controller('searchCtrl', ['$rootScope', '$scope', '$location', 'Search', 'Fl
         $scope.bugList = currentUserBugs.data;
 
 
-        bugConfigFactory.getConfig().then(function(response) {
 
-            $scope.config = response.data;
-            console.log(response.data);
-
-            // sort users alphabetically
-            $scope.config.users.sort(function(a, b) {
-                if (a.name > b.name) {
-                    return 1;
-                }
-                if (a.name < b.name) {
-                    return -1;
-                }
-                // a must be equal to b
-                return 0;
-            });
-            // sort version alphabetically
-            $scope.config.version.sort(function(a, b) {
-                if (a > b) {
-                    return 1;
-                }
-                if (a < b) {
-                    return -1;
-                }
-                // a must be equal to b
-                return 0;
-            });
-            // sort category alphabetically
-            $scope.config.category.sort(function(a, b) {
-                if (a > b) {
-                    return 1;
-                }
-                if (a < b) {
-                    return -1;
-                }
-                // a must be equal to b
-                return 0;
-            });
-
+        // sort users alphabetically
+        $scope.config.users.sort(function(a, b) {
+            return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+        });
+        // sort version alphabetically
+        $scope.config.version.sort(function(a, b) {
+            return a.toLowerCase().localeCompare(b.toLowerCase());
+        });
+        // sort category alphabetically
+        $scope.config.category.sort(function(a, b) {
+            return a.toLowerCase().localeCompare(b.toLowerCase());
         });
 
 
@@ -113,7 +158,6 @@ app.controller('searchCtrl', ['$rootScope', '$scope', '$location', 'Search', 'Fl
 
 
 
-
         $scope.search = function() {
             console.log($scope.form);
             return Search.search($scope.form).success(function(response) {
@@ -134,9 +178,12 @@ app.controller('searchCtrl', ['$rootScope', '$scope', '$location', 'Search', 'Fl
         $scope.clear = function() {
             console.log('clear fields');
             $scope.q = '';
-            $scope.form = {};
+            $scope.form = {
+                kind: $scope.config.kind,
+                status: $scope.config.status,
+                severity: $scope.config.severity
+            };
             $scope.search();
-            // $scope.searchForm.$setPristine();
         };
 
 
@@ -190,11 +237,12 @@ app.controller('searchCtrl', ['$rootScope', '$scope', '$location', 'Search', 'Fl
         };
 
 
-
+        // go to bug details page when clicked on bug id
         $scope.goToBug = function(uri) {
             $location.path(uri);
         };
 
+        // get bugs for the current page
         $scope.setPage = function(pageNo) {
             $scope.currentPage = pageNo;
             console.log('Page changed to: ' + $scope.currentPage);
@@ -203,14 +251,120 @@ app.controller('searchCtrl', ['$rootScope', '$scope', '$location', 'Search', 'Fl
             getBugDetails(begin, end);
         };
 
+        // for table column sorting
+        var orderBy = $filter('orderBy');
+        $scope.order = function(predicate, reverse) {
+            $scope.bugs = orderBy($scope.bugs, predicate, reverse);
+        };
+
 
         getBugDetails();
 
 
         $scope.$watchCollection('bugList', function() {
-            console.log('hey, bug list has changed!', $scope.bugList);
+            // console.log('hey, bug list has changed!', $scope.bugList);
             getBugDetails();
         }, true);
+
+
+        $scope.$watchCollection('form', function() {
+            $scope.prettyForm = JSON.stringify($scope.form, null, 6);
+        }, true);
+
+
+        // watch if user default query is changed
+        $scope.$watch('form', function() {
+            // console.log('hey, search query changed!' + JSON.stringify($scope.form));
+            // console.log('default user query', JSON.stringify(currentUser.savedQueries.default));
+            if (angular.equals($scope.form, currentUser.savedQueries.default)) {
+                console.log('user default search unchanged');
+                $scope.userDefaultSearch = true;
+            } else {
+                console.log('user default search changed');
+                $scope.userDefaultSearch = false;
+            }
+
+           /* var index = $scope.form.status.indexOf[{
+                name: 'n/v/f/e',
+                value: false
+            }];
+            index = 8;
+            var isSelected = $scope.form.status[index].value;
+            if (isSelected) {
+                $scope.form.status = [{
+                    name: 'New',
+                    value: true
+                }, {
+                    name: 'Verify',
+                    value: true
+                }, {
+                    name: 'Test',
+                    value: false
+                }, {
+                    name: 'Fix',
+                    value: true
+                }, {
+                    name: 'Ship',
+                    value: false
+                }, {
+                    name: 'External',
+                    value: true
+                }, {
+                    name: 'Will not fix',
+                    value: false
+                }, {
+                    name: 'Closed',
+                    value: false
+                }, {
+                    name: 'n/v/f/e',
+                    value: true
+                }];
+            } else {
+                $scope.form.status = [{
+                    name: 'New',
+                    value: false
+                }, {
+                    name: 'Verify',
+                    value: false
+                }, {
+                    name: 'Test',
+                    value: false
+                }, {
+                    name: 'Fix',
+                    value: false
+                }, {
+                    name: 'Ship',
+                    value: false
+                }, {
+                    name: 'External',
+                    value: false
+                }, {
+                    name: 'Will not fix',
+                    value: false
+                }, {
+                    name: 'Closed',
+                    value: false
+                }, {
+                    name: 'n/v/f/e',
+                    value: false
+                }];
+
+            }*/
+
+
+        }, true);
+
+        $scope.saveUserDefaultSearch = function() {
+            if (!$scope.form.userDefaultSearch) {
+                console.log('saved......');
+                User.saveDefaultQuery($scope.form).success(function(response) {
+                    $scope.userDefaultSearch = true;
+                    console.log(response);
+                }).error(function(error) {
+                    console.log(error);
+                });
+            }
+        };
 
 
         // private functions

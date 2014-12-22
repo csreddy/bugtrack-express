@@ -2,18 +2,53 @@
 
 var app = angular.module('search.controllers', []);
 
-app.controller('searchCtrl', ['$rootScope', '$scope', 'Search', 'Flash', 'bugConfigFactory',
-    function($rootScope, $scope, Search, Flash, bugConfigFactory) {
-        $scope.q = '';
+app.controller('searchCtrl', ['$rootScope', '$scope', '$location', 'Search', 'Flash', 'bugConfigFactory', 'currentUser', 'currentUserBugs', 'User',
+    function($rootScope, $scope, $location, Search, Flash, bugConfigFactory, currentUser, currentUserBugs, User) {
+        $scope.bugs = [];
+        $scope.currentPage = 1;
+        $scope.itemsPerPage = 25;
         $scope.config = {};
         $scope.form = {};
-        bugConfigFactory.getConfig().then(function(response) {
-            console.log(response.data);
-            $scope.config = response.data;
 
-            //    $scope.submittedBy = $scope.config.users;
-            //   $scope.tofixin = $scope.config.version;
-            //  $scope.fixedin = $scope.config.version;
+        // if the user has default query then set the $scope.form to user's default query
+        // otherwise initialize with app default query
+        $scope.defaultSearchCriteria = function() {
+            if (Object.keys(currentUser.savedQueries.default).length === 0) {
+                $scope.form = {
+                    kind: {
+                        Bug: true
+                    },
+                    q: '',
+                    facets: {},
+                    assignTo: currentUser.username,
+                    userDefaultSearch: false
+                };
+            } else {
+                //angular.copy(currentUser.savedQueries.default, $scope.form);
+                $scope.form = currentUser.savedQueries.default;
+                $scope.form.userDefaultSearch = true;
+                console.log('user has default search....');
+                $scope.search();
+            }
+
+        };
+
+        // get search metrics data from first item in result set
+        $scope.searchMetrics = currentUserBugs.data[0].metrics;
+        $scope.totalItems = currentUserBugs.data[0].total;
+
+        // get facets
+        $scope.facets = currentUserBugs.data[0].facets;
+
+        // remove search metrics item from the result set
+        currentUserBugs.data.splice(0, 1);
+        $scope.bugList = currentUserBugs.data;
+
+
+        bugConfigFactory.getConfig().then(function(response) {
+
+            $scope.config = response.data;
+            console.log(response.data);
 
             // sort users alphabetically
             $scope.config.users.sort(function(a, b) {
@@ -49,29 +84,6 @@ app.controller('searchCtrl', ['$rootScope', '$scope', 'Search', 'Flash', 'bugCon
                 return 0;
             });
 
-
-
-            // create model variables from on config.kind to generate form fields
-            angular.forEach($scope.config.kind, function(value, index) {
-                $scope.config.kind.splice(index, 1, {
-                    name: value,
-                    selected: false
-                });
-            });
-            // create model variables from config.status to generate form fields
-            angular.forEach($scope.config.status, function(value, index) {
-                $scope.config.status.splice(index, 1, {
-                    name: value,
-                    selected: false
-                });
-            });
-            // create model variables from config.severity to generate form fields
-            angular.forEach($scope.config.severity, function(value, index) {
-                $scope.config.severity.splice(index, 1, {
-                    name: value,
-                    selected: false
-                });
-            });
         });
 
 
@@ -87,90 +99,45 @@ app.controller('searchCtrl', ['$rootScope', '$scope', 'Search', 'Flash', 'bugCon
 
 
 
-        $scope.form.setAssignedTo = function(assignTo) {
-            $scope.assignTo = JSON.parse(assignTo);
+        $scope.setAssignedTo = function(assignTo) {
+            $scope.form.assignTo = assignTo;
         };
 
-        $scope.from.setSubmittedBy = function(submittedBy) {
-            $scope.submittedBy = JSON.parse(submittedBy);
+        $scope.setSubmittedBy = function(submittedBy) {
+            $scope.form.submittedBy = submittedBy;
         };
 
-        $scope.form.setCategory = function(category) {
-            $scope.category = category;
+        $scope.setCategory = function(category) {
+            $scope.form.category = category;
         };
 
-        $scope.form.setVersion = function(version) {
-            $scope.version = version;
+        $scope.setVersion = function(version) {
+            $scope.form.version = version;
         };
 
         $scope.setToFixin = function(tofixin) {
-            $scope.tofixin = tofixin;
+            $scope.form.tofixin = tofixin;
         };
 
         $scope.setFixedIn = function(fixedin) {
-            $scope.fixedin = fixedin;
+            $scope.form.fixedin = fixedin;
         };
 
 
+
+
         $scope.search = function() {
-
-            var searchCriteria = {};
-            searchCriteria.kind = [];
-            searchCriteria.status = [];
-            searchCriteria.severity = [];
-
-            angular.forEach($scope.config.kind, function(obj, index) {
-                if (obj.selected === true) {
-                    searchCriteria.kind.push(obj.name);
-                }
-            });
-            angular.forEach($scope.config.status, function(obj, index) {
-                if (obj.selected === true) {
-                    searchCriteria.status.push(obj.name);
-                }
-            });
-            angular.forEach($scope.config.severity, function(obj, index) {
-                if (obj.selected === true) {
-                    searchCriteria.severity.push(obj.name);
-                }
-            });
-
-
-            searchCriteria.q = $scope.q;
-
-            if ($scope.assignTo) {
-                searchCriteria.assignTo = $scope.assignTo;
-            }
-
-            if ($scope.submittedBy) {
-                searchCriteria.submittedBy = $scope.submittedBy;
-            }
-
-            if ($scope.category) {
-                searchCriteria.category = $scope.category;
-            }
-
-            if ($scope.version) {
-                searchCriteria.version = $scope.version;
-            }
-
-            if ($scope.tofixin) {
-                searchCriteria.tofixin = $scope.tofixin;
-            }
-
-            if ($scope.fixedin) {
-                searchCriteria.fixedin = $scope.fixedin;
-            }
-
-            console.log("---------", searchCriteria);
-
-            return Search.search(searchCriteria).success(function(response) {
+            console.log($scope.form);
+            return Search.search().success(function(response) {
                 console.log(response);
+                $scope.bugList = response;
                 $scope.results = response;
-                $rootScope.$broadcast('search', {
-                    searchResults: response
-                });
-                Flash.addAlert('success', 'Returned ' + $scope.results[0].results.length + ' results');
+                $scope.facets = response[0].facets;
+                $scope.searchMetrics = response[0].metrics;
+                $scope.totalItems = response[0].total;
+                console.log('facets', $scope.facets);
+                console.log('RESULT', response);
+                //   Flash.addAlert('success', 'Returned ' + ($scope.results.length - 1) + ' results');
             }).error(function(response) {
                 Flash.addAlert('danger', response.status + ' :error occured');
             });
@@ -179,23 +146,128 @@ app.controller('searchCtrl', ['$rootScope', '$scope', 'Search', 'Flash', 'bugCon
         $scope.clear = function() {
             console.log('clear fields');
             $scope.q = '';
-             $scope.searchForm.$setPristine();
+            $scope.form = {};
+            $scope.search();
+            // $scope.searchForm.$setPristine();
         };
 
 
+        // filter results based on facets
+        $scope.filter = function(facetKind, facet) {
+            console.log('$scope.form', $scope.form);
+            $scope.form.facets[facetKind] = facet;
 
-    }
-]);
+            return Search.search($scope.form).success(function(response) {
+                console.log(response);
+                $scope.results = response;
+                $scope.bugList = response;
+                $scope.facets = response[0].facets;
+                $scope.searchMetrics = response[0].metrics;
+                $scope.totalItems = response[0].total;
+                angular.element("ul[name='" + facetKind + "']").hide();
+                Flash.addAlert('success', 'Returned ' + ($scope.results.length - 1) + ' results');
+            }).error(function(response) {
+                Flash.addAlert('danger', response.status + ' :error occured');
+            });
+        };
+
+        // remove filter 
+        $scope.unfilter = function(facetKind) {
+            delete $scope.form.facets[facetKind];
+            console.log('$scope.form from removeFacet', $scope.form);
+            return Search.search($scope.form).success(function(response) {
+                console.log(response);
+                $scope.results = response;
+                $scope.bugList = response;
+                $scope.facets = response[0].facets;
+                $scope.searchMetrics = response[0].metrics;
+                $scope.totalItems = response[0].total;
+                angular.element("ul[name='" + facetKind + "']").show();
+                Flash.addAlert('success', 'Returned ' + ($scope.results.length - 1) + ' results');
+            }).error(function(response) {
+                Flash.addAlert('danger', response.status + ' :error occured');
+            });
+        };
+
+        $scope.hideFacetBox = function() {
+            console.log('hide facet');
+            angular.element("div[id='facetBox']").hide();
+            angular.element('span#showFacetBox').attr('style', 'display:block');
+        };
+
+        $scope.showFacetBox = function() {
+            console.log('show facet');
+            angular.element("div[id='facetBox']").show();
+            angular.element('a#showFacetBox').attr('style', 'display:none');
+        };
 
 
-app.controller('facetCtrl', ['$scope', 'Flash', '$http', 'BugService',
-    function($scope, Flash, $http, BugService) {
-        $scope.test = 'Facet controller';
-        return BugService.getFacets().success(function(response) {
-            console.log(response);
-            $scope.facets = response;
-        }).error(function(response) {
-            Flash.addAlert('danger', response + ' :error occured');
-        });
+        // go to bug details page when clicked on bug id
+        $scope.goToBug = function(uri) {
+            $location.path(uri);
+        };
+
+        $scope.setPage = function(pageNo) {
+            $scope.currentPage = pageNo;
+            console.log('Page changed to: ' + $scope.currentPage);
+            var begin = (($scope.currentPage - 1) * $scope.itemsPerPage);
+            var end = begin + $scope.itemsPerPage;
+            getBugDetails(begin, end);
+        };
+
+
+        getBugDetails();
+
+
+        $scope.$watchCollection('bugList', function() {
+            console.log('hey, bug list has changed!', $scope.bugList);
+            getBugDetails();
+        }, true);
+
+
+        
+
+        function watchSearchForm() {
+            $scope.$watch('form', function() {
+            console.log('hey, search query changed!', $scope.form);
+            console.log('userquery', currentUser.savedQueries.default);
+            if (angular.equals($scope.form, currentUser.savedQueries.default)) {
+                $scope.form.userDefaultSearch = true;
+            } else {
+                $scope.form.userDefaultSearch = false;
+            }
+        }, true);
+        }
+
+
+        $scope.saveUserDefaultSearch = function() {
+            if (!$scope.form.userDefaultSearch) {
+                console.log('saved......');
+                User.saveDefaultQuery($scope.form).success(function(response) {
+                    console.log(response);
+                }).error(function(error) {
+                    console.log(error);
+                });
+            }
+        };
+
+
+        // private functions
+        function getBugDetails(begin, end) {
+            $scope.bugs = [];
+            var paginatedBugList = $scope.bugList.slice(begin, end);
+
+            angular.forEach(paginatedBugList, function(bug) {
+                $scope.bugs.push(bug.content);
+            });
+        }
+
+        // for pagination, get bug details only for given page
+        function getBugList() {
+            getBugDetails(0, $scope.itemsPerPage);
+        }
+
+
+
     }
 ]);

@@ -1,14 +1,18 @@
 var express = require('express');
 var flash = require('connect-flash');
+var marklogic = require('marklogic');
+var conn = require('../db-config.js').connection;
+var db = marklogic.createDatabaseClient(conn);
+var q = marklogic.queryBuilder;
 var router = express.Router();
 
 
 
 /* GET user profile. */
-router.get('/', ensureAuthenticated, function(req, res) {
+router.get('/:username', ensureAuthenticated, function(req, res) {
     res.locals.errors = req.flash();
     console.log('request----', req.user);
-   // console.log(req);
+    // console.log(req);
     console.log(res.locals);
     //  console.log('----------', req.user.username);
     // res.render('users', {
@@ -18,6 +22,19 @@ router.get('/', ensureAuthenticated, function(req, res) {
         username: req.user
     });
 });
+
+// save default user query
+router.put('/savedefaultquery', ensureAuthenticated, function(req, res) {
+    res.locals.errors = req.flash();
+    var p = marklogic.patchBuilder;
+    db.documents.patch('/user/'+req.user+'.json', 
+        p.replace('/node("savedQueries")/node("default")',  req.body)
+        ).result(function(response) {
+           res.status(204).json(response);
+        });
+
+});
+
 
 
 // Simple route middleware to ensure user is authenticated.
@@ -31,12 +48,12 @@ function ensureAuthenticated(req, res, next) {
     var username = req.originalUrl.replace('/user/', '');
     if (req.isAuthenticated()) {
         return next();
-    } else{
-    res.send(401, {
-        message: 'Please sign in'
-    });	
+    } else {
+        res.send(401, {
+            message: 'Please sign in'
+        });
     }
-    
+
 
 
 }

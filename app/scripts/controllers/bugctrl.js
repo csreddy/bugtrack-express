@@ -3,9 +3,9 @@
 var app = angular.module('bug.controllers', ['ui.bootstrap', 'angularFileUpload']);
 app.constant('RESTURL', 'http://' + location.hostname + ':' + location.port);
 
-app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'bugFactory', 'bugConfigFactory', 'Flash', 'User', 'loadConfig', 'getCurrentUser', 'bugId', 'FileUploader', '$http',
+app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'bugFactory', 'bugConfigFactory', 'Flash', 'User', 'loadConfig', 'getCurrentUser', 'bugId',
 
-    function($scope, $location, RESTURL, BugService, bugFactory, bugConfigFactory, Flash, User, loadConfig, getCurrentUser, bugId, FileUploader, $http) {
+    function($scope, $location, RESTURL, BugService, bugFactory, bugConfigFactory, Flash, User, loadConfig, getCurrentUser, bugId) {
         //$scope.test = 'controller works';
 
         // accordion interactions   

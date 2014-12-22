@@ -14,7 +14,7 @@ var app = angular.module('bugtrackApp', [
     'bugtrackApp.flashService',
     'xeditable',
     'wysiHtml5.directive',
-    'login.controllers',
+    //'login.controllers',
     'user.services',
     'user.controllers',
     'dashboard.controllers',
@@ -22,7 +22,8 @@ var app = angular.module('bugtrackApp', [
     'search.services',
     'navbar.controllers',
     'modal.services',
-    'fileupload.directive'
+    'fileupload.directive',
+    'code.directive'
     //   'angular-flash.service',
     //  'angular-flash.flash-alert-directive'
 ]);
@@ -52,9 +53,34 @@ app.config(function($routeProvider) {
                         return BugService.getBugs();
                     }
                 ],
-                loadConfig: ['bugConfigFactory',
+                config: ['bugConfigFactory',
                     function(bugConfigFactory) {
-                        return bugConfigFactory.getConfig();
+                        var config = {};
+                        return bugConfigFactory.getConfig().then(function(configdata) {
+                            config = angular.copy(configdata.data);
+                            config.kind = [];
+                            config.status = [];
+                            config.severity = [];
+                            for (var i = 0; i < configdata.data.kind.length; i++) {
+                                config.kind.push({
+                                    name: configdata.data.kind[i],
+                                    value: false
+                                });
+                            }
+                            for (var i = 0; i < configdata.data.status.length; i++) {
+                                config.status.push({
+                                    name: configdata.data.status[i],
+                                    value: false
+                                });
+                            }
+                              for (var i = 0; i < configdata.data.severity.length; i++) {
+                                config.severity.push({
+                                    name: configdata.data.severity[i],
+                                    value: false
+                                });
+                            }
+                            return config;
+                        });
                     }
                 ]
             }

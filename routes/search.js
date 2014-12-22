@@ -9,15 +9,20 @@ var maxLimit = 99999999;
 
 
 router.post('/', function(req, res) {
-	// if (!req.user) {
-	// 	res.redirect("/#/login");
-	// };
-	console.log('CALLED /SEARCH------------------');
+    // if (!req.user) {
+    // 	res.redirect("/#/login");
+    // };
+    console.log('CALLED /SEARCH------------------');
     res.locals.errors = req.flash();
-   // console.log(res.locals.errors);
+    // console.log(res.locals.errors);
     var result = {};
     var criteria = req.body;
-    var searchCriteria = [q.collection('bugs'), q.value(q.pathIndex('/assignTo/username'), 'sreddy')];
+    var searchCriteria = [];
+    // when empty criteira is sent 
+    if (!criteria.keys) {
+        searchCriteria = [q.collection('bugs')];
+    }
+    
 
     var orQuery = [];
     for (var key in criteria) {
@@ -26,14 +31,69 @@ router.post('/', function(req, res) {
         if (key === 'q') {
             searchCriteria.push(q.parsedFrom(value));
         }
+        // set collection
+        if (key === 'kind') {
+            var collectionName;
+            for (var index in value) {
+                switch (value[index].name) {
+                    case 'Bug':
+                        collectionName = 'bugs';
+                        if (value[index].value) {
+                            orQuery.push(q.collection(collectionName));
+                            searchCriteria.push(q.or(orQuery));
+                        }
+                        break;
+                    case 'Task':
+                        collectionName = 'tasks';
+                        if (value[index].value) {
+                            orQuery.push(q.collection(collectionName));
+                            searchCriteria.push(q.or(orQuery));
+                        }
+                        break;
+                    case 'RFE':
+                        collectionName = 'rfes';
+                        if (value[index].value) {
+                            orQuery.push(q.collection(collectionName));
+                            searchCriteria.push(q.or(orQuery));
+                        }
+                        break;
+                    case 'Other':
+                        collectionName = 'others';
+                        if (value[index].value) {
+                            orQuery.push(q.collection(collectionName));
+                            searchCriteria.push(q.or(orQuery));
+                        }
+                        break;
+                    default:
+                        collectionName = 'bugs';
+                        if (value[index].value) {
+                            orQuery.push(q.collection(collectionName));
+                            searchCriteria.push(q.or(orQuery));
+                        }
+                }
+            }
+        }
+
+
+        if (key === 'status' || key === 'severity') {
+            for(var index in value){
+                if(value[index].value){
+                    orQuery.push(q.value(key, value[index].name));
+                    searchCriteria.push(q.or(orQuery));
+                }
+            }
+        }
+
+    
+
 
         if (typeof value === 'string' && key !== 'q' && value !== '') {
             if (key === 'assignTo') {
                 searchCriteria.push(q.range(q.pathIndex('/assignTo/username'), q.datatype('string'), '=', value));
-                 //  searchCriteria.push(q.value(q.pathIndex('/assignTo/username'), value));
+                //  searchCriteria.push(q.value(q.pathIndex('/assignTo/username'), value));
             } else if (key === 'submittedBy') {
-                searchCriteria.push(q.range(q.pathIndex('/submittedBy/username'), q.datatype('string'),'=', value));
-               //  searchCriteria.push(q.value(q.pathIndex('/submittedBy/username'), value));
+                searchCriteria.push(q.range(q.pathIndex('/submittedBy/username'), q.datatype('string'), '=', value));
+                //  searchCriteria.push(q.value(q.pathIndex('/submittedBy/username'), value));
             } else {
                 searchCriteria.push(q.value(key, value));
             }
@@ -47,7 +107,7 @@ router.post('/', function(req, res) {
                     searchCriteria.push(q.or(orQuery));
                 }
             });
-            
+
             orQuery = [];
         }
 
@@ -57,13 +117,13 @@ router.post('/', function(req, res) {
             keys.forEach(function(item) {
                 if (item === 'submittedBy') {
                     searchCriteria.push(q.range(q.pathIndex('/submittedBy/name'), q.datatype('string'), '=', value[item].name));
-                  //  searchCriteria.push(q.value(q.pathIndex('/submittedBy/username'), value[item].name));
+                    //  searchCriteria.push(q.value(q.pathIndex('/submittedBy/username'), value[item].name));
                 } else if (item === 'assignTo') {
-                    searchCriteria.push(q.range(q.pathIndex('/assignTo/name'),q.datatype('string'), '=', value[item].name));
-                  //  searchCriteria.push(q.value(q.pathIndex('/assignTo/username'), value[item].name));
+                    searchCriteria.push(q.range(q.pathIndex('/assignTo/name'), q.datatype('string'), '=', value[item].name));
+                    //  searchCriteria.push(q.value(q.pathIndex('/assignTo/username'), value[item].name));
                 } else if (item === 'priority') {
                     searchCriteria.push(q.range(q.pathIndex('/priority/level'), q.datatype('string'), '=', value[item].name));
-                   //searchCriteria.push(q.value(q.pathIndex('/priority/level'), value[item].name));
+                    //searchCriteria.push(q.value(q.pathIndex('/priority/level'), value[item].name));
                 } else {
                     //searchCriteria.push(q.range(item, '=', value[item].name));
                     searchCriteria.push(q.value(item, value[item].name));
@@ -78,10 +138,6 @@ router.post('/', function(req, res) {
     db.documents.query(
         q.where(
             searchCriteria
-          //  q.collection('bugs'),
-           // q.range(q.pathIndex('/assignTo/username'), q.datatype('string'), '=', 'sreddy')
-          // q.value(q.pathIndex('/assignTo/username'), 'sreddy')
-
         )
         .orderBy(
             q.sort('id', 'ascending')
@@ -100,15 +156,15 @@ router.post('/', function(req, res) {
         )
         .slice(1, maxLimit)
         .withOptions({
-        	debug:true,
+            debug: true,
             queryPlan: true,
             metrics: true,
             category: 'contents',
             view: 'facets'
         })
     ).result(function(response) {
-       // console.log(response);
-       // console.log('/search', req.body);
+        // console.log(response);
+        // console.log('/search', req.body);
         result = response;
         res.status(200).json(result);
     }, function(error) {
@@ -130,13 +186,13 @@ router.get('/all', function(req, res) {
             q.sort('id', 'ascending')
         )
         .withOptions({
-        	debug:true,
+            debug: true,
             metrics: true,
             category: 'contents',
             view: 'facets'
         })
     ).result(function(response) {
-      //  console.log(response);
+        //  console.log(response);
         result = response;
         res.status(200).json(result);
     }, function(error) {
@@ -148,8 +204,8 @@ router.get('/all', function(req, res) {
 
 
 router.post('/test', function(req, res) {
-	//console.log('---------------', req);
- var result = {};
+    //console.log('---------------', req);
+    var result = {};
     db.documents.query(
         q.where(
             q.collection('bugs'),

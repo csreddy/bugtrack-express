@@ -60,7 +60,7 @@ app.use(flash());
 
 
 app.use('/', routes);
-app.use('/user/:username', user);
+app.use('/user', user);
 app.use('/login', login);
 app.use('/bug', bug);
 app.use('/search', search);

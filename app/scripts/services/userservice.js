@@ -58,5 +58,17 @@ app.service('User', ['$http', 'RESTURL', '$location', 'Flash',
             });
         };
 
+        this.saveDefaultQuery = function(searchCriteria) {
+            return $http({
+                method: 'PUT',
+                url: '/user/savedefaultquery',
+                data: searchCriteria
+            });
+        };
+
+        this.getDefaultSearch = function() {
+                
+        };
+
     }
 ]);
