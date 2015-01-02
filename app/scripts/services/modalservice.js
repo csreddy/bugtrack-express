@@ -11,8 +11,10 @@ app.service('modalService', ['$modal',
             modalFade: true,
             templateUrl: 'views/partials/modal.partial.html'
         };
-
+ 
         var modalOptions = {
+            showCloseButton:true,
+            showActionButton: true,
             closeButtonText: 'Close',
             actionButtonText: 'OK',
             headerText: 'Proceed?',

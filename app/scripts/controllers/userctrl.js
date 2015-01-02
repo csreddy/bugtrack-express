@@ -1,88 +1,122 @@
 'user strict';
 
-var app = angular.module('user.controllers', []);
+var app = angular.module('user.controllers', ['ngCookies']);
 
-/*app.controller('userCtrl', ['$scope', '$http', '$location', 'Flash', 'User',
-    function($scope, $http, $location, Flash, User) {
-        $http.get($location.path()).then(function(response) {
-            $scope.username = response.data.username;
-            // /v1/documents?uri=/user/' + $scope.username + '.json'
-            User.getInfo().then(function(response) {
-                $scope.user = response.data;
-            }, function() {
-                // $location.path('/login');
-                Flash.addAlert('danger', 'Could not get user profile');
-                // Flash.addAlert('warning', 'sign in to go to user profile');
-            });
-        }, function(response) {
-            $location.path('/login');
-            Flash.addAlert('warning', response.data.message);
-        });
+app.controller('loginCtrl', ['$scope', '$location', '$cookieStore', 'Flash', '$http', 'User',
+    function($scope, $location, $cookieStore, Flash, $http, User) {
+
+        $scope.username = 'sreddy';
+        $scope.password = 'admin';
+
+
+        $scope.login = function() {
+            console.log('login called');
+            console.log($scope.username, $scope.password);
+            var payload = {
+                username: $scope.username,
+                password: $scope.password
+            };
+
+            User.login(payload).then(function(response) {
+                    //$location.path('/user/' + response.data.username);
+                    $location.path('/');
+                    User.getInfo().success(function(user) {
+                        Flash.addAlert('success', 'Welcome! ' + user.name);
+                    });
+                },
+                function(response) {
+                    Flash.addAlert('danger', response.data.message);
+                });
+        };
 
     }
 ]);
-*/
 
-/*app.controller('userCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'bugFactory', 'Flash', 'getCurrentUserBugs', '$filter', 'getCurrentUser',
 
-    function($scope, $location, RESTURL, BugService, bugFactory, Flash, getCurrentUserBugs, $filter, getCurrentUser) {
+app.controller('logoutCtrl', ['$http', 'Flash', '$location', '$rootScope',
+    function($http, Flash, $location, $rootScope) {
+        $http.get('/logout').then(function() {
+            console.log('logged out');
+            $location.path('/login');
+            Flash.addAlert('success', 'user logged out');
+            $rootScope.navbarUser = undefined;
+        }, function() {
+            Flash.addAlert('danger', 'something went wrong');
+        });
+    }
+]);
 
-        $scope.bugs = [];
-        $scope.currentUser = getCurrentUser;
-        $scope.currentPage = 1;
-        $scope.itemsPerPage = 10;
+app.controller('registerCtrl', ['$scope', '$location', 'Flash', 'User', 'bugConfigFactory',
+    function($scope, $location, Flash, User, bugConfigFactory) {
 
-        $scope.bugList = getCurrentUserBugs.data.results;
-        $scope.totalItems = $scope.bugList.length;
-        $scope.bugList.sort(function(a, b) {
-            //  console.log(a.uri);
-            a = parseInt(a.uri.replace('.json', ''));
-            b = parseInt(b.uri.replace('.json', ''));
-            return (a - b);
+        $scope.config = {};
+        bugConfigFactory.getConfig().then(function(response) {
+            $scope.config = response.data;
         });
 
-        function getBugDetails(begin, end) {
-            $scope.bugs = [];
-            angular.forEach($scope.bugList.slice(begin, end), function(bug, index) {
-                BugService.getBug(bug.uri).then(function(response) {
-                    $scope.bugs.push(response.data);
-                    // sort 
-                    $scope.bugs.sort(function(a, b) {
-                        return (a.id - b.id);
-                    });
 
-                }, function() {
-                    Flash.addAlert('danger', 'Oops! could not retriev bugs');
-                });
-            });
+        $scope.createUser = function() {
+
+            // TODO : check if user already exists 
+
+            console.log($scope.user.password1);
+            if ($scope.user.password1 !== $scope.user.password2) {
+                Flash.addAlert('danger', 'passwords did not match');
+            } else {
+                var user = {};
+                user.name = $scope.user.name;
+                user.email = $scope.user.email;
+                user.username = $scope.user.username;
+                user.password = $scope.user.password1; //md5($scope.user.password1);
+                user.createdAt = new Date();
+                user.modifiedAt = new Date();
+                user.savedQueries = {
+                    default: {}
+                };
+                User.create(user.username, user).then(function() {
+                    // update config
+                    $scope.config.users.push({
+                        'email': user.email,
+                        'name': user.name,
+                        'username': user.username
+                    });
+                    bugConfigFactory.updateConfiguration($scope.config);
+
+                    // login user automatically after successfull registration
+                    User.login({
+                        username: user.username,
+                        password: user.password
+                    }).then(function(response) {
+                            $location.path('/');
+                            User.getInfo().success(function(user) {
+                                Flash.addAlert('success', 'Welcome! ' + user.name);
+                            });
+                        },
+                        function(response) {
+                            Flash.addAlert('danger', response.data.message);
+                        });
+
+                    //  console.log('user', user.fullname);
+                    // Flash.addAlert('success', '<b>' + user.username + '</b> was successfully created');
+
+                }),
+                function(response) {
+                    Flash.addAlert('danger', response.data.error.message);
+                };
+            }
+
+        };
+
+    }
+]);
+
+app.controller('userRedirectCtrl', ['$location', 'getCurrentUser',
+    function($location, getCurrentUser) {
+        try {
+            $location.path('/user/' + getCurrentUser.username);
+        } catch (e) {
+            $location.path('/login');
         }
 
-        getBugDetails(0, $scope.itemsPerPage);
-
-
-        $scope.goToBug = function(uri) {
-            $location.path(uri);
-        };
-
-        $scope.setPage = function(pageNo) {
-            $scope.currentPage = pageNo;
-            console.log('Page changed to: ' + $scope.currentPage);
-            var begin = (($scope.currentPage - 1) * $scope.itemsPerPage);
-            var end = begin + $scope.itemsPerPage;
-            getBugDetails(begin, end);
-        };
-        
-        var orderBy = $filter('orderBy');
-        $scope.order = function(predicate, reverse) {
-            $scope.bugs = orderBy($scope.bugs, predicate, reverse);
-        };
-
-
     }
 ]);
-*/
-
-
-app.controller('userRedirectCtrl', ['$location', 'getCurrentUser', function($location, getCurrentUser){
-		$location.path('/user/'+ getCurrentUser.username);
-}]);

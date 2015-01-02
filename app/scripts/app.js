@@ -14,14 +14,16 @@ var app = angular.module('bugtrackApp', [
     'bugtrackApp.flashService',
     'xeditable',
     'wysiHtml5.directive',
-    'login.controllers',
+    //'login.controllers',
     'user.services',
     'user.controllers',
     'dashboard.controllers',
     'search.controllers',
     'search.services',
     'navbar.controllers',
-    'modal.services'
+    'modal.services',
+    'fileupload.directive',
+    'code.directive'
     //   'angular-flash.service',
     //  'angular-flash.flash-alert-directive'
 ]);
@@ -30,58 +32,54 @@ app.config(function($routeProvider) {
     $routeProvider
         .when('/', {
             templateUrl: 'views/list.html',
-            controller: 'bugListCtrl',
+            controller: 'searchCtrl',
+            title: 'Home',
             resolve: {
-                getCurrentUser: ['User',
+                currentUser: ['User',
                     function(User) {
                         return User.getCurrentUserInfo();
                     }
                 ],
-                getCurrentUserBugs: ['BugService', 'User',
-                    function(BugService, User) {
-                        return User.getCurrentUserInfo().then(function(user) {
-                             return BugService.getCurrentUserBugs(user);
-                        });
-
+                getAllBugs: ['BugService',
+                    function(BugService) {
+                        return BugService.getBugs();
                     }
                 ],
-                getAllBugs: ['BugService', function(BugService) {
-                    return BugService.getBugs();
-                }]
+                config: ['bugConfigFactory',
+                    function(bugConfigFactory) {
+                        var config = {};
+                        return bugConfigFactory.getConfig().then(function(configdata) {
+                            config = angular.copy(configdata.data);
+                            config.kind = [];
+                            config.status = [];
+                            config.severity = [];
+                            for (var i = 0; i < configdata.data.kind.length; i++) {
+                                config.kind.push({
+                                    name: configdata.data.kind[i],
+                                    value: false
+                                });
+                            }
+                            for (var i = 0; i < configdata.data.status.length; i++) {
+                                config.status.push({
+                                    name: configdata.data.status[i],
+                                    value: false
+                                });
+                            }
+                              for (var i = 0; i < configdata.data.severity.length; i++) {
+                                config.severity.push({
+                                    name: configdata.data.severity[i],
+                                    value: false
+                                });
+                            }
+                            return config;
+                        });
+                    }
+                ]
             }
         })
-        .when('/list', {
+        .when('/list2', {
+            title: 'Home',
             templateUrl: 'views/list.html',
-            controller: 'bugListCtrl',
-            resolve: {
-                getCurrentUser: ['User',
-                    function(User) {
-                        return User.getCurrentUserInfo();
-                    }
-                ],
-                getCurrentUserBugs: ['BugService', 'User',
-                    function(BugService, User) {
-                        return User.getCurrentUserInfo().then(function(user) {
-                            return BugService.getCurrentUserBugs(user);  
-                        });
-
-                    }
-                ],
-                getAllBugs: ['BugService', function(BugService) {
-                    return BugService.getBugs();
-                }]
-            }
-        })
-        .when('/login', {
-            templateUrl: 'views/login.html',
-            controller: 'loginCtrl'
-        })
-        .when('/logout', {
-            templateUrl: 'views/login.html',
-            controller: 'logoutCtrl'
-        })
-        .when('/user/:username', {
-            templateUrl: 'views/user.html',
             controller: 'bugListCtrl',
             resolve: {
                 getCurrentUser: ['User',
@@ -97,15 +95,58 @@ app.config(function($routeProvider) {
 
                     }
                 ],
-                getAllBugs: ['BugService', function(BugService) {
-                    return BugService.getBugs();
-                }]
+                getAllBugs: ['BugService',
+                    function(BugService) {
+                        return BugService.getBugs();
+                    }
+                ],
+                loadConfig: ['bugConfigFactory',
+                    function(bugConfigFactory) {
+                        return bugConfigFactory.getConfig();
+                    }
+                ]
             }
         })
-       .when('/home', {
+        .when('/login', {
+            title: 'Login',
+            templateUrl: 'views/login.html',
+            controller: 'loginCtrl'
+        })
+        .when('/logout', {
+            title: 'Logout',
+            templateUrl: 'views/login.html',
+            controller: 'logoutCtrl'
+        })
+        .when('/user/:username', {
+            title: 'Home',
+            templateUrl: 'views/list.html',
+            controller: 'bugListCtrl',
+            resolve: {
+                getCurrentUser: ['User',
+                    function(User) {
+                        return User.getCurrentUserInfo();
+                    }
+                ],
+                getCurrentUserBugs: ['BugService', 'User',
+                    function(BugService, User) {
+                        return User.getCurrentUserInfo().then(function(user) {
+                            return BugService.getCurrentUserBugs(user);
+                        });
+
+                    }
+                ],
+                // getAllBugs: ['BugService',
+                //     function(BugService) {
+                //         return BugService.getBugs();
+                //     }
+                // ]
+            }
+        })
+        .when('/home', {
+            title: 'Home',
             templateUrl: 'views/user.html',
             controller: 'userRedirectCtrl',
-            resolve:{
+            resolve: {
                 getCurrentUser: ['User',
                     function(User) {
                         return User.getCurrentUserInfo();
@@ -114,10 +155,12 @@ app.config(function($routeProvider) {
             }
         })
         .when('/register', {
+            title: 'Register',
             templateUrl: 'views/register.html',
             controller: 'registerCtrl'
         })
         .when('/new', {
+            title: 'New',
             templateUrl: 'views/new.html',
             controller: 'newBugCtrl',
             resolve: {
@@ -140,10 +183,12 @@ app.config(function($routeProvider) {
             }
         })
         .when('/config', {
+            title: 'Configure',
             templateUrl: 'views/config.html',
             controller: 'bugConfigCtrl'
         })
         .when('/bug/:id', {
+            title: 'Bug Details',
             templateUrl: 'views/bugdetails.html',
             controller: 'bugViewCtrl',
             resolve: {
@@ -160,6 +205,7 @@ app.config(function($routeProvider) {
             }
         })
         .when('/dashboard', {
+            title: 'Dashboard',
             templateUrl: 'views/dashboard.html',
             controller: 'dashboardCtrl'
         })
@@ -172,6 +218,15 @@ app.config(function($routeProvider) {
 });
 
 app.constant('RESTURL', 'http://' + location.hostname + ':' + location.port);
+
+/*app.run(['$location', '$rootScope', 'editableOptions', function($location, $rootScope, editableOptions) {
+    $rootScope.$on('$routeChangeSuccess', function (event, current, previous) {
+        $rootScope.title = current.$route.title;
+    });
+
+    // Xeditable
+    editableOptions.theme = 'bs3'; // bootstrap3 theme. Can be also 'bs2', 'default'
+}]);*/
 
 app.run(function(editableOptions) {
     // Xeditable

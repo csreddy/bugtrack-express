@@ -1,7 +1,7 @@
 {
     "users": [],
     "severity": ["P1 - Catastrophic", "P2 - Critcial", "P3 - Major", "P4 - Minor", "P5 -  Aesthetic", "Performance"],
-    "status": ["New", "Verify", "Fix", "Test", "Ship", "Closed", "Will not fix", "External"],
+    "status": ["New", "Verify", "Fix", "Test", "Ship", "Closed", "Will not fix", "External", "n/v/f/e"],
     "version": [
         "n/a",
         "TKW-2.0-1",

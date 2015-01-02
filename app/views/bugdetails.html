@@ -1,7 +1,7 @@
 <div class="row">
 </div>
 <div class="col-md-3 pull-left">
-    <div class="panel panel-primary">
+    <div class="panel panel-info">
         <div class="panel-heading" style="height: 40px">
             <div class="pull-left">
             <h3 class="panel-title">
@@ -12,15 +12,13 @@
             
 
             <div class="pull-right" ng-show="showSubscribe">
-          <!-- <a ng-click="subscribe()" tooltip="subscribe" tooltip-placement="right"> -->
            <a class="pointer"  tooltip="Subscribe" ng-click="subscribe()">
-           <span class="glyphicon glyphicon-bookmark" style="background-color: white"></span> 
+           <span class="glyphicon glyphicon-star-empty"></span> 
            </a>
             </div>
             <div class="pull-right" ng-show="showUnsubscribe">
-          <!-- <a ng-click="subscribe()" tooltip="subscribe" tooltip-placement="right"> -->
            <a class="pointer" tooltip="Unsubscribe"  ng-click="unsubscribe()">
-           <span class="glyphicon glyphicon-bookmark" style="background-color: black"></span> 
+            <span class="glyphicon glyphicon-star"></span> 
            </a>
             </div>
         </div>
@@ -192,24 +190,42 @@
         </div>
     </div>
 </div>
+<!-- bug details  -->
 <div class="col-md-9">
  <div class="panel panel-default">
     <div class="panel-heading"><b>{{bug.title}}</b></div>
       <div class="panel-body">
+              <div class="col-md-3 pull-right" ng-show="bug.attachments">
+    <div class="box box-success">
+    <div class="box-header">
+        <div class="box-tools pull-left">
+            <div class="label bg-green"><span class="glyphicon glyphicon-file"></span> Attachments</div>
+        </div>
+    </div>
+    <div class="box-body">
+        <ul ng-repeat="file in attachments track by $index" class="list-unstyled">
+            <li><a ng-href="/v1/documents?uri={{file.uri}}" target="_window">{{file.name}}</a>
+            </li>
+        </ul>
+
+    </div>
+    <!-- /.box-body -->
+  </div>
+</div>
       <p ng-bind-html="bug.description"></p>
+
             <div ng-show="bug.note">
                 <p>
                     <h6>Note:</h6>
                     <span class="glyphicon glyphicon-info-sign"> Note:</span> <blockquote style="border-left-color: #d9534f;"> {{bug.note}} </blockquote>
                 </p>
-                <br>
             </div>
 
             <div ng-show="bug.samplequery">
                 <legend>
                   <h5><span class="glyphicon glyphicon-pencil"></span>  Sample Query</span></h5>
                 </legend>
-                {{bug.samplequery}}
+                {{bug.samplequery}}  
             </div>
             <div ng-show="bug.sampledata">
                 <legend>
@@ -223,13 +239,16 @@
                 </legend>
                 <div style="overflow: auto; max-height:500px;">
                     <pre>{{bug.stacktrace}}</pre>
+                    <p class="gist">{{bug.stacktrace}}</p>
                 </div>
             </div>
       </div>
-  </div>
+</div>
+
+
   <div class="panel panel-default" ng-repeat="item in bug.changeHistory">
     <div class="panel-heading">
-         <img alt="user pic" src="images/photo.png" class="img-circle img-responsive" style="height: 40px;width: 40px; float:left;margin-right: 5px;">
+         <img alt="user pic" src="images/avatar.png" class="img-circle img-responsive" style="height: 3em;width: 3em; float:left;margin-right: 5px;">
    <b>{{item.updatedBy.name}}</b><p class="pull-right" style="font-size: 12px;font-weight: 400;">{{item.time}}</p>   
     </div>
       <div class="panel-body">
@@ -249,27 +268,29 @@
       </div>
   </div>
 
-<br>
+
+
 
 <!-- <div class="col-md-3"></div> -->
-<div class="pull-left">
+<div class="container pull-left">
 <div class="row">
   <div class="col-md-1">
-<!--   <a href="" tooltip="{{updatedBy.name}}"</span>
-      <img alt="user pic" src="images/photo.png" class="img-circle tooltips" style="height: 40px;width: 40px;">
-  </a> -->
   <a href="" class="tooltips"> <span>{{updatedBy.name}}</span>
-    <img alt="user pic" src="images/photo.png" class="img-circle tooltips" style="height: 40px;width: 40px;">
+    <img alt="user pic" src="images/avatar.png" class="img-circle tooltips" style="height: 3em;width: 3em;">
   </a>
   </div>
-  <div class="col-md-11">
-       <textarea rich-text-editor  class="form-control"  ng-model="newcomment" id="newcomment" name="newcomment" placeholder="Add a comment here..." rows="8" cols="100%"></textarea>
-    <br>
-    <button ng-click="updateBug()" id="updatebug" name="updatebug" class="btn btn-primary">Update</button>
-  </div>
+  <!-- second method -->
+<div class="row col-md-8">
+<form name="commentForm">
+     <textarea rich-text-editor  class="form-control"  ng-model="newcomment" id="newcomment" name="newcomment" placeholder="Add a comment here..." rows="8" cols="100%"></textarea>
+       <br>
+     <input type="file" file-upload multiple/>
+     <ul>
+        <li ng-repeat="file in files">{{file.name}}</li>
+    </ul> 
+    <button ng-click="updateBug()" id="updatebug" name="updatebug" class="btn btn-primary btn-danger">Update</button>
+</form>    
 </div>
-
-   <!--  <textarea class="form-control" ng-model="newcomment" id="newcomment" name="newcomment" placeholder="Add a comment" rows="8" cols="100%"></textarea> -->
-
+</div>
 </div>
 </div>

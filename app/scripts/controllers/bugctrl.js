@@ -1,6 +1,6 @@
 'use strict';
 
-var app = angular.module('bug.controllers', ['ui.bootstrap']);
+var app = angular.module('bug.controllers', ['ui.bootstrap', 'angularFileUpload']);
 app.constant('RESTURL', 'http://' + location.hostname + ':' + location.port);
 
 app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'bugFactory', 'bugConfigFactory', 'Flash', 'User', 'loadConfig', 'getCurrentUser', 'bugId',
@@ -41,6 +41,7 @@ app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'b
 
         $scope.submitted = false;
 
+
         $scope.setQuery = function(samplequery) {
             $scope.samplequery = samplequery;
         };
@@ -76,11 +77,19 @@ app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'b
         };
 
         $scope.setRelatedTo = function(relatedTo) {
-            var tokenizedTaskIds = relatedTo.split(',');
-            for (var i = 0; i < tokenizedTaskIds.length; i++) {
-                tokenizedTaskIds[i] = parseInt(tokenizedTaskIds[i].replace(/ /g, ''));
+            if (relatedTo) {
+                var tokenizedTaskIds = relatedTo.split(',');
+                var taskIds = [];
+                for (var i = 0; i < tokenizedTaskIds.length; i++) {
+                    if (!isNaN(parseInt(tokenizedTaskIds[i].replace(/ /g, '')))) {
+                        taskIds[i] = parseInt(tokenizedTaskIds[i].replace(/ /g, ''));
+                    }
+                }
+                $scope.relatedTo = taskIds;
+                console.log(taskIds);
+            } else {
+                $scope.relatedTo = [];
             }
-            $scope.relatedTo = tokenizedTaskIds;
         };
 
         $scope.setVersion = function(version) {
@@ -119,12 +128,20 @@ app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'b
             $scope.publishStatus = publishStatus;
         };
 
-        $scope.setTickets = function(setTickets) {
-            var tokenizedTickets = setTickets.split(',');
-            for (var i = 0; i < tokenizedTickets.length; i++) {
-                tokenizedTickets[i] = parseInt(tokenizedTickets[i].replace(/ /g, ''));
+        $scope.setTickets = function(tickets) {
+            if (tickets) {
+                var tokenizedTickets = tickets.split(',');
+                var ticketIds = [];
+                for (var i = 0; i < tokenizedTickets.length; i++) {
+                    if (!isNaN(parseInt(tokenizedTickets[i].replace(/ /g, '')))) {
+                        ticketIds[i] = parseInt(tokenizedTickets[i].replace(/ /g, ''));
+                    }
+                }
+                $scope.tickets = ticketIds;
+            } else {
+                $scope.tickets = [];
             }
-            $scope.tickets = (tokenizedTickets === null) ? [] : tokenizedTickets;
+
         };
 
         $scope.setCustomerImpact = function(customerImpact) {
@@ -132,6 +149,16 @@ app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'b
         };
 
 
+        //an array of files selected
+        $scope.files = [];
+
+        //listen for the file selected event
+        $scope.$on('fileSelected', function(event, args) {
+            $scope.$apply(function() {
+                //add the file object to the scope's files collection
+                $scope.files.push(args.file);
+            });
+        });
         $scope.createNewBug = function() {
             if ($scope.bugForm.$valid) {
                 // Submit as normal
@@ -141,14 +168,11 @@ app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'b
             }
         };
 
-
+        //-------------------------------------------------------------------
         function submitBug() {
-            //  var bugId = Math.floor(Math.random() * 10000);
             var bug = {};
-            bug.relatedTo = [];
-            bug.tickets = [];
 
-            bug.id = parseInt(bugId.data.total) + 1;
+            bug.id = parseInt(bugId.data.count) + 1;
             bug.kind = $scope.kind || 'Bug';
             bug.createdAt = new Date();
             bug.modifiedAt = bug.createdAt;
@@ -164,114 +188,108 @@ app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'b
             bug.tofixin = $scope.tofixin;
             bug.severity = $scope.severity;
             bug.priority = $scope.priority;
-            bug.relation = $scope.relation;
-            bug.relatedTo = $scope.relatedTo;
-            bug.clones = [];
             bug.version = $scope.version;
             bug.platform = $scope.platform || 'all';
             bug.memory = $scope.memory;
             bug.processors = $scope.processors;
             bug.note = $scope.note;
             bug.headline = $scope.headline;
+            bug.subscribers = [];
+            bug.subscribers.push($scope.submittedBy);
+            if ($scope.assignTo.username !== $scope.submittedBy.username) {
+                bug.subscribers.push($scope.assignTo);
+            }
+            bug.attachments = [];
+            for (var i = 0; i < $scope.files.length; i++) {
+                bug.attachments[i] = '/' + bug.id + '/' + $scope.files[i].name;
+            }
+            bug.relation = $scope.relation;
+            bug.relatedTo = $scope.relatedTo || [];
+            bug.clones = [];
+
             bug.supportDescription = $scope.supportDescription;
             bug.workaround = $scope.workaround;
             bug.publishStatus = $scope.publishStatus;
-            bug.tickets.push($scope.tickets);
             bug.customerImpact = $scope.customerImpact;
+            bug.tickets = $scope.tickets || [];
             bug.changeHistory = [];
-            bug.subscribers = [$scope.submittedBy, $scope.assignTo];
 
-
-            var uri = bug.id + '.json';
-            BugService.putDocument(uri, bug, $scope.submittedBy).then(function() {
-                    console.log('bug details ', bug);
-                    $location.path('/list');
-                    Flash.addAlert('success', '<a href=\'/#/bug/' + bug.id + '\'>' + 'Bug-' + bug.id + '</a>' + ' was successfully created');
-
-                },
-                function(response) {
-                    console.log(response);
-                    Flash.addAlert('danger', response.statusText);
-                }
-            );
-        };
-
-
-        // text editor for bug descrition   
-        //  $scope.descrizione = undefined;
-
+            BugService.createNewBug(bug, $scope.files).success(function() {
+                $location.path('/');
+                Flash.addAlert('success', '<a href=\'/#/bug/' + bug.id + '\'>' + 'Bug-' + bug.id + '</a>' + ' was successfully created');
+            }).error(function(response) {
+                Flash.addAlert('danger', response);
+            });
+        }
     }
 ]);
 
 
 
-app.controller('bugListCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'bugFactory', 'Flash', 'getCurrentUserBugs', 'getAllBugs', '$filter', 'getCurrentUser',
+app.controller('bugListCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'bugFactory', 'Flash', 'getCurrentUserBugs', '$filter', 'getCurrentUser',
 
-    function($scope, $location, RESTURL, BugService, bugFactory, Flash, getCurrentUserBugs, getAllBugs, $filter, getCurrentUser) {
+    function($scope, $location, RESTURL, BugService, bugFactory, Flash, getCurrentUserBugs, $filter, getCurrentUser) {
 
         $scope.bugs = [];
         $scope.currentUser = getCurrentUser;
         $scope.currentPage = 1;
-        $scope.itemsPerPage = 10;
-        // get all bugs on load
-        $scope.bugList = getAllBugs.data.results;
-
-        function getBugList() {
-            // $scope.bugList = getCurrentUserBugs.data.results;            
-            $scope.totalItems = $scope.bugList.length;
-            $scope.bugList.sort(function(a, b) {
-                //  console.log(a.uri);
-                a = parseInt(a.uri.replace('.json', ''));
-                b = parseInt(b.uri.replace('.json', ''));
-                return (a - b);
-            });
-
-            function getBugDetails(begin, end) {
-                $scope.bugs = [];
-                angular.forEach($scope.bugList.slice(begin, end), function(bug) {
-                    BugService.getBug(bug.uri).then(function(response) {
-                        $scope.bugs.push(response.data);
-                        // sort 
-                        $scope.bugs.sort(function(a, b) {
-                            return (a.id - b.id);
-                        });
-
-                    }, function() {
-                        Flash.addAlert('danger', 'Oops! could not retrieve bugs');
-                    });
-                });
-            }
-
-            getBugDetails(0, $scope.itemsPerPage);
+        $scope.itemsPerPage = 25;
 
 
-            $scope.goToBug = function(uri) {
-                $location.path(uri);
-            };
+        // get search metrics data from first item in result set
+        $scope.searchMetrics = getCurrentUserBugs.data[0].metrics;
+        $scope.totalItems = getCurrentUserBugs.data[0].total;
 
-            $scope.setPage = function(pageNo) {
-                $scope.currentPage = pageNo;
-                console.log('Page changed to: ' + $scope.currentPage);
-                var begin = (($scope.currentPage - 1) * $scope.itemsPerPage);
-                var end = begin + $scope.itemsPerPage;
-                getBugDetails(begin, end);
-            };
+        // get bug contents
+        getCurrentUserBugs.data.splice(0, 1);
+        $scope.bugList = getCurrentUserBugs.data;
 
-            var orderBy = $filter('orderBy');
-            $scope.order = function(predicate, reverse) {
-                $scope.bugs = orderBy($scope.bugs, predicate, reverse);
-            };
-
-        }
 
         getBugList();
 
 
         $scope.$on('search', function(event, data) {
             $scope.bugList = data.searchResults;
+            $scope.facets = data.searchCriteria.facets;
             console.log($scope.bugList);
+            $scope.totalItems = $scope.bugList[0].total;
             getBugList();
         });
+
+
+        $scope.goToBug = function(uri) {
+            $location.path(uri);
+        };
+
+        $scope.setPage = function(pageNo) {
+            $scope.currentPage = pageNo;
+            console.log('Page changed to: ' + $scope.currentPage);
+            var begin = (($scope.currentPage - 1) * $scope.itemsPerPage);
+            var end = begin + $scope.itemsPerPage;
+            getBugDetails(begin, end);
+        };
+
+        var orderBy = $filter('orderBy');
+        $scope.order = function(predicate, reverse) {
+            $scope.bugs = orderBy($scope.bugs, predicate, reverse);
+        };
+
+
+        // private functions
+
+        function getBugDetails(begin, end) {
+            $scope.bugs = [];
+            var paginatedBugList = $scope.bugList.slice(begin, end);
+
+            angular.forEach(paginatedBugList, function(bug) {
+                $scope.bugs.push(bug.content);
+            });
+        }
+        // for pagination, get bug details only for given page
+        function getBugList() {
+            getBugDetails(0, $scope.itemsPerPage);
+        }
+
 
 
     }
@@ -290,19 +308,27 @@ app.controller('bugViewCtrl', ['$scope', '$location', 'RESTURL', 'BugService', '
 
 
         var updateBug;
-        var uri = $location.path().replace('/bug/', '') + '.json';
+        var id = $location.path().replace('/bug/', '');
 
         bugConfigFactory.getConfig().then(function(response) {
             $scope.config = response.data;
             console.log('config: ', $scope.config);
         });
 
-        BugService.getBug(uri).then(function(response) {
+        BugService.getBug(id).then(function(response) {
                 console.log(response.data);
 
                 $scope.bug = response.data;
                 updateBug = response.data;
                 console.log('updateBug', updateBug);
+
+                // cloned bug attachedments will have its parent attachment uri, hence need to do this
+                $scope.attachments = [];
+                for (var i = 0; i < $scope.bug.attachments.length; i++) {
+                    $scope.attachments[i] = {};
+                    $scope.attachments[i].uri = $scope.bug.attachments[i];
+                    $scope.attachments[i].name = $scope.bug.attachments[i].replace(/\/\d*\//, '');
+                }
 
                 // if the current user has already subscribed then show Unsubscribe else show Subscribe
                 var subscribers = $scope.bug.subscribers;
@@ -440,6 +466,17 @@ app.controller('bugViewCtrl', ['$scope', '$location', 'RESTURL', 'BugService', '
 
             });
 
+        //an array of files selected
+        $scope.files = [];
+
+        //listen for the file selected event
+        $scope.$on('fileSelected', function(event, args) {
+            $scope.$apply(function() {
+                //add the file object to the scope's files collection
+                $scope.files.push(args.file);
+            });
+        });
+
 
         // update bug 
         $scope.updateBug = function() {
@@ -476,20 +513,30 @@ app.controller('bugViewCtrl', ['$scope', '$location', 'RESTURL', 'BugService', '
                 // clear text area after submit
                 $scope.newcomment = '';
             }
-
-            BugService.putDocument(uri, updateBug, updateBug.submittedBy).then(function() {
-
-                    $scope.changes = {};
-                    console.log('changes', $scope.changes);
-                    //      console.log('updateBug', updateBug);
-                    console.log('bug changed from ', updateBug);
-                    console.log('bug changed to', $scope.bug);
-                    Flash.addAlert('success', '<a href=\'/#/bug/' + $scope.bug.id + '\'>' + 'Bug-' + $scope.bug.id + '</a>' + ' was successfully updated');
-                },
-                function(response) {
-                    Flash.addAlert('danger', response.data.error.message);
+            for (var j = 0; j < $scope.files.length; j++) {
+                var fileuri = '/' + updateBug.id + '/' + $scope.files[j].name;
+                if (updateBug.attachments.indexOf(fileuri) > -1) {
+                    var modalOptions = {
+                        showCloseButton: true,
+                        showActionButton: false,
+                        closeButtonText: 'Ok',
+                        headerText: 'File Exists!',
+                        bodyText: 'File with name <b>' + fileuri + '</b> is already attached to this bug'
+                    };
+                    modalService.showModal({}, modalOptions);
+                } else {
+                    updateBug.attachments.push(fileuri);
                 }
-            );
+            }
+
+            BugService.updateBug(updateBug, $scope.files).success(function() {
+                // reset watchers
+                $scope.changes = {};
+                $scope.files = [];
+                Flash.addAlert('success', '<a href=\'/#/bug/' + $scope.bug.id + '\'>' + 'Bug-' + $scope.bug.id + '</a>' + ' was successfully updated');
+            }).error(function(response) {
+                Flash.addAlert('danger', response.data.error.message);
+            });
         };
 
         // clone bug 
@@ -502,14 +549,15 @@ app.controller('bugViewCtrl', ['$scope', '$location', 'RESTURL', 'BugService', '
                 bodyText: 'Are you sure you want to clone this bug?'
             };
 
-            console.log('cloned ' + id);
+            console.log('cloning ' + id);
             var cloneTime = new Date();
-            var newBugId = parseInt(bugId.data.total) + 1;
-            var clonedBug = angular.copy($scope.bug);
-            clonedBug.id = newBugId;
-            clonedBug.cloneOf = id;
-            clonedBug.clones = [];
-            clonedBug.changeHistory.push({
+            var newBugId = parseInt(bugId.data.count) + 1;
+            var clone = {};
+            clone.bug = angular.copy($scope.bug);
+            clone.bug.id = newBugId;
+            clone.bug.cloneOf = id;
+            clone.bug.clones = [];
+            clone.bug.changeHistory.push({
                 'time': cloneTime,
                 'updatedBy': $scope.updatedBy,
                 'comment': "<span class='label label-danger'><span class='glyphicon glyphicon-bullhorn'></span></span> Cloned from " + "<a href='#/bug/" + id + "'>Bug-" + id + "</a>"
@@ -526,15 +574,14 @@ app.controller('bugViewCtrl', ['$scope', '$location', 'RESTURL', 'BugService', '
                     } else {
                         $scope.bug.clones = [newBugId];
                     }
-
-                    var promises = [BugService.putDocument(newBugId + '.json', clonedBug, $scope.bug.submittedBy).then(),
-                        BugService.putDocument(uri, $scope.bug, $scope.bug.submittedBy).then()
+                    var promises = [BugService.cloneBug(clone.bug).then(),
+                        BugService.cloneBug($scope.bug).then()
                     ];
                     $q.all(promises).then(function() {
-                            console.log('bug details ', clonedBug);
+                            console.log('bug details ', clone.bug);
                             //  console.log('----', $scope.updatedBy);
                             $location.path('/bug/' + newBugId);
-                            Flash.addAlert('success', '<a href=\'/#/bug/' + clonedBug.id + '\'>' + 'Bug-' + clonedBug.id + '</a>' + ' was successfully cloned');
+                            Flash.addAlert('success', '<a href=\'/#/bug/' + clone.bug.id + '\'>' + 'Bug-' + clone.bug.id + '</a>' + ' was successfully cloned');
                         },
                         function(response) {
                             console.log(response);
@@ -547,9 +594,8 @@ app.controller('bugViewCtrl', ['$scope', '$location', 'RESTURL', 'BugService', '
 
         // subscribe to the bug
         $scope.subscribe = function() {
-            var uri = $scope.bug.id + '.json';
             $scope.bug.subscribers.push($scope.updatedBy);
-            BugService.putDocument(uri, $scope.bug, $scope.bug.submittedBy).then(function() {
+            BugService.updateBug($scope.bug).then(function() {
                 $scope.showSubscribe = false;
                 $scope.showUnsubscribe = true;
                 Flash.addAlert('success', 'You have subscribed to ' + '<a href=\'/#/bug/' + $scope.bug.id + '\'>' + 'Bug-' + $scope.bug.id + '</a>');
@@ -559,7 +605,6 @@ app.controller('bugViewCtrl', ['$scope', '$location', 'RESTURL', 'BugService', '
         };
         // unsubscribe to the bug
         $scope.unsubscribe = function() {
-            var uri = $scope.bug.id + '.json';
             var subscribers = $scope.bug.subscribers;
             for (var i = 0; i < subscribers.length; i++) {
                 if (subscribers[i].username === getCurrentUser.username) {
@@ -567,7 +612,7 @@ app.controller('bugViewCtrl', ['$scope', '$location', 'RESTURL', 'BugService', '
                     break;
                 }
             }
-            BugService.putDocument(uri, $scope.bug, $scope.bug.submittedBy).then(function() {
+            BugService.updateBug($scope.bug).then(function() {
                 // if the current user is bug reporter or bug assignee then do not show subscribe/unsubscribe because 
                 // they are subscribed default and cannot unsubscribe
                 if (getCurrentUser.username === $scope.bug.submittedBy.username || getCurrentUser.username === $scope.bug.assignTo.username) {

@@ -21,7 +21,7 @@ app.controller('navbarCtrl', ['$rootScope', '$location', 'User',
                         $rootScope.hide = true;
                     }
 
-                    console.log('====', $rootScope.navbarUser);
+                 //   console.log('====', $rootScope.navbarUser);
                 }, function() {
                     $rootScope.hide = true;
                     console.log($rootScope.hide);
@@ -31,8 +31,8 @@ app.controller('navbarCtrl', ['$rootScope', '$location', 'User',
 
 
 
-        $rootScope.navbarSearch = function(str) {
-
+        $rootScope.quickSearch = function(bugId) {
+            $location.path('/bug/'+ bugId);
         };
 
 
