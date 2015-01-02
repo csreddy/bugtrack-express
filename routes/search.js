@@ -18,121 +18,120 @@ router.post('/', function(req, res) {
     var result = {};
     var criteria = req.body;
     var searchCriteria = [];
-    // when empty criteira is sent 
-    if (!criteria.keys) {
+    // when empty criteria is sent 
+    if (Object.keys(criteria).length === 0) {
         searchCriteria = [q.collection('bugs')];
     }
-    
 
-    var orQuery = [];
+
+
     for (var key in criteria) {
+        var orQuery = [];
         var value = criteria[key];
 
-        if (key === 'q') {
-            searchCriteria.push(q.parsedFrom(value));
-        }
-        // set collection
-        if (key === 'kind') {
-            var collectionName;
-            for (var index in value) {
-                switch (value[index].name) {
-                    case 'Bug':
-                        collectionName = 'bugs';
-                        if (value[index].value) {
-                            orQuery.push(q.collection(collectionName));
-                            searchCriteria.push(q.or(orQuery));
-                        }
-                        break;
-                    case 'Task':
-                        collectionName = 'tasks';
-                        if (value[index].value) {
-                            orQuery.push(q.collection(collectionName));
-                            searchCriteria.push(q.or(orQuery));
-                        }
-                        break;
-                    case 'RFE':
-                        collectionName = 'rfes';
-                        if (value[index].value) {
-                            orQuery.push(q.collection(collectionName));
-                            searchCriteria.push(q.or(orQuery));
-                        }
-                        break;
-                    case 'Other':
-                        collectionName = 'others';
-                        if (value[index].value) {
-                            orQuery.push(q.collection(collectionName));
-                            searchCriteria.push(q.or(orQuery));
-                        }
-                        break;
-                    default:
-                        collectionName = 'bugs';
-                        if (value[index].value) {
-                            orQuery.push(q.collection(collectionName));
-                            searchCriteria.push(q.or(orQuery));
-                        }
+        switch (key) {
+            case 'q':
+                searchCriteria.push(q.parsedFrom(value));
+                break;
+            case 'kind':
+                var collectionName;
+                for (var index in value) {
+                    switch (value[index].name) {
+                        case 'Bug':
+                            collectionName = 'bugs';
+                            if (value[index].value) {
+                                orQuery.push(q.collection(collectionName));
+                                searchCriteria.push(q.or(orQuery));
+                            }
+                            break;
+                        case 'Task':
+                            collectionName = 'tasks';
+                            if (value[index].value) {
+                                orQuery.push(q.collection(collectionName));
+                                searchCriteria.push(q.or(orQuery));
+                            }
+                            break;
+                        case 'RFE':
+                            collectionName = 'rfes';
+                            if (value[index].value) {
+                                orQuery.push(q.collection(collectionName));
+                                searchCriteria.push(q.or(orQuery));
+                            }
+                            break;
+                        case 'Other':
+                            collectionName = 'others';
+                            if (value[index].value) {
+                                orQuery.push(q.collection(collectionName));
+                                searchCriteria.push(q.or(orQuery));
+                            }
+                            break;
+                        default:
+                            // collectionName = 'bugs';
+                            // if (value[index].value) {
+                            //     orQuery.push(q.collection(collectionName));
+                            // }
+                            break;
+                    }
+                    //searchCriteria.push(q.or(orQuery));
                 }
-            }
-        }
-
-
-        if (key === 'status' || key === 'severity') {
-            for(var index in value){
-                if(value[index].value){
-                    orQuery.push(q.value(key, value[index].name));
+                break;
+            case 'status':
+            case 'severity':
+                for (var index in value) {
+                    if (value[index].value && value[index].name !== 'n/v/f/e') {
+                        orQuery.push(q.value(key, value[index].name));
+                    }
+                }
+                if (orQuery.length > 0) {
                     searchCriteria.push(q.or(orQuery));
                 }
-            }
-        }
-
-    
-
-
-        if (typeof value === 'string' && key !== 'q' && value !== '') {
-            if (key === 'assignTo') {
-                searchCriteria.push(q.range(q.pathIndex('/assignTo/username'), q.datatype('string'), '=', value));
-                //  searchCriteria.push(q.value(q.pathIndex('/assignTo/username'), value));
-            } else if (key === 'submittedBy') {
+                break;
+            case 'assignTo':
+            if (value !== '') {
+                searchCriteria.push(q.range(q.pathIndex('/assignTo/username'), q.datatype('string'), '=', value));    
+            }   
+                break;
+            case 'submittedBy':
+            if (value !== '') {
                 searchCriteria.push(q.range(q.pathIndex('/submittedBy/username'), q.datatype('string'), '=', value));
-                //  searchCriteria.push(q.value(q.pathIndex('/submittedBy/username'), value));
-            } else {
-                searchCriteria.push(q.value(key, value));
             }
-        }
-
-        if (key !== 'facets' && typeof value === 'object' && Object.keys(value).length > 0) {
-            var keys = Object.keys(value);
-            keys.forEach(function(item) {
-                if (value[item] === true) {
-                    orQuery.push(q.value(key, item));
-                    searchCriteria.push(q.or(orQuery));
+                break;
+            case 'category':
+            case 'version':
+            case 'fixedin':
+            case 'tofixin':
+            if (value !== '') {
+                   searchCriteria.push(q.value(key, value));
+            }
+                break;
+            case 'facets':
+                var keys = Object.keys(value);
+                if (keys.length > 0) {
+                    keys.forEach(function(item) {
+                        if (item === 'submittedBy') {
+                            searchCriteria.push(q.range(q.pathIndex('/submittedBy/name'), q.datatype('string'), '=', value[item].name));
+                            // searchCriteria.push(q.value(q.pathIndex('/submittedBy/username'), value[item].name));
+                        } else if (item === 'assignTo') {
+                            searchCriteria.push(q.range(q.pathIndex('/assignTo/name'), q.datatype('string'), '=', value[item].name));
+                            // searchCriteria.push(q.value(q.pathIndex('/assignTo/username'), value[item].name));
+                        } else if (item === 'priority') {
+                            searchCriteria.push(q.range(q.pathIndex('/priority/level'), q.datatype('string'), '=', value[item].name));
+                            // searchCriteria.push(q.value(q.pathIndex('/priority/level'), value[item].name));
+                        } else {
+                            searchCriteria.push(q.range(item, '=', value[item].name));
+                            // searchCriteria.push(q.value(item, value[item].name));
+                        }
+                    });
                 }
-            });
-
-            orQuery = [];
+                break;
+              default:
+              break;  
         }
 
-        // for facets
-        if (key === 'facets' && Object.keys(value).length > 0) {
-            var keys = Object.keys(value);
-            keys.forEach(function(item) {
-                if (item === 'submittedBy') {
-                    searchCriteria.push(q.range(q.pathIndex('/submittedBy/name'), q.datatype('string'), '=', value[item].name));
-                    //  searchCriteria.push(q.value(q.pathIndex('/submittedBy/username'), value[item].name));
-                } else if (item === 'assignTo') {
-                    searchCriteria.push(q.range(q.pathIndex('/assignTo/name'), q.datatype('string'), '=', value[item].name));
-                    //  searchCriteria.push(q.value(q.pathIndex('/assignTo/username'), value[item].name));
-                } else if (item === 'priority') {
-                    searchCriteria.push(q.range(q.pathIndex('/priority/level'), q.datatype('string'), '=', value[item].name));
-                    //searchCriteria.push(q.value(q.pathIndex('/priority/level'), value[item].name));
-                } else {
-                    //searchCriteria.push(q.range(item, '=', value[item].name));
-                    searchCriteria.push(q.value(item, value[item].name));
-                }
-            });
-        }
-
-
+        console.log('--------------- ' + key + '--------------------');
     }
+
+
 
     // get results
     db.documents.query(

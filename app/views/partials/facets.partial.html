@@ -18,9 +18,9 @@
     </span>
 </li>
         <ul ng-repeat="(facetKind, facetType) in facets" class="list-unstyled" name="{{facetKind}}" ng-hide="facetType.facetValues.length === 0">
-            <li><b>{{facetKind | uppercase }} ({{facetType.facetValues.length}})</b>
+            <li><b>{{facetKind | uppercase }}  ({{facetType.facetValues.length}})</b>
             </li>
-            <ul ng-repeat="(key, facet) in facetType.facetValues" class="list-unstyled">
+            <ul ng-repeat="facet in facetType.facetValues" class="list-unstyled">
                 <a href="" ng-click="filter(facetKind, facet)">
                     <li style="margin-left: 10px">{{facet.name}}
                     <span class="badge bg-olive pull-right">{{facet.count}}</span>

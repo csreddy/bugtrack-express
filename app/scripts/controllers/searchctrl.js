@@ -2,8 +2,8 @@
 
 var app = angular.module('search.controllers', []);
 
-app.controller('searchCtrl', ['$rootScope', '$scope', '$location', '$filter', 'Search', 'Flash', 'bugConfigFactory', 'currentUser', 'currentUserBugs', 'User', 'config',
-    function($rootScope, $scope, $location, $filter, Search, Flash, bugConfigFactory, currentUser, currentUserBugs, User, config) {
+app.controller('searchCtrl', ['$rootScope', '$scope', '$location', '$filter', 'Search', 'Flash', 'bugConfigFactory', 'currentUser', 'User', 'config',
+    function($rootScope, $scope, $location, $filter, Search, Flash, bugConfigFactory, currentUser, User, config) {
         $scope.bugs = [];
         $scope.currentPage = 1;
         $scope.itemsPerPage = 10;
@@ -45,13 +45,13 @@ app.controller('searchCtrl', ['$rootScope', '$scope', '$location', '$filter', 'S
                         name: 'Ship',
                         value: false
                     }, {
-                        name: 'External',
+                        name: 'Closed',
                         value: false
                     }, {
                         name: 'Will not fix',
                         value: false
                     }, {
-                        name: 'Closed',
+                        name: 'External',
                         value: false
                     }, {
                         name: 'n/v/f/e',
@@ -85,6 +85,8 @@ app.controller('searchCtrl', ['$rootScope', '$scope', '$location', '$filter', 'S
                     fixedin: '',
                     tofixin: ''
                 };
+                $scope.search();
+
             } else {
                 $scope.form = angular.copy(currentUser.savedQueries.default);
                 console.log('user has default search....');
@@ -92,19 +94,6 @@ app.controller('searchCtrl', ['$rootScope', '$scope', '$location', '$filter', 'S
             }
 
         };
-
-        // get search metrics data from first item in result set
-        $scope.searchMetrics = currentUserBugs.data[0].metrics;
-        $scope.totalItems = currentUserBugs.data[0].total;
-
-        // get facets
-        $scope.facets = currentUserBugs.data[0].facets;
-
-        // remove search metrics item from the result set
-        currentUserBugs.data.splice(0, 1);
-        $scope.bugList = currentUserBugs.data;
-
-
 
         // sort users alphabetically
         $scope.config.users.sort(function(a, b) {
@@ -162,27 +151,30 @@ app.controller('searchCtrl', ['$rootScope', '$scope', '$location', '$filter', 'S
             console.log($scope.form);
             return Search.search($scope.form).success(function(response) {
                 console.log(response);
-                $scope.bugList = response;
+                $scope.bugList = response.slice(1);
                 $scope.results = response;
                 $scope.facets = response[0].facets;
                 $scope.searchMetrics = response[0].metrics;
                 $scope.totalItems = response[0].total;
                 console.log('facets', $scope.facets);
-                console.log('RESULT', response);
+                console.log('RESULT', response[0].report);
                 //   Flash.addAlert('success', 'Returned ' + ($scope.results.length - 1) + ' results');
             }).error(function(response) {
                 Flash.addAlert('danger', response.status + ' :error occured');
             });
         };
 
+        // clear form. returns all bugs by default.
+        // will change to return tasks, rfes and others when 
+        // they are implemented
         $scope.clear = function() {
             console.log('clear fields');
             $scope.q = '';
-            $scope.form = {
-                kind: $scope.config.kind,
-                status: $scope.config.status,
-                severity: $scope.config.severity
-            };
+            $scope.form.kind[0].value = true;
+            $scope.form.status = $scope.config.status;
+            $scope.form.severity = $scope.config.severity;
+            $scope.form.submittedBy = '';
+            $scope.form.assignTo = '';
             $scope.search();
         };
 
@@ -195,7 +187,7 @@ app.controller('searchCtrl', ['$rootScope', '$scope', '$location', '$filter', 'S
             return Search.search($scope.form).success(function(response) {
                 console.log(response);
                 $scope.results = response;
-                $scope.bugList = response;
+                $scope.bugList = response.slice(1);
                 $scope.facets = response[0].facets;
                 $scope.searchMetrics = response[0].metrics;
                 $scope.totalItems = response[0].total;
@@ -213,7 +205,7 @@ app.controller('searchCtrl', ['$rootScope', '$scope', '$location', '$filter', 'S
             return Search.search($scope.form).success(function(response) {
                 console.log(response);
                 $scope.results = response;
-                $scope.bugList = response;
+                $scope.bugList = response.slice(1);
                 $scope.facets = response[0].facets;
                 $scope.searchMetrics = response[0].metrics;
                 $scope.totalItems = response[0].total;
@@ -258,7 +250,7 @@ app.controller('searchCtrl', ['$rootScope', '$scope', '$location', '$filter', 'S
         };
 
 
-        getBugDetails();
+        //   getBugDetails();
 
 
         $scope.$watchCollection('bugList', function() {
@@ -284,73 +276,23 @@ app.controller('searchCtrl', ['$rootScope', '$scope', '$location', '$filter', 'S
                 $scope.userDefaultSearch = false;
             }
 
-           /* var index = $scope.form.status.indexOf[{
-                name: 'n/v/f/e',
-                value: false
-            }];
-            index = 8;
+            var index = 8;
             var isSelected = $scope.form.status[index].value;
             if (isSelected) {
-                $scope.form.status = [{
-                    name: 'New',
-                    value: true
-                }, {
-                    name: 'Verify',
-                    value: true
-                }, {
-                    name: 'Test',
-                    value: false
-                }, {
-                    name: 'Fix',
-                    value: true
-                }, {
-                    name: 'Ship',
-                    value: false
-                }, {
-                    name: 'External',
-                    value: true
-                }, {
-                    name: 'Will not fix',
-                    value: false
-                }, {
-                    name: 'Closed',
-                    value: false
-                }, {
-                    name: 'n/v/f/e',
-                    value: true
-                }];
+              $scope.form.status.forEach(function(item) {
+                if (item.name === 'New' || item.name === 'Verify' || item.name === 'Fix' || item.name === 'External') {
+                    item.value = true;
+                }
+
+              }); 
             } else {
-                $scope.form.status = [{
-                    name: 'New',
-                    value: false
-                }, {
-                    name: 'Verify',
-                    value: false
-                }, {
-                    name: 'Test',
-                    value: false
-                }, {
-                    name: 'Fix',
-                    value: false
-                }, {
-                    name: 'Ship',
-                    value: false
-                }, {
-                    name: 'External',
-                    value: false
-                }, {
-                    name: 'Will not fix',
-                    value: false
-                }, {
-                    name: 'Closed',
-                    value: false
-                }, {
-                    name: 'n/v/f/e',
-                    value: false
-                }];
+                $scope.form.status.forEach(function(item) {
+                if (item.name === 'New' || item.name === 'Verify' || item.name === 'Fix' || item.name === 'External') {
+                    item.value = false;
+                }
 
-            }*/
-
+              }); 
+            } 
 
         }, true);
 
@@ -370,7 +312,10 @@ app.controller('searchCtrl', ['$rootScope', '$scope', '$location', '$filter', 'S
         // private functions
         function getBugDetails(begin, end) {
             $scope.bugs = [];
-            var paginatedBugList = $scope.bugList.slice(begin, end);
+            var paginatedBugList;
+            if ($scope.bugList) {
+                paginatedBugList = $scope.bugList.slice(begin, end);
+            }
 
             angular.forEach(paginatedBugList, function(bug) {
                 $scope.bugs.push(bug.content);

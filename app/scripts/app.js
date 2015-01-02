@@ -40,14 +40,6 @@ app.config(function($routeProvider) {
                         return User.getCurrentUserInfo();
                     }
                 ],
-                currentUserBugs: ['BugService', 'User',
-                    function(BugService, User) {
-                        return User.getCurrentUserInfo().then(function(user) {
-                            return BugService.getCurrentUserBugs(user);
-                        });
-
-                    }
-                ],
                 getAllBugs: ['BugService',
                     function(BugService) {
                         return BugService.getBugs();

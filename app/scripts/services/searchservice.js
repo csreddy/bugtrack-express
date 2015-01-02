@@ -26,5 +26,5 @@ app.service('Search', ['$http', 'RESTURL',
             });
         };
 
-    }
+    } 
 ]);
