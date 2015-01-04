@@ -120,3 +120,9 @@ app.controller('userRedirectCtrl', ['$location', 'getCurrentUser',
 
     }
 ]);
+
+app.controller('userProfileCtrl', ['$scope', 'currentUser',function($scope, currentUser){
+    $scope.username = currentUser.name;
+    //$scope.userQueries = JSON.stringify(currentUser.savedQueries, null, 6);
+    $scope.userQueries = currentUser.savedQueries;
+}]);

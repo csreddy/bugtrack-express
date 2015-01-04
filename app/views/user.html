@@ -1,18 +1,36 @@
-<!-- <h3>Hello! {{currentUser.name}}</h3> -->
+<!-- <div class="col-md-3" ng-include src="'views/partials/facets.alt.html'"></div>	 -->
+<div class="wrapper row-offcanvas row-offcanvas-left">
+    <!-- Left side column. contains the logo and sidebar -->
+    <aside class="left-side sidebar-offcanvas">
+        <!-- sidebar: style can be found in sidebar.less -->
+        <section class="sidebar">
 
-<div ng-controller="searchCtrl">
-    <div ng-include src="'views/partials/search.partial.html'"></div>
-    <div class="col-md-2" id="facetBox">
-        <div ng-include src="'views/partials/facets.partial.html'"></div>
-    </div>
+            <ul class="sidebar-menu">
+                <form action="#" method="get" class="sidebar-form">
+                    <div class="input-group">
+                        <input type="text" name="q" class="form-control" placeholder="Search..." />
+                        <span class="input-group-btn">
+                                <button type='submit' name='search' id='search-btn' class="btn btn-flat"><i class="fa fa-search"></i></button>
+                            </span>
+                    </div>
+                </form>
+                <li class="active">
+                    <a href="index.html">
+                        <i class="fa fa-dashboard"></i> <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="pages/widgets.html">
+                        <i class="fa fa-th"></i> <span>Widgets</span> <small class="badge pull-right bg-green">new</small>
+                    </a>
+                </li>
+            </ul>
+        </section>
+    </aside>
 </div>
 
-<div ng-include src="'views/partials/buglist.partial.html'"></div>
 
-  
-<!-- 
-<div ng-include src="'views/partials/search.partial.html'"></div>
-<div class="col-md-2" style="padding-left: 0px;">
-<div ng-include src="'views/partials/facets.alt.html'"></div>	
-</div>
-<div ng-include src="'views/partials/buglist.partial.html'"></div>	 -->
+
+<h3>Hello! {{username}}</h3>
+
+<b>Saved Queries</b>: <pre>{{userQueries}}</pre>
