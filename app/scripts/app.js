@@ -119,27 +119,14 @@ app.config(function($routeProvider) {
         })
         .when('/user/:username', {
             title: 'Home',
-            templateUrl: 'views/list.html',
-            controller: 'bugListCtrl',
+            templateUrl: 'views/user.html',
+            controller: 'userProfileCtrl',
             resolve: {
-                getCurrentUser: ['User',
+                currentUser: ['User',
                     function(User) {
                         return User.getCurrentUserInfo();
                     }
-                ],
-                getCurrentUserBugs: ['BugService', 'User',
-                    function(BugService, User) {
-                        return User.getCurrentUserInfo().then(function(user) {
-                            return BugService.getCurrentUserBugs(user);
-                        });
-
-                    }
-                ],
-                // getAllBugs: ['BugService',
-                //     function(BugService) {
-                //         return BugService.getBugs();
-                //     }
-                // ]
+                ]
             }
         })
         .when('/home', {
