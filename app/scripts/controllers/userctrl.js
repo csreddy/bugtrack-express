@@ -121,8 +121,21 @@ app.controller('userRedirectCtrl', ['$location', 'getCurrentUser',
     }
 ]);
 
-app.controller('userProfileCtrl', ['$scope', 'currentUser',function($scope, currentUser){
-    $scope.username = currentUser.name;
-    //$scope.userQueries = JSON.stringify(currentUser.savedQueries, null, 6);
-    $scope.userQueries = currentUser.savedQueries;
-}]);
+app.controller('userProfileCtrl', ['$scope', '$location', 'currentUser', 'Search', 'Flash',
+    function($scope, $location, currentUser, Search, Flash) {
+        $scope.username = currentUser.name;
+        //$scope.userQueries = JSON.stringify(currentUser.savedQueries, null, 6);
+        $scope.userQueries = currentUser.savedQueries;
+
+        $scope.search = function(query) {
+            $location.path('#');
+            Search.search(query).success(function(response) {
+                console.log(response);
+                Flash.addAlert('success', 'Returned ' + (response[0].total) + ' results');
+            }).error(function(error) {
+                Flash.addAlert('danger', ' :error occured' + error );
+            });
+        };
+
+    }
+]);
