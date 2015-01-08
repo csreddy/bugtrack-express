@@ -6,8 +6,6 @@ app.constant('RESTURL', 'http://' + location.hostname + ':' + location.port);
 app.controller('newBugCtrl', ['$scope', '$location', 'RESTURL', 'BugService', 'bugFactory', 'bugConfigFactory', 'Flash', 'User', 'loadConfig', 'getCurrentUser', 'bugId',
 
     function($scope, $location, RESTURL, BugService, bugFactory, bugConfigFactory, Flash, User, loadConfig, getCurrentUser, bugId) {
-        //$scope.test = 'controller works';
-
         // accordion interactions   
         $scope.status = {
             isFirstOpen: true,

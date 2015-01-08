@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Controller: BugconfigCtrl', function() {
-
+    console.log('Log message');
     // load the controller's module
     beforeEach(module('bugtrackApp'));
 
